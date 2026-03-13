@@ -1,0 +1,27 @@
+﻿@model CinemaWeb.Models.Order
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<link rel="stylesheet" href="~/css/order.css" />
+
+<h2>Tạo đơn hàng</h2>
+
+<form asp-action="Create" class="order-form">
+    <label>Khách hàng</label>
+    <select asp-for="IdUser">
+        @foreach (var user in ViewBag.IdUser)
+        {
+            <option value="@user.IdUser">@user.FullName</option>
+        }
+    </select>
+
+    <label>Tổng tiền</label>
+    <input asp-for="TotalPrice" />
+
+    <label>Trạng thái</label>
+    <input asp-for="Status" placeholder="Pending / Paid / Cancel" />
+
+    <button type="submit">Lưu</button>
+    <a asp-action="Index">Quay lại</a>
+</form>

@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Http
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Cinestar</title>
+    <link rel="stylesheet" href="~/css/layoutuser.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    @{
+        var username = Context.Session.GetString("UserName");
+        var role = Context.Session.GetString("Role");
+    }
+
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">⭐ CIN<span>ESTAR</span></div>
+
+        <nav>
+            <a href="#">Chọn rạp</a>
+            <a href="#">Lịch chiếu</a>
+            <a href="#">Khuyến mãi</a>
+            <a href="#">Giới thiệu</a>
+        </nav>
+
+        <div class="header-right">
+            <input type="text" placeholder="Tìm phim, rạp" />
+
+            @if (username != null)
+            {
+                <span class="hello-user">
+                     Hello, <b>@username</b>
+                </span>
+
+                <a class="btn-yellow" asp-controller="Auth" asp-action="Logout">
+                    Logout
+                </a>
+            }
+            else
+            {
+                <a class="btn-yellow" asp-controller="Auth" asp-action="Login">
+                    Đăng nhập
+                </a>
+            }
+        </div>
+    </header>
+
+    <!-- BODY -->
+    <main>
+        @RenderBody()
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div>
+            <h3>CINESTAR</h3>
+            <p>Be Happy, Be A Star</p>
+        </div>
+
+        <div>
+            <h4>Tài khoản</h4>
+            <a asp-controller="Auth" asp-action="Login">Đăng nhập</a>
+            <a asp-controller="Auth" asp-action="Register">Đăng ký</a>
+        </div>
+
+        <div>
+            <h4>Hệ thống rạp</h4>
+            <a href="#">Cinestar Hà Nội</a>
+            <a href="#">Cinestar TP.HCM</a>
+        </div>
+    </footer>
+
+</body>
+</html>

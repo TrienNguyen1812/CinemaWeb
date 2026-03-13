@@ -1,0 +1,19 @@
+﻿@model Cinema
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="container">
+    <h2>Xóa rạp</h2>
+
+    <p>Bạn có chắc muốn xóa rạp này không?</p>
+
+    <p><strong>@Model.CinemaName</strong></p>
+    <p>@Model.Address</p>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IdCinema" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

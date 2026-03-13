@@ -1,0 +1,32 @@
+﻿@model CinemaWeb.Models.ScreeningRoom   
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="room-container">
+    <h2 class="room-title">Cập nhật phòng chiếu</h2>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" asp-for="IdRoom" />
+
+        <div class="mb-3">
+            <label class="form-label">Tên phòng</label>
+            <input asp-for="RoomName" class="form-control" />
+            <span asp-validation-for="RoomName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Số ghế</label>
+            <input asp-for="SeatQuantity" class="form-control" />
+            <span asp-validation-for="SeatQuantity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Rạp</label>
+            <select asp-for="IdCinema" asp-items="ViewBag.IdCinema" class="form-select"></select>
+        </div>
+
+        <button type="submit" class="btn btn-warning">✏ Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">⬅ Quay lại</a>
+    </form>
+</div>

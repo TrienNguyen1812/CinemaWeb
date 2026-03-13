@@ -1,0 +1,37 @@
+﻿@{
+    Layout = "LayoutUserHome";
+}
+
+<!-- BANNER -->
+<section class="banner">
+    <img src="~/images/banner.jpg" alt="Banner">
+</section>
+
+<!-- PHIM ĐANG CHIẾU -->
+<section class="section">
+    <h2>PHIM ĐANG CHIẾU</h2>
+
+    @await Html.PartialAsync(
+        "~/Views/CustomerMovie/NowShowingPreview.cshtml"
+    )
+
+    <a asp-controller="CustomerMovie"
+       asp-action="NowShowing"
+       class="btn">
+        Xem phim đang chiếu
+    </a>
+</section>
+
+
+<!-- KHUYẾN MÃI -->
+<section class="section promo">
+    <h2>KHUYẾN MÃI</h2>
+
+    <div class="promo-list">
+        <img src="~/images/promo1.jpg">
+        <img src="~/images/promo1.jpg">
+        <img src="~/images/promo1.jpg">
+    </div>
+
+    <button class="btn-yellow center">TẤT CẢ ƯU ĐÃI</button>
+</section>

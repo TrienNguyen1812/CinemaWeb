@@ -1,0 +1,31 @@
+﻿@model CinemaWeb.Models.Seat
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="seat-container">
+    <h2>Chi tiết ghế</h2>
+
+    <table>
+        <tr>
+            <th>Rạp</th>
+            <td>@Model.Cinema?.CinemaName</td>
+        </tr>
+        <tr>
+            <th>Hàng ghế</th>
+            <td>@Model.SeatRow</td>
+        </tr>
+        <tr>
+            <th>Số ghế</th>
+            <td>@Model.SeatNumber</td>
+        </tr>
+        <tr>
+            <th>Loại ghế</th>
+            <td>@Model.TypeSeat</td>
+        </tr>
+    </table>
+
+    <br />
+    <a asp-action="Edit" asp-route-id="@Model.IdSeat" class="btn btn-warning">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</div>

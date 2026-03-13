@@ -1,0 +1,153 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="container-fluid">
+    <h3 class="fw-bold mb-4">Dashboard Overview</h3>
+
+    <!-- Top Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <h6 class="text-muted">Total Revenue</h6>
+                <h3 class="fw-bold text-primary">₫256M</h3>
+                <small class="text-success">+12% vs last month</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <h6 class="text-muted">Sales Analytics</h6>
+                <h3 class="fw-bold text-success">8,451</h3>
+                <small class="text-muted">Completed Orders</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <h6 class="text-muted">Total Customers</h6>
+                <h3 class="fw-bold text-warning">4,569</h3>
+                <small class="text-muted">Active Customers</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center p-3">
+                <h6 class="text-muted">Daily Sales</h6>
+                <h3 class="fw-bold text-info">158</h3>
+                <small class="text-muted">Today</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Charts -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">In-Store Sales</h6>
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card p-4">
+                <h6 class="fw-bold mb-3">Your Revenue</h6>
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Lists -->
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card p-3">
+                <h6 class="fw-bold mb-3">Top Sellers</h6>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center">
+                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
+                        <div><strong>Nguyễn Văn A</strong><br><small>10.5M ₫</small></div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
+                        <div><strong>Trần Thị B</strong><br><small>8.9M ₫</small></div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
+                        <div><strong>Phạm Hữu C</strong><br><small>7.4M ₫</small></div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card p-3">
+                <h6 class="fw-bold mb-3">Latest Projects</h6>
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Project</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Gaming PC Build</td>
+                            <td>01/09/2025</td>
+                            <td>15/09/2025</td>
+                            <td><span class="badge bg-success">Completed</span></td>
+                        </tr>
+                        <tr>
+                            <td>SSD Upgrade</td>
+                            <td>05/10/2025</td>
+                            <td>12/10/2025</td>
+                            <td><span class="badge bg-info">Ongoing</span></td>
+                        </tr>
+                        <tr>
+                            <td>Workstation Setup</td>
+                            <td>20/10/2025</td>
+                            <td>28/10/2025</td>
+                            <td><span class="badge bg-warning text-dark">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // --- Bar Chart ---
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'In-Store Sales',
+                    data: [12, 19, 8, 15, 20, 25],
+                    backgroundColor: 'rgba(54,162,235,0.6)',
+                    borderRadius: 6
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true } } }
+        });
+
+        // --- Line Chart ---
+        new Chart(document.getElementById('lineChart'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [5, 7, 9, 14, 10, 17],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.3
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    </script>
+}

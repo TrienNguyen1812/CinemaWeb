@@ -1,0 +1,39 @@
+﻿@model IEnumerable<CinemaWeb.Models.Showtime>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<h2 class="title">Quản Lý Suất Chiếu</h2>
+
+<a class="btn-add" asp-action="Create">+ Thêm Suất Chiếu</a>
+
+<table class="styled-table">
+    <thead>
+        <tr>
+            <th>Phim</th>
+            <th>Phòng</th>
+            <th>Ngày</th>
+            <th>Giờ</th>
+            <th>Giá</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>@item.Movie?.MovieName</td>
+        <td>@item.ScreeningRoom?.RoomName</td>
+        <td>@item.StartFilm.ToString("dd/MM/yyyy")</td>
+        <td>@item.StartTime</td>
+        <td>@item.Price.ToString("N0") đ</td>
+        <td>
+            <a asp-action="Edit" asp-route-id="@item.IdShowtime">Sửa</a> |
+            <a asp-action="Details" asp-route-id="@item.IdShowtime">Chi tiết</a> |
+            <a asp-action="Delete" asp-route-id="@item.IdShowtime">Xóa</a>
+        </td>
+    </tr>
+}
+    </tbody>
+</table>

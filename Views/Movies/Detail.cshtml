@@ -1,0 +1,21 @@
+﻿@model CinemaWeb.Models.Movie
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="movie-container movie-detail">
+    <h2 class="movie-title">Chi tiết phim</h2>
+
+    <img src="~/images/movies/@Model.Poster" width="220" />
+
+    <p><b>Tên phim:</b> @Model.MovieName</p>
+    <p><b>Thể loại:</b> @Model.Category</p>
+    <p><b>Thời lượng:</b> @Model.Duration phút</p>
+    <p><b>Ngày phát hành:</b> @Model.ReleaseDate.ToShortDateString()</p>
+    <p><b>Mô tả:</b> @Model.Description</p>
+    <p><b>Độ tuổi:</b> @Model.Age</p>
+
+    <a asp-action="Index" class="btn btn-detail">⬅ Quay lại</a>
+</div>
+

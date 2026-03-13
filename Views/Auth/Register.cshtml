@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
+
+<div class="auth-container">
+    <div class="auth-tabs">
+        <a asp-controller="Auth" asp-action="Login">ĐĂNG NHẬP</a>
+        <a class="active">ĐĂNG KÝ</a>
+    </div>
+
+    <form method="post" class="auth-form">
+        <label>Họ và tên <span>*</span></label>
+        <input type="text" name="FullName" required />
+
+        <label>Email <span>*</span></label>
+        <input type="email" name="Email" required />
+
+        <label>SĐT <span>*</span></label>
+        <input type="text" name="PhoneNumber" required />
+
+        <label>Mật khẩu <span>*</span></label>
+        <input type="password" name="Password" required />
+
+        <label>Nhập lại mật khẩu <span>*</span></label>
+        <input type="password" name="ConfirmPassword" required />
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="text-danger">@ViewBag.Error</p>
+        }
+
+        <button type="submit" class="btn-login">ĐĂNG KÝ</button>
+    </form>
+</div>
+
+<style>
+    .auth-container {
+        width: 420px;
+        margin: 120px auto;
+        background: #f8f9fb;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .auth-tabs {
+        display: flex;
+        margin-bottom: 20px;
+    }
+
+    .auth-tabs a {
+        flex: 1;
+        text-align: center;
+        padding: 12px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #555;
+        background: #eaeaea;
+        border-radius: 6px 6px 0 0;
+    }
+
+    .auth-tabs .active {
+        background: #fff;
+        color: #000;
+        border-bottom: 3px solid #f6e300;
+    }
+
+    .auth-form label {
+        display: block;
+        margin-top: 12px;
+        font-size: 14px;
+        color: #000;
+    }
+
+    .auth-form span {
+        color: red;
+    }
+
+    .auth-form input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        color: #000;
+    }
+
+    .btn-login {
+        width: 100%;
+        background: #f6e300;
+        border: none;
+        padding: 12px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-top: 18px;
+    }
+
+    .btn-login:hover {
+        background: #e5d200;
+    }
+</style>

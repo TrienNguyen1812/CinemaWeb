@@ -1,0 +1,41 @@
+﻿@model IEnumerable<CinemaWeb.Models.Order>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<h2>Quản lý đơn hàng</h2>
+
+<a class="btn-create" asp-action="Create">+ Tạo đơn hàng</a>
+
+<table class="order-table">
+    <thead>
+        <tr>
+            <th>Mã</th>
+            <th>Khách hàng</th>
+            <th>Thời gian</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model)
+{
+        <tr>
+            <td>@item.IdOrder</td>
+            <td>@item.User?.FullName</td>
+            <td>@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+            <td>@item.TotalPrice.ToString("N0") ₫</td>
+            <td>
+                <span class="status">@item.Status</span>
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.IdOrder">Chi tiết</a> |
+                <a asp-action="Edit" asp-route-id="@item.IdOrder">Sửa</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdOrder" class="text-danger">Xóa</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,22 @@
+﻿@model CinemaWeb.Models.Seat
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="seat-container">
+    <h2>Xóa ghế</h2>
+
+    <p>Bạn có chắc muốn xóa ghế này không?</p>
+
+    <ul>
+        <li>Rạp: <strong>@Model.Cinema?.CinemaName</strong></li>
+        <li>Ghế: <strong>@Model.SeatRow - @Model.SeatNumber</strong></li>
+        <li>Loại: <strong>@Model.TypeSeat</strong></li>
+    </ul>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IdSeat" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

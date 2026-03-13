@@ -1,0 +1,41 @@
+﻿@model IEnumerable<CinemaWeb.Models.Movie>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="movie-container">
+    <h2 class="movie-title">Danh sách phim</h2>
+
+    <a asp-action="Create" class="btn btn-add">➕ Thêm phim</a>
+
+    <table class="movie-table">
+        <tr>
+            <th>Poster</th>
+            <th>Tên phim</th>
+            <th>Thể loại</th>
+            <th>Thời lượng</th>
+            <th>Hành động</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img src="~/images/movies/@item.Poster" width="80" />
+                </td>
+                <td>@item.MovieName</td>
+                <td>@item.Category</td>
+                <td>@item.Duration phút</td>
+                <td>
+                    <a class="btn btn-detail" asp-action="Details" asp-route-id="@item.IdMovie">Chi tiết</a>
+                    <a class="btn btn-edit" asp-action="Edit" asp-route-id="@item.IdMovie">Sửa</a>
+                    <a class="btn btn-delete" asp-action="Delete" asp-route-id="@item.IdMovie">Xóa</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+

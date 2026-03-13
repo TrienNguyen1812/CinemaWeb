@@ -1,0 +1,21 @@
+﻿@model CinemaWeb.Models.Movie
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="movie-container delete-box">
+    <h2 class="movie-title">Xóa phim</h2>
+
+    <p>Bạn có chắc chắn muốn xóa phim này?</p>
+
+    <img src="~/images/movies/@Model.Poster" width="180" />
+    <h3>@Model.MovieName</h3>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="IdMovie" />
+        <button class="btn btn-delete" type="submit">❌ Xóa</button>
+        <a asp-action="Index" class="btn btn-detail">Hủy</a>
+    </form>
+</div>
+

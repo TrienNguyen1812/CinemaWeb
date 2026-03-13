@@ -1,0 +1,16 @@
+﻿@model CinemaWeb.Models.Payment
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="payment-container">
+    <div class="payment-title text-danger">Xác nhận xóa</div>
+
+    <p>Bạn có chắc muốn xóa thanh toán <b>@Model.TransactionCode</b>?</p>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="IdPayment" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

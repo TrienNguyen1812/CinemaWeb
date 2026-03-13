@@ -1,0 +1,27 @@
+﻿.payment-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
+
+.payment-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.table th {
+    background: #0d6efd;
+    color: white;
+}
+
+.btn + .btn {
+    margin-left: 5px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}

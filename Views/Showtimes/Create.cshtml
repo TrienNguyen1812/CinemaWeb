@@ -1,0 +1,28 @@
+﻿@model CinemaWeb.Models.Showtime
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<link rel="stylesheet" href="~/css/showtime.css" />
+
+<h2>Thêm Suất Chiếu</h2>
+
+<form asp-action="Create" class="form-box">
+    <label>Phim</label>
+    <select asp-for="IdMovie" asp-items="ViewBag.IdMovie"></select>
+
+    <label>Phòng</label>
+    <select asp-for="IdRoom" asp-items="ViewBag.IdRoom"></select>
+
+    <label>Ngày chiếu</label>
+    <input asp-for="StartFilm" type="date" />
+
+    <label>Giờ chiếu</label>
+    <input asp-for="StartTime" type="time" />
+
+    <label>Giá vé</label>
+    <input asp-for="Price" />
+
+    <button type="submit">Lưu</button>
+    <a asp-action="Index">Quay lại</a>
+</form>

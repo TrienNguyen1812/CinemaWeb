@@ -1,0 +1,38 @@
+﻿@model CinemaWeb.Models.Movie
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="movie-container">
+    <h2 class="movie-title">Quản lý phim</h2>
+
+    <form class="movie-form" asp-action="Create" method="post" enctype="multipart/form-data">
+        <label>Tên phim</label>
+        <input asp-for="MovieName" />
+
+        <label>Thể loại</label>
+        <input asp-for="Category" />
+
+        <label>Thời lượng</label>
+        <input asp-for="Duration" type="number" />
+
+        <label>Ngày phát hành</label>
+        <input asp-for="ReleaseDate" type="date" />
+
+        <label>Mô tả</label>
+        <textarea asp-for="Description"></textarea>
+
+        <label>Poster</label>
+        <input type="file" name="posterFile" accept="image/*" />
+
+        <label>Trailer</label>
+        <input asp-for="Trailer" />
+
+        <label>Độ tuổi</label>
+        <input asp-for="Age" />
+
+        <button type="submit">💾 Lưu</button>
+    </form>
+</div>
+

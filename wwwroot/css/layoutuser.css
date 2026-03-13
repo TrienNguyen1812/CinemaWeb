@@ -1,0 +1,118 @@
+﻿body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0b1020;
+    color: white;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: #0b1020;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+    .logo span {
+        color: yellow;
+    }
+
+.header nav a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+}
+
+.header-right input {
+    padding: 7px;
+    border-radius: 20px;
+    border: none;
+}
+
+.btn-yellow {
+    background: yellow;
+    padding: 8px 15px;
+    margin-left: 10px;
+    border-radius: 20px;
+    color: black;
+    text-decoration: none;
+}
+
+/* BANNER */
+.banner img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+/* SECTION */
+.section {
+    padding: 40px;
+}
+
+    .section h2 {
+        margin-bottom: 20px;
+    }
+
+/* MOVIES */
+.movie-list {
+    display: flex;
+    gap: 20px;
+}
+
+.movie-card {
+    width: 200px;
+    background: #1b1f3a;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+    .movie-card img {
+        width: 100%;
+        border-radius: 10px;
+    }
+
+    .movie-card button {
+        margin-top: 10px;
+        padding: 8px;
+        background: yellow;
+        border: none;
+        border-radius: 20px;
+    }
+
+/* PROMO */
+.promo-list {
+    display: flex;
+    gap: 20px;
+}
+
+    .promo-list img {
+        width: 30%;
+        border-radius: 15px;
+    }
+
+.center {
+    display: block;
+    margin: 20px auto;
+}
+
+/* FOOTER */
+.footer {
+    background: linear-gradient(90deg, #5b2d8b, #3556c4);
+    padding: 40px;
+    display: flex;
+    justify-content: space-around;
+}
+.hello-user {
+    color: white;
+    margin-right: 12px;
+    font-size: 14px;
+    white-space: nowrap;
+}
+

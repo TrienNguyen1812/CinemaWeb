@@ -1,0 +1,18 @@
+﻿@model CinemaWeb.Models.ScreeningRoom
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="room-container">
+    <h2 class="room-title text-danger">Xóa phòng chiếu</h2>
+
+    <div class="alert alert-warning">
+        Bạn có chắc chắn muốn xóa phòng <strong>@Model.RoomName</strong> không?
+    </div>
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="IdRoom" />
+        <button type="submit" class="btn btn-danger">🗑 Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

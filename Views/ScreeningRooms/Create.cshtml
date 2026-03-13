@@ -1,0 +1,43 @@
+﻿@model CinemaWeb.Models.ScreeningRoom
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="room-container">
+    <h2 class="room-title">Thêm phòng chiếu</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="mb-3">
+            <label class="form-label">
+                Tên phòng <span class="form-required">*</span>
+            </label>
+            <input asp-for="RoomName" class="form-control" />
+            <span asp-validation-for="RoomName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Số ghế <span class="form-required">*</span>
+            </label>
+            <input asp-for="SeatQuantity" class="form-control" />
+            <span asp-validation-for="SeatQuantity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Rạp <span class="form-required">*</span>
+            </label>
+            <select asp-for="IdCinema" asp-items="ViewBag.IdCinema" class="form-select">
+                <option value="">-- Chọn rạp --</option>
+            </select>
+            <span asp-validation-for="IdCinema" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary">⬅ Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

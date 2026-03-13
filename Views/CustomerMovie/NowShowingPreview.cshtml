@@ -1,0 +1,29 @@
+﻿@model IEnumerable<CinemaWeb.Models.Movie>
+
+@if (Model != null && Model.Any())
+{
+    <div class="movie-list">
+        @foreach (var movie in Model)
+        {
+            <div class="movie-card">
+                <img src="~/images/@(movie.Poster ?? "default.jpg")" />
+                <h4>@movie.MovieName</h4>
+            </div>
+        }
+    </div>
+
+    <div class="pagination">
+        @for (int i = 1; i <= (ViewBag.TotalPages ?? 0); i++)
+        {
+            <a asp-action="NowShowingPreview"
+               asp-route-page="@i"
+               class="@(i == ViewBag.CurrentPage ? "active" : "")">
+                @i
+            </a>
+        }
+    </div>
+}
+else
+{
+    <p>Hiện chưa có phim đang chiếu</p>
+}

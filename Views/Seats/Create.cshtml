@@ -1,0 +1,44 @@
+﻿@model CinemaWeb.Models.Seat
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="seat-container">
+    <h2>Thêm ghế</h2>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-group">
+            <label>Rạp</label>
+            <select asp-for="IdCinema" class="form-control">
+                @foreach (var c in ViewBag.Cinemas)
+                {
+                    <option value="@c.IdCinema">@c.CinemaName</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Hàng ghế</label>
+            <input asp-for="SeatRow" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Số ghế</label>
+            <input asp-for="SeatNumber" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label>Loại ghế</label>
+            <select asp-for="TypeSeat" class="form-control">
+                <option>Thường</option>
+                <option>VIP</option>
+                <option>Couple</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>

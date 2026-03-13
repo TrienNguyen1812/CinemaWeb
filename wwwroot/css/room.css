@@ -1,0 +1,25 @@
+﻿.room-container {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+.room-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.room-table th {
+    background-color: #343a40;
+    color: white;
+}
+
+.form-required {
+    color: red;
+}
+
+.btn-action {
+    min-width: 80px;
+}

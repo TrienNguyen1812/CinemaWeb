@@ -1,0 +1,44 @@
+﻿@model IEnumerable<CinemaWeb.Models.Seat>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="seat-container">
+    <div class="seat-header">
+        <h2>Danh sách ghế</h2>
+        <a asp-action="Create" class="btn btn-primary">+ Thêm ghế</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <p class="text-danger">@TempData["Error"]</p>
+    }
+
+    <table>
+        <thead>
+            <tr>
+                <th>Rạp</th>
+                <th>Hàng</th>
+                <th>Số</th>
+                <th>Loại ghế</th>
+                <th>Chức năng</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Cinema?.CinemaName</td>
+                <td>@item.SeatRow</td>
+                <td>@item.SeatNumber</td>
+                <td>@item.TypeSeat</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.IdSeat" class="btn btn-info">Xem</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdSeat" class="btn btn-warning">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdSeat" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,29 @@
+﻿@model Cinema
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="container">
+    <h2>Thêm rạp mới</h2>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label>Tên rạp</label>
+            <input asp-for="CinemaName" class="form-control" placeholder="Nhập tên rạp" />
+            <span asp-validation-for="CinemaName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input asp-for="Address" class="form-control" placeholder="Nhập địa chỉ rạp" />
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">💾 Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary">↩ Quay lại</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
