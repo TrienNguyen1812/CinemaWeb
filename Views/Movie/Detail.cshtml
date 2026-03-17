@@ -1,0 +1,75 @@
+﻿@model CinemaWeb.Models.Movie
+@{
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
+<div class="container mt-4">
+
+    <div class="row">
+
+        <!-- Poster -->
+        <div class="col-md-3">
+            <img src="~/images/@Model.Poster" class="img-fluid"/>
+        </div>
+
+        <!-- Movie info -->
+        <div class="col-md-9">
+
+            <h2>@Model.MovieName</h2>
+
+            <p><b>Thể loại:</b> @Model.Category</p>
+
+            <p><b>Thời lượng:</b> @Model.Duration phút</p>
+
+            <p><b>Ngày khởi chiếu:</b> @Model.ReleaseDate.ToString("dd/MM/yyyy")</p>
+
+            <p><b>Độ tuổi:</b> @Model.Age</p>
+
+            <p>@Model.Description</p>
+
+            <!-- Trailer -->
+            <iframe width="560" height="315"
+                    src="@Model.Trailer"
+                    frameborder="0"
+                    allowfullscreen>
+            </iframe>
+
+        </div>
+
+    </div>
+
+    <hr />
+
+    <h3>Lịch Chiếu</h3>
+
+    @{
+        var cinemas = Model.Showtimes
+            .GroupBy(s => s.ScreeningRoom.Cinema.CinemaName);
+    }
+
+    @foreach (var cinema in cinemas)
+    {
+        <div class="cinema-block mb-3">
+
+            <h5>@cinema.Key</h5>
+
+            @foreach (var show in cinema)
+            {
+                <a class="btn btn-outline-primary m-1"
+                   asp-controller="Seat"
+                   asp-action="SelectSeat"
+                   asp-route-id="@show.IdShowtime">
+
+                    @show.StartTime.ToString("HH:mm")
+
+                </a>
+            }
+
+        </div>
+    }
+
+</div>
+<style>.cinema-block{
+    padding:15px;
+    border:1px solid #ddd;
+    border-radius:8px;
+}</style>

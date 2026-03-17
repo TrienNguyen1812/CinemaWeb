@@ -9,7 +9,8 @@
     <p>Bạn có chắc muốn xóa ghế này không?</p>
 
     <ul>
-        <li>Rạp: <strong>@Model.Cinema?.CinemaName</strong></li>
+        <li>Rạp: <strong>@Model.ScreeningRoom?.Cinema?.CinemaName</strong></li>
+        <li>Phòng: <strong>@Model.ScreeningRoom?.RoomName</strong></li>
         <li>Ghế: <strong>@Model.SeatRow - @Model.SeatNumber</strong></li>
         <li>Loại: <strong>@Model.TypeSeat</strong></li>
     </ul>

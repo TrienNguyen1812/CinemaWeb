@@ -1,0 +1,91 @@
+﻿@model CinemaWeb.Models.Showtime
+
+<h2>Chọn ghế</h2>
+
+<label>Số lượng vé:</label>
+<input type="number" id="ticketCount" min="1" value="1" />
+
+<div class="screen">MÀN HÌNH</div>
+
+<form asp-controller="Combo" asp-action="SelectCombo" method="post">
+
+    <div class="seat-map">
+
+        @foreach (var seat in Model.ScreeningRoom.Seats)
+        {
+            <button type="button"
+                    class="seat"
+                    data-seat="@seat.IdSeat">
+                @seat.SeatRow@seat.SeatNumber
+            </button>
+        }
+
+    </div>
+
+    <input type="hidden" name="seatIds" id="seatIds" />
+
+    <br />
+
+    <button type="submit" class="btn btn-primary">
+        Tiếp tục
+    </button>
+
+</form>
+<style>
+    .screen{
+    text-align:center;
+    padding:10px;
+    background:black;
+    color:white;
+    margin-bottom:20px;
+}
+
+.seat-map{
+    display:grid;
+    grid-template-columns: repeat(10,50px);
+    gap:10px;
+}
+
+.seat{
+    width:50px;
+    height:50px;
+    background:#ccc;
+    border:none;
+}
+
+.seat.selected{
+    background:green;
+}
+
+.seat.booked{
+    background:red;
+}
+</style>
+<script>
+    let selectedSeats = [];
+
+    document.querySelectorAll(".seat").forEach(btn => {
+
+        btn.addEventListener("click", () => {
+
+            let maxTicket = parseInt(document.getElementById("ticketCount").value);
+
+            if(btn.classList.contains("selected")){
+                btn.classList.remove("selected");
+                selectedSeats = selectedSeats.filter(id => id != btn.dataset.seat);
+            }
+            else{
+
+                if(selectedSeats.length >= maxTicket){
+                    alert("Bạn chỉ được chọn " + maxTicket + " ghế");
+                    return;
+                }
+
+                btn.classList.add("selected");
+                selectedSeats.push(btn.dataset.seat);
+            }
+
+        });
+
+    });
+</script>

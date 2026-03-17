@@ -9,7 +9,11 @@
     <table>
         <tr>
             <th>Rạp</th>
-            <td>@Model.Cinema?.CinemaName</td>
+            <td>@Model.ScreeningRoom?.Cinema?.CinemaName</td>
+        </tr>
+        <tr>
+            <th>Phòng</th>
+            <td>@Model.ScreeningRoom?.RoomName</td>
         </tr>
         <tr>
             <th>Hàng ghế</th>

@@ -1,0 +1,41 @@
+﻿@model CinemaWeb.Models.Combo
+
+<h2>Sửa Combo</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+
+<input type="hidden" asp-for="IdCombo"/>
+
+<div>
+    <label>Tên Combo</label>
+    <input asp-for="ComboName" class="form-control" />
+</div>
+
+<div>
+    <label>Mô tả</label>
+    <textarea asp-for="Description" class="form-control"></textarea>
+</div>
+
+<div>
+    <label>Giá</label>
+    <input asp-for="Price" class="form-control" />
+</div>
+
+<div>
+    <label>Hình hiện tại</label>
+    <br />
+    <img src="~/images/@Model.Image" width="150"/>
+</div>
+
+<div>
+    <label>Đổi hình mới</label>
+    <input type="file" name="ImageFile" class="form-control"/>
+</div>
+
+<br />
+
+<button type="submit" class="btn btn-warning">
+    Cập nhật
+</button>
+
+</form>

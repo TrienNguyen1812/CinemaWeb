@@ -25,5 +25,6 @@ namespace CinemaWeb.Models
 
         public ICollection<Ticket>? Tickets { get; set; }
         public ICollection<Payment>? Payments { get; set; }
+        public ICollection<OrderCombo>? OrderCombos { get; set; }
     }
 }

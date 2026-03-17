@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Generate Seats";
+}
+
+<h2>Tạo sơ đồ ghế</h2>
+
+<form asp-action="GenerateSeats" method="post">
+
+    <label>Chọn phòng:</label>
+
+    <select name="roomId" class="form-control">
+        @foreach (var room in ViewBag.Rooms)
+        {
+            <option value="@room.IdRoom">
+                @room.RoomName
+            </option>
+        }
+    </select>
+
+    <br />
+
+    <button type="submit" class="btn btn-success">
+        Tạo ghế
+    </button>
+
+</form>

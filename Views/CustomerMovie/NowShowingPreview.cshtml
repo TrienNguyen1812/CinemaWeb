@@ -7,7 +7,16 @@
         {
             <div class="movie-card">
                 <img src="~/images/@(movie.Poster ?? "default.jpg")" />
+
                 <h4>@movie.MovieName</h4>
+
+                <!-- Nút đặt vé -->
+                <a asp-controller="Movie"
+                   asp-action="Detail"
+                   asp-route-id="@movie.IdMovie"
+                   class="btn-book">
+                    Đặt vé
+                </a>
             </div>
         }
     </div>
@@ -27,3 +36,19 @@ else
 {
     <p>Hiện chưa có phim đang chiếu</p>
 }
+
+<style>.btn-book{
+    display:inline-block;
+    margin-top:8px;
+    padding:8px 12px;
+    background:#f5b50a;
+    color:#000;
+    font-weight:bold;
+    text-decoration:none;
+    border-radius:5px;
+}
+
+.btn-book:hover{
+    background:#ffcc33;
+}
+</style>

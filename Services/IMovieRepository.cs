@@ -8,5 +8,6 @@ namespace CinemaWeb.Services
         IEnumerable<Movie> GetNowShowingMoviesPaged(int page, int pageSize);
         int CountNowShowingMovies();
         Movie? GetById(int id);
+        Movie? GetMovieDetail(int id);
     }
 }

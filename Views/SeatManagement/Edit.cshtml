@@ -12,11 +12,13 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
         <div class="form-group">
-            <label>Rạp</label>
-            <select asp-for="IdCinema" class="form-control">
-                @foreach (var c in ViewBag.Cinemas)
+            <label>Phòng</label>
+            <select asp-for="IdRoom" class="form-control">
+                @foreach(var room in ViewBag.Rooms)
                 {
-                    <option value="@c.IdCinema">@c.CinemaName</option>
+                   <option value="@room.IdRoom">
+                       @room.RoomName
+                  </option>
                 }
             </select>
         </div>

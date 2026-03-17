@@ -13,7 +13,7 @@ namespace CinemaWeb.Models
         [Required, Column(TypeName = "date")]
         public DateTime StartFilm { get; set; }
 
-        [Required, Column(TypeName = "date")]
+        [Required, Column(TypeName = "datetime")]
         public DateTime StartTime { get; set; }
 
         [Required, Column(TypeName = "numeric(10,2)")]

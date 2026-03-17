@@ -5,12 +5,12 @@ using System.Diagnostics;
 
 namespace CinemaWeb.Controllers
 {
-    public class MoviesController : Controller
+    public class MovieManagementController : Controller
     {
         private readonly DbContexts _context;
-        private readonly ILogger<MoviesController> _logger;
+        private readonly ILogger<MovieManagementController> _logger;
 
-        public MoviesController(DbContexts context, ILogger<MoviesController> logger)
+        public MovieManagementController(DbContexts context, ILogger<MovieManagementController> logger)
         {
             _context = context;
             _logger = logger;

@@ -16,6 +16,8 @@ namespace CinemaWeb.Models
         public DbSet<Order> Orders { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Combo> Combos { get; set; }
+        public DbSet<OrderCombo> OrderCombos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -65,6 +67,13 @@ namespace CinemaWeb.Models
             modelBuilder.Entity<Showtime>()
                 .HasOne(s => s.ScreeningRoom)
                 .WithMany(r => r.Showtimes)
+                .HasForeignKey(s => s.IdRoom)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ===== SEAT - SCREENING ROOM =====
+            modelBuilder.Entity<Seat>()
+                .HasOne(s => s.ScreeningRoom)
+                .WithMany(r => r.Seats)
                 .HasForeignKey(s => s.IdRoom)
                 .OnDelete(DeleteBehavior.Cascade);
         }

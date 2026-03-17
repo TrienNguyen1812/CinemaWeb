@@ -1,4 +1,5 @@
 ﻿using CinemaWeb.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CinemaWeb.Services
 {
@@ -37,6 +38,15 @@ namespace CinemaWeb.Services
         {
             return _context.Movies
                 .Count(m => m.ReleaseDate <= DateTime.Now);
+        }
+
+        public Movie? GetMovieDetail(int id)
+        {
+            return _context.Movies
+                .Include(m => m.Showtimes)
+                .ThenInclude(s => s.ScreeningRoom)
+                .ThenInclude(r => r.Cinema)
+                .FirstOrDefault(m => m.IdMovie == id);
         }
     }
 }

@@ -1,14 +1,43 @@
 ﻿using CinemaWeb.Models;
+using CinemaWeb.Services.Builders;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace CinemaWeb.Controllers
 {
-    public class SeatsController : Controller
+    public class SeatManagementController : Controller
     {
         private readonly DbContexts _context;
 
-        public SeatsController(DbContexts context)
+        public IActionResult GenerateSeats()
+        {
+            ViewBag.Rooms = _context.ScreeningRooms.ToList();
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult GenerateSeats(int roomId)
+        {
+            if (roomId == 0)
+            {
+                TempData["Error"] = "Vui lòng chọn phòng";
+                return RedirectToAction("Index");
+            }
+
+            var builder = new SeatLayoutBuilder();
+            var director = new SeatLayoutDirector();
+
+            director.BuildStandardRoom(builder, roomId);
+
+            var seats = builder.Build();
+
+            _context.Seats.AddRange(seats);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        public SeatManagementController(DbContexts context)
         {
             _context = context;
         }
@@ -17,7 +46,8 @@ namespace CinemaWeb.Controllers
         public async Task<IActionResult> Index()
         {
             var seats = _context.Seats
-                .Include(s => s.Cinema);
+                .Include(s => s.ScreeningRoom)
+                .ThenInclude(r => r.Cinema);
             return View(await seats.ToListAsync());
         }
 
@@ -27,8 +57,9 @@ namespace CinemaWeb.Controllers
             if (id == null) return NotFound();
 
             var seat = await _context.Seats
-                .Include(s => s.Cinema)
-                .FirstOrDefaultAsync(m => m.IdSeat == id);
+                       .Include(s => s.ScreeningRoom)
+                       .ThenInclude(r => r.Cinema)
+                       .FirstOrDefaultAsync(m => m.IdSeat == id);
 
             if (seat == null) return NotFound();
 
@@ -38,7 +69,7 @@ namespace CinemaWeb.Controllers
         // GET: Seat/Create
         public IActionResult Create()
         {
-            ViewBag.Cinemas = _context.Cinemas.ToList();
+            ViewBag.Rooms = _context.ScreeningRooms.ToList();
             return View();
         }
 
@@ -57,7 +88,7 @@ namespace CinemaWeb.Controllers
 
             // ❗ Check trùng ghế trong cùng rạp
             bool isExist = await _context.Seats.AnyAsync(s =>
-                s.IdCinema == seat.IdCinema &&
+                s.IdRoom == seat.IdRoom &&
                 s.SeatRow == seat.SeatRow &&
                 s.SeatNumber == seat.SeatNumber);
 
@@ -99,7 +130,7 @@ namespace CinemaWeb.Controllers
             // Check trùng ghế (trừ chính nó)
             bool isExist = await _context.Seats.AnyAsync(s =>
                 s.IdSeat != seat.IdSeat &&
-                s.IdCinema == seat.IdCinema &&
+                s.IdRoom == seat.IdRoom &&
                 s.SeatRow == seat.SeatRow &&
                 s.SeatNumber == seat.SeatNumber);
 
@@ -134,8 +165,9 @@ namespace CinemaWeb.Controllers
             if (id == null) return NotFound();
 
             var seat = await _context.Seats
-                .Include(s => s.Cinema)
-                .FirstOrDefaultAsync(m => m.IdSeat == id);
+                       .Include(s => s.ScreeningRoom)
+                       .ThenInclude(r => r.Cinema)
+                       .FirstOrDefaultAsync(m => m.IdSeat == id);
 
             if (seat == null) return NotFound();
 

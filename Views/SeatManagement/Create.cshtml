@@ -11,11 +11,13 @@
 
         <div class="form-group">
             <label>Rạp</label>
-            <select asp-for="IdCinema" class="form-control">
-                @foreach (var c in ViewBag.Cinemas)
-                {
-                    <option value="@c.IdCinema">@c.CinemaName</option>
-                }
+            <select asp-for="IdRoom" class="form-control">
+                  @foreach(var room in ViewBag.Rooms)
+                  {
+                    <option value="@room.IdRoom">
+                          @room.RoomName
+                   </option>
+                  }
             </select>
         </div>
 

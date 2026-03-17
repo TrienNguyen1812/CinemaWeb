@@ -3,10 +3,19 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
+
 <div class="seat-container">
+
     <div class="seat-header">
         <h2>Danh sách ghế</h2>
-        <a asp-action="Create" class="btn btn-primary">+ Thêm ghế</a>
+
+        <a asp-action="Create" class="btn btn-primary">
+            + Thêm ghế
+        </a>
+
+        <a asp-action="GenerateSeats" class="btn btn-success">
+            + Tạo sơ đồ ghế
+        </a>
     </div>
 
     @if (TempData["Error"] != null)
@@ -18,20 +27,25 @@
         <thead>
             <tr>
                 <th>Rạp</th>
+                <th>Phòng</th>
                 <th>Hàng</th>
                 <th>Số</th>
                 <th>Loại ghế</th>
                 <th>Chức năng</th>
             </tr>
         </thead>
+
         <tbody>
+
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Cinema?.CinemaName</td>
+                <td>@item.ScreeningRoom?.Cinema?.CinemaName</td>
+                <td>@item.ScreeningRoom?.RoomName</td>
                 <td>@item.SeatRow</td>
                 <td>@item.SeatNumber</td>
                 <td>@item.TypeSeat</td>
+
                 <td>
                     <a asp-action="Details" asp-route-id="@item.IdSeat" class="btn btn-info">Xem</a>
                     <a asp-action="Edit" asp-route-id="@item.IdSeat" class="btn btn-warning">Sửa</a>
@@ -39,6 +53,8 @@
                 </td>
             </tr>
         }
+
         </tbody>
     </table>
+
 </div>

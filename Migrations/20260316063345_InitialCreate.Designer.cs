@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaWeb.Migrations
 {
     [DbContext(typeof(DbContexts))]
-    [Migration("20260202152329_FixIdentity")]
-    partial class FixIdentity
+    [Migration("20260316063345_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,15 +34,43 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Address")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("CinemaName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("IdCinema");
 
                     b.ToTable("Cinemas");
+                });
+
+            modelBuilder.Entity("CinemaWeb.Models.Combo", b =>
+                {
+                    b.Property<int>("IdCombo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCombo"), 1L, 1);
+
+                    b.Property<string>("ComboName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("IdCombo");
+
+                    b.ToTable("Combos");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Movie", b =>
@@ -55,22 +83,22 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Age")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
 
                     b.Property<string>("MovieName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Poster")
                         .IsRequired()
@@ -104,7 +132,7 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("numeric(10,2)");
@@ -114,6 +142,38 @@ namespace CinemaWeb.Migrations
                     b.HasIndex("IdUser");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("CinemaWeb.Models.OrderCombo", b =>
+                {
+                    b.Property<int>("IdOrderCombo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdOrderCombo"), 1L, 1);
+
+                    b.Property<int?>("ComboIdCombo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdCombo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("OrderIdOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdOrderCombo");
+
+                    b.HasIndex("ComboIdCombo");
+
+                    b.HasIndex("OrderIdOrder");
+
+                    b.ToTable("OrderCombos");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Payment", b =>
@@ -129,7 +189,7 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("PaymentMethod")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<DateTime>("PaymentTime")
                         .HasColumnType("date");
@@ -139,11 +199,11 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("TransactionCode")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("IdPayment");
 
@@ -160,22 +220,19 @@ namespace CinemaWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRoom"), 1L, 1);
 
-                    b.Property<int>("CinemaIdCinema")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdCinema")
                         .HasColumnType("int");
 
                     b.Property<string>("RoomName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SeatQuantity")
                         .HasColumnType("int");
 
                     b.HasKey("IdRoom");
 
-                    b.HasIndex("CinemaIdCinema");
+                    b.HasIndex("IdCinema");
 
                     b.ToTable("ScreeningRooms");
                 });
@@ -188,27 +245,29 @@ namespace CinemaWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSeat"), 1L, 1);
 
-                    b.Property<int>("CinemaIdCinema")
+                    b.Property<int?>("CinemaIdCinema")
                         .HasColumnType("int");
 
-                    b.Property<int>("IdCinema")
+                    b.Property<int>("IdRoom")
                         .HasColumnType("int");
 
                     b.Property<string>("SeatNumber")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("SeatRow")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("TypeSeat")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdSeat");
 
                     b.HasIndex("CinemaIdCinema");
+
+                    b.HasIndex("IdRoom");
 
                     b.ToTable("Seats");
                 });
@@ -234,7 +293,7 @@ namespace CinemaWeb.Migrations
                         .HasColumnType("date");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime");
 
                     b.HasKey("IdShowtime");
 
@@ -289,23 +348,23 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("varchar(11)");
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .HasColumnType("varchar(10)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdUser");
 
@@ -323,6 +382,21 @@ namespace CinemaWeb.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CinemaWeb.Models.OrderCombo", b =>
+                {
+                    b.HasOne("CinemaWeb.Models.Combo", "Combo")
+                        .WithMany("OrderCombos")
+                        .HasForeignKey("ComboIdCombo");
+
+                    b.HasOne("CinemaWeb.Models.Order", "Order")
+                        .WithMany("OrderCombos")
+                        .HasForeignKey("OrderIdOrder");
+
+                    b.Navigation("Combo");
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("CinemaWeb.Models.Payment", b =>
                 {
                     b.HasOne("CinemaWeb.Models.Order", "Order")
@@ -338,7 +412,7 @@ namespace CinemaWeb.Migrations
                 {
                     b.HasOne("CinemaWeb.Models.Cinema", "Cinema")
                         .WithMany("ScreeningRooms")
-                        .HasForeignKey("CinemaIdCinema")
+                        .HasForeignKey("IdCinema")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -347,13 +421,17 @@ namespace CinemaWeb.Migrations
 
             modelBuilder.Entity("CinemaWeb.Models.Seat", b =>
                 {
-                    b.HasOne("CinemaWeb.Models.Cinema", "Cinema")
+                    b.HasOne("CinemaWeb.Models.Cinema", null)
                         .WithMany("Seats")
-                        .HasForeignKey("CinemaIdCinema")
+                        .HasForeignKey("CinemaIdCinema");
+
+                    b.HasOne("CinemaWeb.Models.ScreeningRoom", "ScreeningRoom")
+                        .WithMany("Seats")
+                        .HasForeignKey("IdRoom")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Cinema");
+                    b.Navigation("ScreeningRoom");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Showtime", b =>
@@ -409,6 +487,11 @@ namespace CinemaWeb.Migrations
                     b.Navigation("Seats");
                 });
 
+            modelBuilder.Entity("CinemaWeb.Models.Combo", b =>
+                {
+                    b.Navigation("OrderCombos");
+                });
+
             modelBuilder.Entity("CinemaWeb.Models.Movie", b =>
                 {
                     b.Navigation("Showtimes");
@@ -416,6 +499,8 @@ namespace CinemaWeb.Migrations
 
             modelBuilder.Entity("CinemaWeb.Models.Order", b =>
                 {
+                    b.Navigation("OrderCombos");
+
                     b.Navigation("Payments");
 
                     b.Navigation("Tickets");
@@ -423,6 +508,8 @@ namespace CinemaWeb.Migrations
 
             modelBuilder.Entity("CinemaWeb.Models.ScreeningRoom", b =>
                 {
+                    b.Navigation("Seats");
+
                     b.Navigation("Showtimes");
                 });
 

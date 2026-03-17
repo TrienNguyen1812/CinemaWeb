@@ -1,0 +1,50 @@
+﻿@model IEnumerable<CinemaWeb.Models.Combo>
+
+<h2>Chọn Combo</h2>
+
+<form asp-controller="Payment" asp-action="Checkout" method="post">
+
+<div class="combo-list">
+
+@foreach (var combo in Model)
+{
+    <div class="combo-card">
+
+        <img src="~/images/@combo.Image" width="150"/>
+
+        <h4>@combo.ComboName</h4>
+
+        <p>@combo.Description</p>
+
+        <p><b>@combo.Price.ToString("N0") đ</b></p>
+
+        <input type="number"
+               name="combos[@combo.IdCombo]"
+               value="0"
+               min="0"/>
+
+    </div>
+}
+
+</div>
+
+<br />
+
+<button type="submit" class="btn btn-primary">
+    Tiếp tục
+</button>
+
+</form>
+<style>
+   .combo-list{
+    display:flex;
+    gap:20px;
+}
+
+.combo-card{
+    border:1px solid #ddd;
+    padding:15px;
+    width:200px;
+    text-align:center;
+}
+</style>

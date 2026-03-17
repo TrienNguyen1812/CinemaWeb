@@ -10,16 +10,17 @@ namespace CinemaWeb.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdRoom { get; set; }
 
-        [Required, Column(TypeName = "nvarchar(255)")]
+        [Required]
         public string RoomName { get; set; }
 
-        [Required]
         public int SeatQuantity { get; set; }
 
-        [Required,ForeignKey("IdCinema")]
         public int IdCinema { get; set; }
+
+        [ForeignKey("IdCinema")]
         public Cinema? Cinema { get; set; }
 
         public ICollection<Showtime>? Showtimes { get; set; }
+        public ICollection<Seat>? Seats { get; set; }
     }
 }

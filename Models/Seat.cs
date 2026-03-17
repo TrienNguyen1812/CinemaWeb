@@ -19,8 +19,10 @@ namespace CinemaWeb.Models
         public string TypeSeat { get; set; }
 
         [Required]
-        public int IdCinema { get; set; }
-        public Cinema? Cinema { get; set; }
+        [ForeignKey("ScreeningRoom")]
+        public int IdRoom { get; set; }
+
+        public ScreeningRoom? ScreeningRoom { get; set; }
 
         public ICollection<Ticket>? Tickets { get; set; }
     }

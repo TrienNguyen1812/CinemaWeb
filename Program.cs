@@ -1,5 +1,6 @@
 using CinemaWeb.Models;
 using CinemaWeb.Services;
+using CinemaWeb.Services.Commands;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<DbContexts>(options =>
 );
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<CreateOrderCommandHandler>();
 
 builder.Services.AddSession();
 
