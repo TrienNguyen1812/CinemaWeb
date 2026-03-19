@@ -9,13 +9,15 @@
     <div class="seat-header">
         <h2>Danh sách ghế</h2>
 
-        <a asp-action="Create" class="btn btn-primary">
-            + Thêm ghế
-        </a>
+        <div class="seat-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                + Thêm ghế
+            </a>
 
-        <a asp-action="GenerateSeats" class="btn btn-success">
-            + Tạo sơ đồ ghế
-        </a>
+            <a asp-action="GenerateSeats" class="btn btn-success">
+                + Tạo sơ đồ ghế
+            </a>
+        </div>
     </div>
 
     @if (TempData["Error"] != null)

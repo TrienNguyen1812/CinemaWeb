@@ -4,11 +4,12 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 <div class="payment-container">
-    <div class="payment-title">Quản lý Thanh Toán</div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="payment-title">Quản lý Thanh Toán</h2>
 
-    <a asp-action="Create" class="btn btn-success mb-3">+ Thêm thanh toán</a>
-
-    <table class="table table-bordered">
+        <a asp-action="Create" class="btn btn-success">+ Thêm thanh toán</a>
+    </div>
+    <table class="table table-bordered table-hover payment-table">
         <thead>
             <tr>
                 <th>Phương thức</th>

@@ -6,9 +6,11 @@
         @foreach (var movie in Model)
         {
             <div class="movie-card">
-                <img src="~/images/@(movie.Poster ?? "default.jpg")" />
+                <img src="~/@(movie.Poster ?? "default.jpg")" />
 
-                <h4>@movie.MovieName</h4>
+                <video width="100%" height="200" controls>
+                <source src="~/@movie.Trailer" type="video/mp4">
+                </video>
 
                 <!-- Nút đặt vé -->
                 <a asp-controller="Movie"

@@ -4,20 +4,20 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 
-<h2>User List</h2>
+<div class="room-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="room-title">User List</h2>
+        <a asp-action="Create" class="btn btn-primary">Create New</a>
+    </div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Create New</a>
-</p>
-
-<table class="table">
+    <table class="table table-bordered table-hover room-table">
     <thead>
         <tr>
             <th>Full Name</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Role</th>
-            <th></th>
+            <th>Chức năng</th>
         </tr>
     </thead>
     <tbody>
@@ -29,9 +29,9 @@
             <td>@item.PhoneNumber</td>
             <td>@item.Role</td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.IdUser">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.IdUser">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.IdUser">Delete</a>
+                <a asp-action="Details" asp-route-id="@item.IdUser" class="btn btn-info btn-sm btn-action">Xem</a> 
+                <a asp-action="Edit" asp-route-id="@item.IdUser" class="btn btn-warning btn-sm btn-action">Sửa</a> 
+                <a asp-action="Delete" asp-route-id="@item.IdUser" class="btn btn-danger btn-sm btn-action">Xóa</a>
             </td>
         </tr>
 }

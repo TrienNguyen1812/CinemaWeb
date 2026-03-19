@@ -76,6 +76,20 @@ namespace CinemaWeb.Models
                 .WithMany(r => r.Seats)
                 .HasForeignKey(s => s.IdRoom)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // ===== ORDERCOMBO - ORDER =====
+            modelBuilder.Entity<OrderCombo>()
+                .HasOne(oc => oc.Order)
+                .WithMany(o => o.OrderCombos)
+                .HasForeignKey(oc => oc.IdOrder)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ===== ORDERCOMBO - COMBO =====
+            modelBuilder.Entity<OrderCombo>()
+                .HasOne(oc => oc.Combo)
+                .WithMany(c => c.OrderCombos)
+                .HasForeignKey(oc => oc.IdCombo)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
     }

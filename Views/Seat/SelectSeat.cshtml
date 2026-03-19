@@ -9,6 +9,9 @@
 
 <form asp-controller="Combo" asp-action="SelectCombo" method="post">
 
+    <input type="hidden" name="showtimeId" value="@Model.IdShowtime" />
+    <div id="seatIdsContainer"></div>
+
     <div class="seat-map">
 
         @foreach (var seat in Model.ScreeningRoom.Seats)
@@ -21,8 +24,6 @@
         }
 
     </div>
-
-    <input type="hidden" name="seatIds" id="seatIds" />
 
     <br />
 
@@ -85,6 +86,26 @@
                 selectedSeats.push(btn.dataset.seat);
             }
 
+        });
+
+    });
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+        if (selectedSeats.length === 0) {
+            event.preventDefault();
+            alert('Vui lòng chọn ít nhất 1 ghế.');
+            return;
+        }
+
+        const container = document.getElementById('seatIdsContainer');
+        container.innerHTML = '';
+
+        selectedSeats.forEach(function (seatId) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'seatIds';
+            input.value = seatId;
+            container.appendChild(input);
         });
 
     });

@@ -1,5 +1,18 @@
-﻿<h2>Thanh toán thành công</h2>
+﻿@model CinemaWeb.Models.PaymentCheckoutViewModel
 
-<p>Vé của bạn đã được đặt thành công.</p>
+<h2>Thanh toán thành công</h2>
 
-<a asp-controller="Home" asp-action="Index">Về trang chủ</a>
+<div class="order-success">
+    <p><strong>Mã đơn hàng:</strong> @Model.OrderId</p>
+    <p><strong>Phim:</strong> @Model.MovieName</p>
+    <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") @Model.ShowtimeTime</p>
+    <p><strong>Số vé:</strong> @Model.TicketCount</p>
+    <p><strong>Ghế:</strong> @string.Join(", ", Model.SeatNames)</p>
+    <p><strong>Tổng thanh toán:</strong> @Model.Total.ToString("N0") đ</p>
+    <p><strong>Trạng thái:</strong> @Model.Status</p>
+
+    <h4>Thêm thông tin:</h4>
+    <p>Cảm ơn bạn đã sử dụng dịch vụ Galaxy Cinema.</p>
+</div>
+
+<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Về trang chủ</a>

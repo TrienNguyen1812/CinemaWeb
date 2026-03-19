@@ -4,9 +4,11 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 <div class="container">
-    <h2>Danh sách rạp</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Danh sách rạp</h2>
 
-    <a asp-action="Create" class="btn btn-primary">➕ Thêm rạp</a>
+        <a asp-action="Create" class="btn btn-primary">➕ Thêm rạp</a>
+    </div>
 
     <table>
         <thead>
@@ -23,9 +25,9 @@
                 <td>@item.CinemaName</td>
                 <td>@item.Address</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.IdCinema" class="btn btn-secondary">Chi tiết</a>
-                    <a asp-action="Edit" asp-route-id="@item.IdCinema" class="btn btn-warning">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.IdCinema" class="btn btn-danger">Xóa</a>
+                    <a asp-action="Details" asp-route-id="@item.IdCinema" class="btn btn-info btn-sm btn-action">Xem</a>
+                    <a asp-action="Edit" asp-route-id="@item.IdCinema" class="btn btn-warning btn-sm btn-action">Sửa</a>
+                    <a asp-action="Delete" asp-route-id="@item.IdCinema" class="btn btn-danger btn-sm btn-action">Xóa</a>
                 </td>
             </tr>
         }

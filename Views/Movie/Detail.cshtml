@@ -8,7 +8,7 @@
 
         <!-- Poster -->
         <div class="col-md-3">
-            <img src="~/images/@Model.Poster" class="img-fluid"/>
+            <img src="~/@Model.Poster" class="img-fluid"/>
         </div>
 
         <!-- Movie info -->
@@ -27,11 +27,9 @@
             <p>@Model.Description</p>
 
             <!-- Trailer -->
-            <iframe width="560" height="315"
-                    src="@Model.Trailer"
-                    frameborder="0"
-                    allowfullscreen>
-            </iframe>
+            <video width="100%" height="200" controls>
+                <source src="~/@Model.Trailer" type="video/mp4">
+            </video>
 
         </div>
 
