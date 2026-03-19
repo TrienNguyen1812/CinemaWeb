@@ -1,30 +1,37 @@
-﻿.title {
-    text-align: center;
+﻿.showtime-container {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+.showtime-title {
+    font-size: 26px;
+    font-weight: 700;
     margin-bottom: 20px;
 }
 
-.btn-add {
-    display: inline-block;
-    padding: 8px 12px;
-    background: #4CAF50;
-    color: white;
-    text-decoration: none;
-    margin-bottom: 10px;
-}
-
+.showtime-table,
 .styled-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-    .styled-table th, .styled-table td {
+    .showtime-table th,
+    .styled-table th,
+    .showtime-table td,
+    .styled-table td {
         border: 1px solid #ddd;
         padding: 10px;
+        text-align: center;
     }
 
+    .showtime-table th,
     .styled-table th {
-        background: #333;
-        color: white;
+        background: #343a40;
+        color: #fff;
     }
 
 .form-box {

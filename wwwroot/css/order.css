@@ -1,5 +1,16 @@
-﻿h2 {
-    margin-bottom: 15px;
+﻿.order-container {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    margin: 0 auto;
+    max-width: 1000px;
+}
+
+.order-title {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 20px;
 }
 
 .order-table {
@@ -10,10 +21,11 @@
     .order-table th, .order-table td {
         border: 1px solid #ddd;
         padding: 10px;
+        text-align: center;
     }
 
     .order-table th {
-        background: #222;
+        background: #343a40;
         color: #fff;
     }
 

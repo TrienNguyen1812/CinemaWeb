@@ -10,8 +10,6 @@ body {
 
 /* ====== CONTAINER ====== */
 .movie-container {
-    max-width: 1000px;
-    margin: 30px auto;
     background: #fff;
     padding: 25px;
     border-radius: 8px;
@@ -21,6 +19,7 @@ body {
 /* ====== TITLE ====== */
 .movie-title {
     font-size: 26px;
+    font-weight: 700;
     margin-bottom: 20px;
     color: #2f3640;
     text-align: center;
@@ -62,7 +61,7 @@ body {
 }
 
 .btn-add {
-    background: #44bd32;
+    background: #40f324;
 }
 
 .btn-detail {
