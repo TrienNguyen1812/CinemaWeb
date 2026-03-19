@@ -1,6 +1,7 @@
 ﻿using CinemaWeb.Models;
 using CinemaWeb.Services.Commands;
 using CinemaWeb.Services.Factory;
+using CinemaWeb.Services.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,20 @@ namespace CinemaWeb.Controllers
     {
         private readonly DbContexts _context;
         private readonly CreateOrderCommandHandler _handler;
+        private readonly Services.Notifications.INotificationSubject _notificationSubject;
 
-        public PaymentController(DbContexts context, CreateOrderCommandHandler handler)
+        public PaymentController(DbContexts context, CreateOrderCommandHandler handler,
+            Services.Notifications.INotificationSubject notificationSubject,
+            IEnumerable<Services.Notifications.INotificationObserver> observers)
         {
             _context = context;
             _handler = handler;
+            _notificationSubject = notificationSubject;
+
+            foreach (var observer in observers)
+            {
+                _notificationSubject.Attach(observer);
+            }
         }
 
         [HttpPost]
@@ -69,6 +79,8 @@ namespace CinemaWeb.Controllers
             };
 
             var orderId = _handler.Handle(command);
+
+            _notificationSubject.Publish($"Đặt vé thành công. Mã đơn hàng: {orderId}", "success");
 
             var savedCombos = _context.OrderCombos.Where(oc => oc.IdOrder == orderId).Select(oc => new { oc.IdCombo, oc.Quantity }).ToList();
             ViewBag.SavedOrderCombos = savedCombos;
@@ -195,9 +207,12 @@ namespace CinemaWeb.Controllers
             order.Status = orderStatus;
             _context.SaveChanges();
 
+            _notificationSubject.Publish($"Thanh toán '{paymentType}' cho đơn hàng {orderId} thành công.", "success");
+
             if (paymentType.ToLower() == "cash")
             {
                 ViewBag.Message = "Đã ghi nhận thanh toán tiền mặt: đang chờ xác nhận admin.";
+                _notificationSubject.Publish($"Đơn hàng {orderId} đang chờ xác nhận admin.", "warning");
                 return RedirectToAction("Success", new { id = orderId });
             }
 

@@ -103,7 +103,7 @@ namespace CinemaWeb.Migrations
                 {
                     IdOrder = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    OrderTime = table.Column<DateTime>(type: "date", nullable: false),
+                    OrderTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     IdUser = table.Column<int>(type: "int", nullable: false)

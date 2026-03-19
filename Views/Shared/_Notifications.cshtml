@@ -1,0 +1,37 @@
+@using CinemaWeb.Models
+@using System.Text.Json
+@using System.Collections.Generic
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+
+@{
+    var session = HttpContextAccessor?.HttpContext?.Session;
+    var rawJson = session?.GetString("Notifications");
+    var notifications = string.IsNullOrEmpty(rawJson)
+        ? new List<Notification>()
+        : JsonSerializer.Deserialize<List<Notification>>(rawJson) ?? new List<Notification>();
+
+    if (notifications.Count > 0)
+    {
+        session?.Remove("Notifications");
+    }
+}
+
+@if (notifications.Count > 0)
+{
+    <div class="container mt-2">
+        @foreach (var notification in notifications)
+        {
+            var alertClass = notification.Level switch
+            {
+                "success" => "alert alert-success",
+                "warning" => "alert alert-warning",
+                "danger" => "alert alert-danger",
+                _ => "alert alert-info"
+            };
+
+            <div class="@alertClass" role="alert">
+                <strong>@notification.CreatedAt.ToString("HH:mm:ss"):</strong> @notification.Message
+            </div>
+        }
+    </div>
+}

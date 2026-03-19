@@ -16,6 +16,12 @@ builder.Services.AddDbContext<DbContexts>(options =>
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<CreateOrderCommandHandler>();
 
+// Observer pattern services for notification
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationSubject, CinemaWeb.Services.Notifications.NotificationSubject>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.SessionNotificationObserver>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.ConsoleNotificationObserver>();
+
 builder.Services.AddSession();
 
 var app = builder.Build();

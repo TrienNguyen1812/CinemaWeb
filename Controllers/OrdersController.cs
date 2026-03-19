@@ -18,7 +18,8 @@ namespace CinemaWeb.Controllers
         {
             var orders = _context.Orders
                 .Include(o => o.User)
-                .OrderByDescending(o => o.OrderTime);
+                .OrderByDescending(o => o.OrderTime)
+                .ThenByDescending(o => o.IdOrder);
 
             return View(await orders.ToListAsync());
         }
