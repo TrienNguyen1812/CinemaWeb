@@ -23,6 +23,22 @@
         <dd class="col-sm-9">@Model.PaymentTime</dd>
     </dl>
 
-    <a asp-action="Edit" asp-route-id="@Model.IdPayment" class="btn btn-warning">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    <div class="d-flex gap-2">
+        @* @if (Model.PaymentMethod != null && Model.PaymentMethod.Contains("Tiền mặt") && 
+            Model.Status != null && Model.Status.Contains("Chờ xác nhận"))
+        {
+            <form asp-action="ConfirmPayment" asp-route-id="@Model.IdPayment" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success">Xác nhận đã nhận tiền</button>
+            </form>
+        } *@
+        @if (Model.PaymentMethod == PaymentConstants.Cash && Model.Status == PaymentConstants.StatusPending)
+        {
+            <form asp-action="ConfirmPayment" asp-route-id="@Model.IdPayment" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success" onclick="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán bằng tiền mặt?');">Xác nhận tiền mặt</button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
 </div>

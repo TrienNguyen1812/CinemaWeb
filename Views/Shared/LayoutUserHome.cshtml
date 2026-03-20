@@ -1,11 +1,55 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using System.Text.Json
+@using CinemaWeb.Models
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cinestar</title>
     <link rel="stylesheet" href="~/css/layoutuser.css" />
+    <link rel="stylesheet" href="~/css/checkout.css" />
+    <link rel="stylesheet" href="~/css/history.css" />
+    <link rel="stylesheet" href="~/css/historydetail.css" />
+    <link rel="stylesheet" href="~/css/detailmovie.css" />
+    <link rel="stylesheet" href="~/css/selectseat.css" />
+    <link rel="stylesheet" href="~/css/selectcombo.css" />
+    <link rel="stylesheet" href="~/css/success.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@{
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var notificationsRaw = session?.GetString("Notifications");
+    List<Notification> notifications = null;
+
+    if (!string.IsNullOrEmpty(notificationsRaw))
+    {
+        notifications = JsonSerializer.Deserialize<List<Notification>>(notificationsRaw);
+        // Sau khi đọc xong thì xóa Session để thông báo không hiện lại khi F5
+        session.Remove("Notifications");
+    }
+}
+
+@if (notifications != null && notifications.Any())
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @foreach (var note in notifications)
+            {
+                // Sử dụng Html.Raw để tránh Razor encode các ký tự tiếng Việt thành dạng &amp;
+                var message = Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(note.Message));
+                <text>
+                Swal.fire({
+                    title: '@(note.Level == "success" ? "Thành công!" : "Thông báo")',
+                    text: '@message', 
+                    icon: '@note.Level',
+                    confirmButtonText: 'OK'
+                });
+                </text>
+            }
+        });
+    </script>
+}
 </head>
 <body>
 
@@ -16,7 +60,7 @@
 
     <!-- HEADER -->
     <header class="header">
-        <div class="logo">⭐ CIN<span>ESTAR</span></div>
+        <a asp-controller="Home" asp-action="Index" class="logo">⭐ CIN<span>ESTAR</span></a>
 
         <nav>
             <a href="#">Chọn rạp</a>
@@ -26,17 +70,23 @@
         </nav>
 
         <div class="header-right">
-            <input type="text" placeholder="Tìm phim, rạp" />
+            <div class="search-box" id="movieBox">
+                <input type="text" id="searchInput" placeholder="Tìm phim..." autocomplete="off" />
+                <div id="searchResult" class="dropdown"></div>
+            </div>
 
             @if (username != null)
             {
-                <span class="hello-user">
-                     Hello, <b>@username</b>
-                </span>
+                <div class="user-menu">
+                    <a class="hello-user" id="userToggle">
+                        Hello, <b>@username</b>
+                    </a>
 
-                <a class="btn-yellow" asp-controller="Auth" asp-action="Logout">
-                    Logout
-                </a>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a asp-controller="Orders" asp-action="History">📄 Lịch sử đặt vé</a>
+                        <a asp-controller="Auth" asp-action="Logout">🚪 Đăng xuất</a>
+                    </div>
+                </div>
             }
             else
             {
@@ -73,4 +123,138 @@
     </footer>
 
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const isLoggedIn = @(Context.Session.GetInt32("UserId") != null ? "true" : "false");
+
+    const input = document.getElementById("searchInput");
+    const resultBox = document.getElementById("searchResult");
+    const movieBox = document.getElementById("movieBox");
+
+    const userToggle = document.getElementById("userToggle");
+    const userDropdown = document.getElementById("userDropdown");
+    const userMenu = document.querySelector(".user-menu");
+
+    // ===== SEARCH CLICK =====
+    input.addEventListener("click", function (e) {
+        e.stopPropagation();
+
+        // 🔥 đóng user dropdown
+        if (userDropdown) userDropdown.style.display = "none";
+
+        if (!isLoggedIn) {
+            resultBox.innerHTML = "";
+            return;
+        }
+
+        fetch("/Movie/GetHistory")
+            .then(res => res.json())
+            .then(data => showDropdown(data));
+    });
+
+    // ===== SEARCH KEYUP =====
+    input.addEventListener("keyup", function () {
+        let keyword = input.value;
+
+        if (keyword.length === 0) return;
+
+        fetch(`/Movie/Search?keyword=${keyword}`)
+            .then(res => res.json())
+            .then(data => showDropdown(data));
+    });
+
+    // ===== USER TOGGLE =====
+    if (userToggle) {
+        userToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+
+            // 🔥 đóng search dropdown
+            resultBox.style.display = "none";
+
+            userDropdown.style.display =
+                userDropdown.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    // ===== CLICK OUTSIDE (CHUNG) =====
+    document.addEventListener("click", function (e) {
+
+        // 🔥 search
+        if (!movieBox.contains(e.target)) {
+            resultBox.style.display = "none";
+        }
+
+        // 🔥 user
+        if (userMenu && !userMenu.contains(e.target)) {
+            userDropdown.style.display = "none";
+        }
+    });
+
+    // ===== CHỐNG CLICK TRONG DROPDOWN =====
+    resultBox.addEventListener("click", function (e) {
+        e.stopPropagation();
+    });
+
+    if (userDropdown) {
+        userDropdown.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    }
+
+    // ===== RENDER =====
+    function showDropdown(data) {
+        resultBox.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            resultBox.style.display = "none";
+            return;
+        }
+
+        resultBox.style.display = "block";
+
+        data.forEach(item => {
+            let div = document.createElement("div");
+            div.classList.add("dropdown-item");
+
+            div.innerHTML = `
+                <img src="/${item.poster}" />
+                <span class="movie-name">${item.movieName}</span>
+                <span class="delete-btn" data-id="${item.idMovie}">✖</span>
+            `;
+
+            div.onclick = async function (e) {
+                if (e.target.classList.contains("delete-btn")) return;
+
+                if (isLoggedIn) {
+                    await fetch(`/Movie/SaveHistory?movieId=${item.idMovie}`);
+                }
+
+                window.location.href = `/Movie/Detail/${item.idMovie}`;
+            };
+
+            div.querySelector(".delete-btn").onclick = function (e) {
+                e.stopPropagation();
+
+                fetch(`/Movie/DeleteHistory?movieId=${item.idMovie}`)
+                    .then(() => div.remove());
+            };
+
+            resultBox.appendChild(div);
+        });
+    }
+
+});
+window.addEventListener("pageshow", function (event) {
+    const input = document.getElementById("searchInput");
+    const resultBox = document.getElementById("searchResult");
+
+    // 🔥 reset khi quay lại (back)
+    if (event.persisted) {
+        input.value = "";
+        resultBox.style.display = "none";
+    }
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

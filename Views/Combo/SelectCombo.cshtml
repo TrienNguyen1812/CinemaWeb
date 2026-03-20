@@ -1,62 +1,64 @@
 ﻿@model IEnumerable<CinemaWeb.Models.Combo>
+@{
+    ViewData["Title"] = "Chọn Combo";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
+<link rel="stylesheet" href="~/css/selectcombo.css" />
 
-<h2>Chọn Combo</h2>
-
-<form asp-controller="Payment" asp-action="Checkout" method="post" id="comboForm">
-
-    <input type="hidden" name="showtimeId" value="@ViewBag.ShowtimeId" />
-
-    @foreach (var seatId in (List<int>)ViewBag.SeatIds)
-    {
-        <input type="hidden" name="seatIds" value="@seatId" />
-    }
-
-    <div class="combo-list">
-
-    @foreach (var combo in Model)
-    {
-        <div class="combo-card">
-
-            <img src="~/@combo.Image" width="150"/>
-
-            <h4>@combo.ComboName</h4>
-
-            <p>@combo.Description</p>
-
-            <p><b>@combo.Price.ToString("N0") đ</b></p>
-
-            <input type="number"
-                   class="combo-qty"
-                   data-comboid="@combo.IdCombo"
-                   name="combos[@combo.IdCombo]"
-                   value="0"
-                   min="0" />
-
-        </div>
-    }
-
+<div class="combo-container">
+    <div class="combo-header">
+        <h2>Chọn Combo</h2>
+        <p>Thêm bắp nước để trải nghiệm xem phim trọn vẹn hơn!</p>
     </div>
 
-    <br />
+    <form asp-controller="Payment" asp-action="Checkout" method="post" id="comboForm">
+        <input type="hidden" name="showtimeId" value="@ViewBag.ShowtimeId" />
 
-    <button type="submit" class="btn btn-primary">
-        Tiếp tục
-    </button>
+        @foreach (var seatId in (List<int>)ViewBag.SeatIds)
+        {
+            <input type="hidden" name="seatIds" value="@seatId" />
+        }
 
-</form>
-<style>
-   .combo-list{
-    display:flex;
-    gap:20px;
-}
+        <div class="combo-list">
+            @foreach (var combo in Model)
+            {
+                <div class="combo-card">
+                    <div class="combo-img-wrapper">
+                        <img src="~/@combo.Image" alt="@combo.ComboName" />
+                    </div>
+                    <div class="combo-info">
+                        <h4>@combo.ComboName</h4>
+                        <p class="description">@combo.Description</p>
+                        <p class="price"><strong>@combo.Price.ToString("N0")</strong> đ</p>
+                        
+                        <div class="quantity-control">
+                            <input type="number"
+                                   class="combo-qty"
+                                   data-comboid="@combo.IdCombo"
+                                   name="combos[@combo.IdCombo]"
+                                   value="0"
+                                   min="0" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
 
-.combo-card{
-    border:1px solid #ddd;
-    padding:15px;
-    width:200px;
-    text-align:center;
-}
-</style>
+        <div class="combo-summary">
+            <h5>Combo đã chọn:</h5>
+            <ul id="selectedComboList">
+                <li>Chưa có combo nào được chọn</li>
+            </ul>
+        </div>
+
+        <div class="footer-action">
+            <button type="submit" class="btn-submit">
+                Tiếp tục thanh toán
+            </button>
+        </div>
+    </form>
+</div>
+
 <script>
     function updateSelectedComboSummary() {
         const items = document.querySelectorAll('.combo-qty');

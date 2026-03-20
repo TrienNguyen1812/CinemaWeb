@@ -1,18 +1,49 @@
 ﻿@model CinemaWeb.Models.PaymentCheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
 
-<h2>Thanh toán thành công</h2>
+@* Nhớ link file CSS vào *@
+<link rel="stylesheet" href="~/css/success.css" />
 
-<div class="order-success">
-    <p><strong>Mã đơn hàng:</strong> @Model.OrderId</p>
-    <p><strong>Phim:</strong> @Model.MovieName</p>
-    <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") @Model.ShowtimeTime</p>
-    <p><strong>Số vé:</strong> @Model.TicketCount</p>
-    <p><strong>Ghế:</strong> @string.Join(", ", Model.SeatNames)</p>
-    <p><strong>Tổng thanh toán:</strong> @Model.Total.ToString("N0") đ</p>
-    <p><strong>Trạng thái:</strong> @Model.Status</p>
+<div class="payment-success-container">
+    <div class="success-icon">✓</div>
+    
+    <h2 class="success-title">Thanh toán thành công</h2>
 
-    <h4>Thêm thông tin:</h4>
-    <p>Cảm ơn bạn đã sử dụng dịch vụ Galaxy Cinema.</p>
+    <div class="order-info-list">
+        <div class="order-info-item">
+            <span class="order-label">Mã đơn hàng:</span>
+            <span class="order-value">#@Model.OrderId</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Phim:</span>
+            <span class="order-value">@Model.MovieName</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Suất chiếu:</span>
+            <span class="order-value">@Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Số vé:</span>
+            <span class="order-value">@Model.TicketCount</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Ghế:</span>
+            <span class="order-value">@string.Join(", ", Model.SeatNames)</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Trạng thái:</span>
+            <span class="order-value text-success">@Model.Status</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Tổng thanh toán:</span>
+            <span class="order-value total-highlight">@Model.Total.ToString("N0") đ</span>
+        </div>
+    </div>
+
+    <p class="thank-you-msg">Cảm ơn bạn đã sử dụng dịch vụ Galaxy Cinema.</p>
+    
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-home">Về trang chủ</a>
 </div>
-
-<a asp-controller="Home" asp-action="Index" class="btn btn-primary">Về trang chủ</a>

@@ -33,6 +33,16 @@ namespace CinemaWeb.Controllers
         [HttpPost]
         public IActionResult Checkout(IFormCollection form)
         {
+            var expiredOrders = _context.Orders
+                .Where(o => o.Status == "Chờ thanh toán" && o.ExpiredAt < DateTime.Now)
+                .ToList();
+
+            foreach (var o in expiredOrders)
+            {
+                o.Status = "Đã hủy";
+            }
+
+            _context.SaveChanges();
             if (HttpContext.Session.GetString("UserName") == null)
                 return RedirectToAction("Login", "Auth");
 
@@ -80,7 +90,7 @@ namespace CinemaWeb.Controllers
 
             var orderId = _handler.Handle(command);
 
-            _notificationSubject.Publish($"Đặt vé thành công. Mã đơn hàng: {orderId}", "success");
+            _notificationSubject.Publish($"Đặt vé thành công.", "success");
 
             var savedCombos = _context.OrderCombos.Where(oc => oc.IdOrder == orderId).Select(oc => new { oc.IdCombo, oc.Quantity }).ToList();
             ViewBag.SavedOrderCombos = savedCombos;
@@ -93,6 +103,82 @@ namespace CinemaWeb.Controllers
 
             if (order == null)
                 return NotFound();
+
+            if (order.ExpiredAt < DateTime.Now)
+            {
+                order.Status = "Đã hủy";
+                _context.SaveChanges();
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            var firstShowtime = order.Tickets.FirstOrDefault()?.Showtime;
+
+            var orderCombos = order.OrderCombos?.ToList() ??
+                _context.OrderCombos.Include(oc => oc.Combo).Where(oc => oc.IdOrder == order.IdOrder).ToList();
+
+            var vm = new PaymentCheckoutViewModel
+            {
+                OrderId = order.IdOrder,
+                MovieName = firstShowtime?.Movie?.MovieName ?? "",
+                Poster = firstShowtime?.Movie?.Poster ?? "",
+                ShowtimeDate = firstShowtime?.StartFilm ?? DateTime.Now,
+                ShowtimeTime = firstShowtime != null ? firstShowtime.StartTime.ToString("HH:mm") : "",
+                TicketCount = order.Tickets.Count,
+                TicketTotal = order.Tickets.Sum(t => t.FinalPrice),
+                ComboTotal = orderCombos.Sum(oc => (oc.Combo?.Price ?? _context.Combos.Find(oc.IdCombo)?.Price ?? 0m) * oc.Quantity),
+                Total = order.TotalPrice,
+                Status = order.Status
+            };
+
+            foreach (var ticket in order.Tickets)
+            {
+                if (ticket.Seat != null)
+                    vm.SeatNames.Add($"{ticket.Seat.SeatRow}{ticket.Seat.SeatNumber}");
+            }
+
+            foreach (var orderCombo in orderCombos)
+            {
+                if (orderCombo.Quantity <= 0) continue;
+
+                var comboInfo = orderCombo.Combo ?? _context.Combos.Find(orderCombo.IdCombo);
+
+                vm.Combos.Add(new PaymentComboItem
+                {
+                    IdCombo = orderCombo.IdCombo,
+                    ComboName = comboInfo?.ComboName ?? "(Combo không xác định)",
+                    Quantity = orderCombo.Quantity,
+                    Price = comboInfo?.Price ?? 0m
+                });
+            }
+
+            ViewBag.OrderComboCount = orderCombos.Count;
+            ViewBag.OrderComboRaw = orderCombos.Select(oc => new { oc.IdCombo, oc.Quantity, ComboName = oc.Combo?.ComboName ?? _context.Combos.Find(oc.IdCombo)?.ComboName }).ToList();
+            ViewBag.ModelComboCount = vm.Combos.Count;
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public IActionResult Checkout(int orderId)
+        {
+            var order = _context.Orders
+                .Include(o => o.Tickets).ThenInclude(t => t.Seat)
+                .Include(o => o.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie)
+                .Include(o => o.OrderCombos).ThenInclude(oc => oc.Combo)
+                .FirstOrDefault(o => o.IdOrder == orderId);
+
+            if (order == null) return NotFound();
+
+            if (order.Status != "Chờ thanh toán")
+                return RedirectToAction("Index", "Home");
+
+            if (order.ExpiredAt < DateTime.Now)
+            {
+                order.Status = "Đã hủy";
+                _context.SaveChanges();
+                return RedirectToAction("Index", "Home");
+            }
 
             var firstShowtime = order.Tickets.FirstOrDefault()?.Showtime;
 
@@ -151,6 +237,14 @@ namespace CinemaWeb.Controllers
             if (order == null)
                 return NotFound();
 
+            if (order.ExpiredAt < DateTime.Now)
+            {
+                order.Status = "Đã hủy";
+                _context.SaveChanges();
+
+                return BadRequest("Đơn đã hết hạn");
+            }
+
             if (order.TotalPrice != total)
                 return BadRequest("Số tiền thanh toán không hợp lệ.");
 
@@ -163,27 +257,27 @@ namespace CinemaWeb.Controllers
 
             if (paymentType.ToLower() == "cash")
             {
-                status = "Pending";
+                status = PaymentConstants.StatusPending;
                 orderStatus = "Chờ thanh toán";
                 transCode = "CASH-" + DateTime.Now.Ticks;
             }
             else if (paymentType.ToLower() == "vnpay")
             {
-                status = "Paid";
-                orderStatus = "Paid";
+                status = PaymentConstants.StatusPaid;
+                orderStatus = "Đã thanh toán";
                 transCode = "LOCAL-VNPAY-" + DateTime.Now.Ticks;
             }
             else if (paymentType.ToLower() == "momo")
             {
                 // Chế độ fake Momo local
-                status = "Paid";
-                orderStatus = "Paid";
+                status = PaymentConstants.StatusPaid;
+                orderStatus = "Đã thanh toán";
                 transCode = "LOCAL-MOMO-" + DateTime.Now.Ticks;
             }
             else
             {
-                status = "Paid";
-                orderStatus = "Paid";
+                status = PaymentConstants.StatusPaid;
+                orderStatus = "Đã thanh toán";
                 transCode = "TX" + DateTime.Now.Ticks;
             }
 
@@ -191,9 +285,9 @@ namespace CinemaWeb.Controllers
             {
                 PaymentMethod = paymentType.ToLower() switch
                 {
-                    "cash" => "Tiền mặt",
-                    "momo" => "Momo",
-                    "vnpay" => "VNPay",
+                    "cash" => PaymentConstants.Cash,
+                    "momo" => PaymentConstants.Momo,
+                    "vnpay" => PaymentConstants.VNPay,
                     _ => "Khác"
                 },
                 Price = total,
@@ -207,12 +301,12 @@ namespace CinemaWeb.Controllers
             order.Status = orderStatus;
             _context.SaveChanges();
 
-            _notificationSubject.Publish($"Thanh toán '{paymentType}' cho đơn hàng {orderId} thành công.", "success");
+            _notificationSubject.Publish($"Thanh toán vé thành công.", "success");
 
             if (paymentType.ToLower() == "cash")
             {
                 ViewBag.Message = "Đã ghi nhận thanh toán tiền mặt: đang chờ xác nhận admin.";
-                _notificationSubject.Publish($"Đơn hàng {orderId} đang chờ xác nhận admin.", "warning");
+                _notificationSubject.Publish($"Vé đang chờ xác nhận admin.", "warning");
                 return RedirectToAction("Success", new { id = orderId });
             }
 
@@ -279,6 +373,24 @@ namespace CinemaWeb.Controllers
             ViewBag.ModelComboCount = vm.Combos.Count;
 
             return View(vm);
+        }
+        [HttpPost]
+        public IActionResult CancelOrder(int orderId)
+        {
+            var order = _context.Orders.Find(orderId);
+            if (order == null)
+                return NotFound();
+
+            // chỉ huỷ khi chưa thanh toán
+            if (order.Status == "Đã thanh toán")
+                return BadRequest("Đơn đã thanh toán, không thể huỷ");
+
+            order.Status = "Đã hủy";
+            _context.SaveChanges();
+
+            _notificationSubject.Publish($"Vé đã bị huỷ.", "warning");
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

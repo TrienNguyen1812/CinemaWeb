@@ -2,11 +2,14 @@ using CinemaWeb.Models;
 using CinemaWeb.Services;
 using CinemaWeb.Services.Commands;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson();
-
+builder.Services.AddSingleton<HtmlEncoder>(
+    HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
 builder.Services.AddDbContext<DbContexts>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
@@ -22,6 +25,7 @@ builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationSubject
 builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.SessionNotificationObserver>();
 builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.ConsoleNotificationObserver>();
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 
 var app = builder.Build();

@@ -18,6 +18,8 @@ namespace CinemaWeb.Models
 
         [Required, Column(TypeName = "nvarchar(255)")]
         public string Status { get; set; }
+        [Required]
+        public DateTime ExpiredAt { get; set; }
 
         [Required]
         public int IdUser { get; set; }

@@ -7,8 +7,11 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="payment-title">Quản lý Thanh Toán</h2>
 
-        <a asp-action="Create" class="btn btn-success">+ Thêm thanh toán</a>
+        @* <a asp-action="Create" class="btn btn-success">+ Thêm thanh toán</a> *@
     </div>
+    @* Hiển thị thông báo *@
+    @if (TempData["Success"] != null) { <div class="alert alert-success">@TempData["Success"]</div> }
+    @if (TempData["Error"] != null) { <div class="alert alert-danger">@TempData["Error"]</div> }
     <table class="table table-bordered table-hover payment-table">
         <thead>
             <tr>
@@ -32,9 +35,20 @@
                 <td>@item.PaymentTime.ToShortDateString()</td>
                 <td>@item.IdOrder</td>
                 <td>
+                    @* Nút Xem mặc định là thẻ <a> (inline-block) *@
                     <a asp-action="Details" asp-route-id="@item.IdPayment" class="btn btn-info btn-sm">Xem</a>
-                    <a asp-action="Edit" asp-route-id="@item.IdPayment" class="btn btn-warning btn-sm">Sửa</a>
-                    <a asp-action="Delete" asp-route-id="@item.IdPayment" class="btn btn-danger btn-sm">Xóa</a>
+                     @* <a asp-action="Edit" asp-route-id="@item.IdPayment" class="btn btn-warning btn-sm">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdPayment" class="btn btn-danger btn-sm">Xóa</a> *@
+
+                    @if (item.PaymentMethod == PaymentConstants.Cash && item.Status == PaymentConstants.StatusPending)
+                    {
+                        @* Ép form hiển thị inline-block và thêm lề trái *@
+                        <form asp-action="ConfirmPayment" asp-route-id="@item.IdPayment" method="post" 
+                            style="display: inline-block; margin-left: 5px;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán bằng tiền mặt?');">Xác nhận tiền mặt</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }

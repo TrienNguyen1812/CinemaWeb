@@ -1,0 +1,58 @@
+@model IEnumerable<CinemaWeb.Models.Order>
+
+@{
+    ViewData["Title"] = "Lịch sử đặt vé";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
+
+<div class="history-container mt-4">
+    <h2 class="history-title">📄 Lịch sử đặt vé</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="no-order">
+            <i class="fas fa-receipt mb-3" style="font-size: 3rem; display: block;"></i>
+            Bạn chưa có đơn hàng nào
+        </div>
+    }
+    else
+    {
+        <div class="order-list">
+            @foreach (var item in Model)
+            {
+                <a asp-controller="Orders" asp-action="RedirectOrder" asp-route-id="@item.IdOrder" class="order-block">
+                    <div class="order-header">
+                        <span class="order-id">Mã đơn: #@item.IdOrder</span>
+                        <span class="order-date">@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+
+                    <div class="order-body">
+                        <div class="order-price">
+                            <span class="label">Tổng tiền:</span>
+                            <span class="value">@item.TotalPrice.ToString("N0") ₫</span>
+                        </div>
+                        
+                        <div class="order-status">
+                            @if (item.Status == "Chờ thanh toán")
+                            {
+                                <span class="badge bg-warning">Chờ thanh toán</span>
+                            }
+                            else if (item.Status == "Đã thanh toán")
+                            {
+                                <span class="badge bg-success">Đã thanh toán</span>
+                            }
+                            else if (item.Status == "Đã hủy")
+                            {
+                                <span class="badge bg-danger">Đã huỷ</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="order-footer">
+                        <span>Xem chi tiết <i class="fas fa-chevron-right ml-1"></i></span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

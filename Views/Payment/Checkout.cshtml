@@ -1,77 +1,81 @@
 ﻿@model CinemaWeb.Models.PaymentCheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
 
 <div class="payment-page">
     <div class="payment-left">
-        <h3>Chi tiết đơn hàng</h3>
+        <h3 class="section-title">Chi tiết đơn hàng</h3>
 
-        <div class="info-block">
-            <p><strong>Phim:</strong> @Model.MovieName</p>
-            <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") @Model.ShowtimeTime</p>
+        <div class="checkout-info-block">
+            <p><strong>Phim:</strong> <span class="text-yellow">@Model.MovieName</span></p>
+            <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</p>
             <p><strong>Số vé:</strong> @Model.TicketCount</p>
-            <p><strong>Ghế:</strong> @string.Join(", ", Model.SeatNames)</p>
+            <p><strong>Ghế:</strong> <span class="text-yellow">@string.Join(", ", Model.SeatNames)</span></p>
         </div>
 
-        <div class="info-block">
+        <div class="checkout-info-block">
             <h4>Combo đã chọn</h4>
-            @if (Model.Combos.Any())
-            {
-                <ul>
-                    @foreach (var combo in Model.Combos)
-                    {
-                        <li>@combo.ComboName x @combo.Quantity (@combo.Subtotal.ToString("N0")) đ</li>
+            @if (Model.Combos.Any()) {
+                <ul class="combo-list">
+                    @foreach (var combo in Model.Combos) {
+                        <li>@combo.ComboName x @combo.Quantity <span class="price-tag">(@combo.Subtotal.ToString("N0") đ)</span></li>
                     }
                 </ul>
-            }
-            else
-            {
-                <p>Không chọn combo.</p>
+            } else {
+                <p class="text-muted">Không chọn combo.</p>
             }
         </div>
 
-        <div class="info-block">
-            <p><strong>Tổng vé:</strong> @Model.TicketTotal.ToString("N0") đ</p>
-            <p><strong>Tổng combo:</strong> @Model.ComboTotal.ToString("N0") đ</p>
-            <p><strong>Tổng thanh toán:</strong> @Model.Total.ToString("N0") đ</p>
+        <div class="checkout-info-block summary-block">
+            <div class="price-row"><span>Tổng vé:</span> <span>@Model.TicketTotal.ToString("N0") đ</span></div>
+            <div class="price-row"><span>Tổng combo:</span> <span>@Model.ComboTotal.ToString("N0") đ</span></div>
+            <div class="price-row total"><span>Tổng thanh toán:</span> <span class="text-yellow">@Model.Total.ToString("N0") đ</span></div>
         </div>
 
-        <form asp-controller="Payment" asp-action="ProcessPayment" method="post">
+        <form asp-controller="Payment" asp-action="ProcessPayment" method="post" id="mainPaymentForm">
             <input type="hidden" name="orderId" value="@Model.OrderId" />
             <input type="hidden" name="total" value="@Model.Total" />
-
-            <div class="form-group">
+            <div class="payment-method-box">
                 <label>Phương thức thanh toán:</label>
-                <select name="paymentType" class="form-control">
+                <select name="paymentType" class="custom-select-dark">
                     <option value="cash">Tiền mặt</option>
                     <option value="momo">Momo</option>
                     <option value="vnpay">VNPay</option>
                 </select>
             </div>
-
-            <button type="submit" class="btn btn-success">Xác nhận thanh toán</button>
         </form>
+
+        <div class="checkout-actions">
+            <button type="submit" form="mainPaymentForm" class="btn-yellow-action">Xác nhận thanh toán</button>
+            <form asp-action="CancelOrder" method="post" class="m-0">
+                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                <button type="submit" class="btn-cancel-action">Huỷ vé</button>
+            </form>
+        </div>
     </div>
 
     <div class="payment-right">
-        <h3>Thông tin phim</h3>
-        <div class="movie-card">
-            @if (!string.IsNullOrEmpty(Model.Poster))
-            {
-                <img src="~/@Model.Poster" alt="Poster phim" class="movie-poster" />
+        <h3 class="section-title">Thông tin phim</h3>
+        <div class="movie-card-sidebar">
+            @if (!string.IsNullOrEmpty(Model.Poster)) {
+                <img src="~/@Model.Poster" alt="Poster" class="sidebar-poster" />
             }
-            <h4>@Model.MovieName</h4>
-            <p>Ngày chiếu: @Model.ShowtimeDate.ToString("dd/MM/yyyy")</p>
-            <p>Giờ chiếu: @Model.ShowtimeTime</p>
-            <p>Trạng thái: @Model.Status</p>
+            <h4 class="text-yellow">@Model.MovieName</h4>
+            <div class="sidebar-details">
+                <p><strong>Ngày:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy")</p>
+                <p><strong>Giờ:</strong> @Model.ShowtimeTime</p>
+                <p><strong>Trạng thái:</strong> <span class="status-tag">@Model.Status</span></p>
+            </div>
         </div>
     </div>
 </div>
 
-<style>
-.payment-page { display: flex; gap: 30px; margin-top: 20px; }
-.payment-left { flex: 2; }
-.payment-right { flex: 1; border: 1px solid #ccc; padding: 16px; border-radius: 8px; background: #fafafa; }
-.movie-card { text-align: center; }
-.movie-poster { max-width: 100%; height: auto; border-radius: 8px; margin-bottom: 12px; }
-.info-block { margin-bottom: 16px; padding: 12px; border: 1px solid #e2e2e2; border-radius: 8px; background: #fff; }
-.info-block h4 { margin-bottom: 8px; }
-</style>
+<script>
+    // Chặn quay lại trang trước để tránh lỗi duplicate order
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", function () {
+        window.location.href = "/"; 
+    });
+</script>

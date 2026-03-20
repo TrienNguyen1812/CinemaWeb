@@ -18,6 +18,7 @@ namespace CinemaWeb.Models
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Combo> Combos { get; set; }
         public DbSet<OrderCombo> OrderCombos { get; set; }
+        public DbSet<SearchHistory> SearchHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

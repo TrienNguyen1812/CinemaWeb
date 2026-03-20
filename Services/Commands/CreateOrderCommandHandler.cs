@@ -33,6 +33,7 @@ namespace CinemaWeb.Services.Commands
             var order = new Order
             {
                 OrderTime = DateTime.Now,
+                ExpiredAt = DateTime.Now.AddMinutes(15), // Đặt thời gian hết hạn sau 15 phút
                 Status = "Pending",
                 IdUser = command.IdUser,
                 TotalPrice = ticketTotal + comboTotal
