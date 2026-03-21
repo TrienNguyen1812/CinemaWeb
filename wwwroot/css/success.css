@@ -1,0 +1,88 @@
+/* success.css */
+.payment-success-container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Biểu tượng dấu tích xanh */
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    margin: 0 auto 20px;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+}
+
+.success-title {
+    color: #28a745;
+    font-weight: 700;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Bố cục danh sách thông tin */
+.order-info-list {
+    text-align: left;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 5px solid #28a745;
+    margin-bottom: 25px;
+}
+
+.order-info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed #dee2e6;
+}
+
+.order-info-item:last-child {
+    border-bottom: none;
+}
+
+.order-label {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.order-value {
+    color: #343a40;
+    font-weight: 600;
+}
+
+.total-highlight {
+    color: #d9534f;
+    font-size: 1.2rem;
+}
+
+.thank-you-msg {
+    font-style: italic;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.btn-home {
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-decoration: none !important;
+}
+
+.btn-home:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}

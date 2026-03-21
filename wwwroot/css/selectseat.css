@@ -1,0 +1,152 @@
+/* Sử dụng bộ CSS bạn đã chọn */
+.booking-container {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #1e1e2f;
+    padding: 30px;
+    border-radius: 20px;
+    color: #fff;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+}
+
+.movie-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.movie-header-info h2 {
+    color: #f5c518;
+    margin: 0;
+}
+
+.ticket-input {
+    background: #2c2c3e;
+    border: 1px solid #444;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 10px;
+    width: 80px;
+    margin-left: 10px;
+}
+
+.screen-wrapper {
+    perspective: 500px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.screen {
+    height: 12px;
+    background: #f5c518;
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 50%;
+    box-shadow: 0 15px 30px rgba(245, 197, 24, 0.4);
+    transform: rotateX(-30deg);
+}
+
+.screen-text {
+    margin-top: 15px;
+    color: #888;
+    font-size: 0.8rem;
+    letter-spacing: 5px;
+}
+
+.seat-map-wrapper {
+    overflow-x: auto;
+    padding: 20px 0;
+}
+
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(10, 40px); 
+    gap: 12px;
+    justify-content: center;
+}
+
+.seat {
+    width: 40px;
+    height: 36px;
+    background: #3d3d5c;
+    border: none;
+    border-radius: 6px 6px 2px 2px;
+    color: #ccc;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.seat:not(.booked):hover {
+    background: #555580;
+    transform: scale(1.1);
+    color: #fff;
+}
+
+.seat.selected {
+    background: #f5c518 !important;
+    color: #000 !important;
+    box-shadow: 0 0 15px rgba(245, 197, 24, 0.5);
+    transform: scale(1.1);
+}
+
+.seat.booked {
+    background: #5a1e1e !important;
+    color: #999;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Style cho chú thích */
+.seat-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+    padding: 20px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.seat-demo {
+    width: 20px;
+    height: 18px;
+    background: #3d3d5c;
+    border-radius: 4px;
+}
+.seat-demo.selected { background: #f5c518; }
+.seat-demo.booked { background: #5a1e1e; }
+
+.booking-footer {
+    text-align: center;
+    margin-top: 40px;
+}
+
+.btn-continue {
+    background: #f5c518;
+    color: #000;
+    border: none;
+    padding: 12px 50px;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-continue:hover {
+    background: #ffdb4d;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(245, 197, 24, 0.3);
+}

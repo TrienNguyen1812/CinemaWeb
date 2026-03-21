@@ -1,0 +1,233 @@
+/* Tổng thể wrapper */
+.movie-detail-wrapper {
+    color: #fff;
+    padding-bottom: 50px;
+}
+
+/* HERO SECTION */
+.movie-hero {
+    padding: 40px 0;
+    /* Hiệu ứng nền mờ nhẹ từ ảnh poster (nếu có thể dùng js lấy ảnh làm nền) hoặc dùng gradient tối */
+    background: linear-gradient(to bottom, rgba(11, 16, 32, 0.9), #0b1020);
+}
+
+/* --- FIX POSTER NHỎ LẠI --- */
+.poster-container {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: transform 0.3s ease;
+    /* Khống chế độ rộng tối đa của poster */
+    max-width: 250px; 
+    margin: 0 auto; /* Căn giữa trên mobile */
+}
+
+/* Đảm bảo căn lề trái trên desktop */
+@media (min-width: 768px) {
+    .poster-container {
+        margin: 0;
+    }
+}
+
+.poster-container:hover {
+    transform: scale(1.03);
+}
+
+.main-poster {
+    width: 100%;
+    display: block;
+    height: auto;
+}
+
+.age-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f5c518;
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Movie Meta */
+.movie-title {
+    font-size: 2.2rem; /* Giảm nhẹ size chữ tiêu đề */
+    font-weight: 800;
+    color: #f5c518;
+    margin-bottom: 15px;
+    margin-top: 0;
+}
+
+@media (max-width: 768px) {
+    .movie-title {
+        text-align: center;
+        margin-top: 15px;
+    }
+}
+
+.meta-tags {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+    .meta-tags {
+        justify-content: center;
+    }
+}
+
+.tag {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    color: #ccc;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tag i {
+    color: #f5c518;
+}
+
+.movie-description h5, .trailer-section h5 {
+    color: #f5c518;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.movie-description p {
+    line-height: 1.7;
+    color: #ddd;
+    text-align: justify;
+    font-size: 0.95rem;
+}
+
+/* Trailer Video */
+.video-container {
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 450px; /* Thu nhỏ trailer box một chút */
+    border: 1px solid rgba(245, 197, 24, 0.3);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.video-container video {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* SHOWTIME SECTION */
+.showtime-section {
+    margin-top: 40px;
+}
+
+.section-title {
+    font-weight: 700;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #333;
+    font-size: 1.5rem;
+}
+
+.cinema-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.cinema-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: rgba(255,255,255, 0.02);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.cinema-info {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+}
+
+/* Suất chiếu (Dạng button hiện đại) */
+.time-slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.time-link {
+    text-decoration: none !important;
+    background: transparent;
+    border: 1px solid #444;
+    color: #ccc;
+    padding: 7px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.time-link:hover {
+    background: #f5c518;
+    color: #000;
+    border-color: #f5c518;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(245, 197, 24, 0.2);
+}
+/* --- TRẠNG THÁI PHIM --- */
+.status-badge {
+    margin-bottom: 15px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* Màu cho Đang chiếu (Đỏ rực rỡ) */
+.status-now {
+    background: rgba(220, 53, 69, 0.2);
+    color: #ff4d5e;
+    border: 1px solid rgba(220, 53, 69, 0.5);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+}
+
+/* Màu cho Sắp chiếu (Xanh dương hoặc Cam) */
+.status-soon {
+    background: rgba(13, 110, 253, 0.2);
+    color: #3d8bff;
+    border: 1px solid rgba(13, 110, 253, 0.5);
+}
+
+/* Animation nhẹ cho badge Đang chiếu để thu hút sự chú ý */
+.status-now i {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .movie-meta .d-flex {
+        justify-content: center;
+    }
+}

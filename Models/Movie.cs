@@ -33,6 +33,18 @@ namespace CinemaWeb.Models
         [Required, Column(TypeName = "nvarchar(30)")]
         public string Age { get; set; }
 
+        // --- THÊM TRƯỜNG NÀY ---
+        [Required, Column(TypeName = "nvarchar(50)")]
+        public string Status { get; set; } = MovieStatus.Showing; // Mặc định là đang chiếu
+
         public ICollection<Showtime>? Showtimes { get; set; }
+    }
+
+    // Tạo một class hằng số để quản lý cho dễ
+    public static class MovieStatus
+    {
+        public const string Showing = "Đang chiếu";
+        public const string ComingSoon = "Sắp chiếu";
+        public const string Ended = "Ngừng chiếu";
     }
 }

@@ -2,11 +2,14 @@ using CinemaWeb.Models;
 using CinemaWeb.Services;
 using CinemaWeb.Services.Commands;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Encodings.Web;
+using System.Text.Unicode;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
-
+builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+builder.Services.AddSingleton<HtmlEncoder>(
+    HtmlEncoder.Create(allowedRanges: new[] { UnicodeRanges.All }));
 builder.Services.AddDbContext<DbContexts>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")
@@ -14,9 +17,21 @@ builder.Services.AddDbContext<DbContexts>(options =>
 );
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<CreateOrderCommandHandler>();
 
+// Observer pattern services for notification
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationSubject, CinemaWeb.Services.Notifications.NotificationSubject>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.SessionNotificationObserver>();
+builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserver, CinemaWeb.Services.Notifications.ConsoleNotificationObserver>();
+
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
+
+// Đăng ký Background Service
+builder.Services.AddHostedService<MovieStatusWorker>();
 
 var app = builder.Build();
 

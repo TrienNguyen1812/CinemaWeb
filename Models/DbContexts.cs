@@ -18,6 +18,7 @@ namespace CinemaWeb.Models
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Combo> Combos { get; set; }
         public DbSet<OrderCombo> OrderCombos { get; set; }
+        public DbSet<SearchHistory> SearchHistories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,6 +76,20 @@ namespace CinemaWeb.Models
                 .HasOne(s => s.ScreeningRoom)
                 .WithMany(r => r.Seats)
                 .HasForeignKey(s => s.IdRoom)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ===== ORDERCOMBO - ORDER =====
+            modelBuilder.Entity<OrderCombo>()
+                .HasOne(oc => oc.Order)
+                .WithMany(o => o.OrderCombos)
+                .HasForeignKey(oc => oc.IdOrder)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // ===== ORDERCOMBO - COMBO =====
+            modelBuilder.Entity<OrderCombo>()
+                .HasOne(oc => oc.Combo)
+                .WithMany(c => c.OrderCombos)
+                .HasForeignKey(oc => oc.IdCombo)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

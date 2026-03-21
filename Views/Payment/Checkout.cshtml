@@ -1,24 +1,81 @@
-﻿<h2>Thanh toán</h2>
+﻿@model CinemaWeb.Models.PaymentCheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
 
-<form asp-controller="Payment" asp-action="Checkout" method="post">
+<div class="payment-page">
+    <div class="payment-left">
+        <h3 class="section-title">Chi tiết đơn hàng</h3>
 
-    <label>Chọn phương thức thanh toán</label>
+        <div class="checkout-info-block">
+            <p><strong>Phim:</strong> <span class="text-yellow">@Model.MovieName</span></p>
+            <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</p>
+            <p><strong>Số vé:</strong> @Model.TicketCount</p>
+            <p><strong>Ghế:</strong> <span class="text-yellow">@string.Join(", ", Model.SeatNames)</span></p>
+        </div>
 
-    <select name="paymentType">
-        <option value="cash">Tiền mặt</option>
-        <option value="momo">Momo</option>
-        <option value="vnpay">VNPay</option>
-    </select>
+        <div class="checkout-info-block">
+            <h4>Combo đã chọn</h4>
+            @if (Model.Combos.Any()) {
+                <ul class="combo-list">
+                    @foreach (var combo in Model.Combos) {
+                        <li>@combo.ComboName x @combo.Quantity <span class="price-tag">(@combo.Subtotal.ToString("N0") đ)</span></li>
+                    }
+                </ul>
+            } else {
+                <p class="text-muted">Không chọn combo.</p>
+            }
+        </div>
 
-    <br /><br />
+        <div class="checkout-info-block summary-block">
+            <div class="price-row"><span>Tổng vé:</span> <span>@Model.TicketTotal.ToString("N0") đ</span></div>
+            <div class="price-row"><span>Tổng combo:</span> <span>@Model.ComboTotal.ToString("N0") đ</span></div>
+            <div class="price-row total"><span>Tổng thanh toán:</span> <span class="text-yellow">@Model.Total.ToString("N0") đ</span></div>
+        </div>
 
-    <label>Tổng tiền</label>
-    <input type="number" name="total" value="@ViewBag.Total" readonly />
+        <form asp-controller="Payment" asp-action="ProcessPayment" method="post" id="mainPaymentForm">
+            <input type="hidden" name="orderId" value="@Model.OrderId" />
+            <input type="hidden" name="total" value="@Model.Total" />
+            <div class="payment-method-box">
+                <label>Phương thức thanh toán:</label>
+                <select name="paymentType" class="custom-select-dark">
+                    <option value="cash">Tiền mặt</option>
+                    <option value="momo">Momo</option>
+                    <option value="vnpay">VNPay</option>
+                </select>
+            </div>
+        </form>
 
-    <br /><br />
+        <div class="checkout-actions">
+            <button type="submit" form="mainPaymentForm" class="btn-yellow-action">Xác nhận thanh toán</button>
+            <form asp-action="CancelOrder" method="post" class="m-0">
+                <input type="hidden" name="orderId" value="@Model.OrderId" />
+                <button type="submit" class="btn-cancel-action">Huỷ vé</button>
+            </form>
+        </div>
+    </div>
 
-    <button type="submit" class="btn btn-success">
-        Thanh toán
-    </button>
+    <div class="payment-right">
+        <h3 class="section-title">Thông tin phim</h3>
+        <div class="movie-card-sidebar">
+            @if (!string.IsNullOrEmpty(Model.Poster)) {
+                <img src="~/@Model.Poster" alt="Poster" class="sidebar-poster" />
+            }
+            <h4 class="text-yellow">@Model.MovieName</h4>
+            <div class="sidebar-details">
+                <p><strong>Ngày:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy")</p>
+                <p><strong>Giờ:</strong> @Model.ShowtimeTime</p>
+                <p><strong>Trạng thái:</strong> <span class="status-tag">@Model.Status</span></p>
+            </div>
+        </div>
+    </div>
+</div>
 
-</form>
+<script>
+    // Chặn quay lại trang trước để tránh lỗi duplicate order
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", function () {
+        window.location.href = "/"; 
+    });
+</script>

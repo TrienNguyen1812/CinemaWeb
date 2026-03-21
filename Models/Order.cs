@@ -10,7 +10,7 @@ namespace CinemaWeb.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdOrder { get; set; }
 
-        [Required, Column(TypeName = "date")]
+        [Required, Column(TypeName = "datetime2")]
         public DateTime OrderTime { get; set; }
 
         [Required, Column(TypeName = "numeric(10,2)")]
@@ -18,6 +18,8 @@ namespace CinemaWeb.Models
 
         [Required, Column(TypeName = "nvarchar(255)")]
         public string Status { get; set; }
+        [Required]
+        public DateTime ExpiredAt { get; set; }
 
         [Required]
         public int IdUser { get; set; }

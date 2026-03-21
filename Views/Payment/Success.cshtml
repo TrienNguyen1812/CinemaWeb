@@ -1,5 +1,49 @@
-﻿<h2>Thanh toán thành công</h2>
+﻿@model CinemaWeb.Models.PaymentCheckoutViewModel
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
 
-<p>Vé của bạn đã được đặt thành công.</p>
+@* Nhớ link file CSS vào *@
+<link rel="stylesheet" href="~/css/success.css" />
 
-<a asp-controller="Home" asp-action="Index">Về trang chủ</a>
+<div class="payment-success-container">
+    <div class="success-icon">✓</div>
+    
+    <h2 class="success-title">Thanh toán thành công</h2>
+
+    <div class="order-info-list">
+        <div class="order-info-item">
+            <span class="order-label">Mã đơn hàng:</span>
+            <span class="order-value">#@Model.OrderId</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Phim:</span>
+            <span class="order-value">@Model.MovieName</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Suất chiếu:</span>
+            <span class="order-value">@Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Số vé:</span>
+            <span class="order-value">@Model.TicketCount</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Ghế:</span>
+            <span class="order-value">@string.Join(", ", Model.SeatNames)</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Trạng thái:</span>
+            <span class="order-value text-success">@Model.Status</span>
+        </div>
+        <div class="order-info-item">
+            <span class="order-label">Tổng thanh toán:</span>
+            <span class="order-value total-highlight">@Model.Total.ToString("N0") đ</span>
+        </div>
+    </div>
+
+    <p class="thank-you-msg">Cảm ơn bạn đã sử dụng dịch vụ Cinestar.</p>
+    
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-home">Về trang chủ</a>
+</div>

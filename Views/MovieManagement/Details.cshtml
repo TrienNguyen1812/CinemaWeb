@@ -1,0 +1,39 @@
+﻿@model CinemaWeb.Models.Movie
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+
+<div class="movie-container movie-detail">
+    <h2 class="movie-title">Chi tiết phim</h2>
+
+    <img src="~/images/@Model.Poster" width="220" />
+
+    <p><b>Tên phim:</b> @Model.MovieName</p>
+    <p><b>Thể loại:</b> @Model.Category</p>
+    <p><b>Thời lượng:</b> @Model.Duration phút</p>
+    <p><b>Ngày phát hành:</b> @Model.ReleaseDate.ToShortDateString()</p>
+    <p><b>Mô tả:</b> @Model.Description</p>
+    <p><b>Độ tuổi:</b> @Model.Age</p>
+    <p><b>Trạng thái:</b>
+        @if (Model.Status == MovieStatus.Showing)
+        {
+            <span class="badge bg-success">Đang chiếu</span>
+        }
+        else if (Model.Status == MovieStatus.ComingSoon)
+        {
+            <span class="badge bg-warning">Sắp chiếu</span>
+        }
+        else if (Model.Status == MovieStatus.Ended)
+        {
+            <span class="badge bg-secondary">Đã kết thúc</span>
+        }
+    </p>
+    <p style="display: flex; align-items: flex-start; gap: 10px; margin-bottom: 15px;"><b>Trailer:</b><video width="320" height="240" controls>
+        <source src="~/trailers/@Model.Trailer" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ video.
+    </video></p>
+
+    <a asp-action="Index" class="btn btn-detail">⬅ Quay lại</a>
+</div>
+

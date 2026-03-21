@@ -128,7 +128,7 @@ namespace CinemaWeb.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderTime")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Status")
                         .IsRequired()

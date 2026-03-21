@@ -1,11 +1,56 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using System.Text.Json
+@using CinemaWeb.Models
+@inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cinestar</title>
     <link rel="stylesheet" href="~/css/layoutuser.css" />
+    <link rel="stylesheet" href="~/css/checkout.css" />
+    <link rel="stylesheet" href="~/css/history.css" />
+    <link rel="stylesheet" href="~/css/historydetail.css" />
+    <link rel="stylesheet" href="~/css/detailmovie.css" />
+    <link rel="stylesheet" href="~/css/selectseat.css" />
+    <link rel="stylesheet" href="~/css/selectcombo.css" />
+    <link rel="stylesheet" href="~/css/success.css" />
+    <link rel="stylesheet" href="~/css/nowshowing.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@{
+    var session = HttpContextAccessor.HttpContext?.Session;
+    var notificationsRaw = session?.GetString("Notifications");
+    List<Notification> notifications = null;
+
+    if (!string.IsNullOrEmpty(notificationsRaw))
+    {
+        notifications = JsonSerializer.Deserialize<List<Notification>>(notificationsRaw);
+        // Sau khi đọc xong thì xóa Session để thông báo không hiện lại khi F5
+        session.Remove("Notifications");
+    }
+}
+
+@if (notifications != null && notifications.Any())
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            @foreach (var note in notifications)
+            {
+                // Sử dụng Html.Raw để tránh Razor encode các ký tự tiếng Việt thành dạng &amp;
+                var message = Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(note.Message));
+                <text>
+                Swal.fire({
+                    title: '@(note.Level == "success" ? "Thành công!" : "Thông báo")',
+                    text: '@message', 
+                    icon: '@note.Level',
+                    confirmButtonText: 'OK'
+                });
+                </text>
+            }
+        });
+    </script>
+}
 </head>
 <body>
 
@@ -16,7 +61,7 @@
 
     <!-- HEADER -->
     <header class="header">
-        <div class="logo">⭐ CIN<span>ESTAR</span></div>
+        <a asp-controller="Home" asp-action="Index" class="logo">⭐ CIN<span>ESTAR</span></a>
 
         <nav>
             <a href="#">Chọn rạp</a>
@@ -26,17 +71,23 @@
         </nav>
 
         <div class="header-right">
-            <input type="text" placeholder="Tìm phim, rạp" />
+            <div class="search-box" id="movieBox">
+                <input type="text" id="searchInput" placeholder="Tìm phim..." autocomplete="off" />
+                <div id="searchResult" class="dropdown"></div>
+            </div>
 
             @if (username != null)
             {
-                <span class="hello-user">
-                     Hello, <b>@username</b>
-                </span>
+                <div class="user-menu">
+                    <a class="hello-user" id="userToggle">
+                        Hello, <b>@username</b>
+                    </a>
 
-                <a class="btn-yellow" asp-controller="Auth" asp-action="Logout">
-                    Logout
-                </a>
+                    <div class="user-dropdown" id="userDropdown">
+                        <a asp-controller="Orders" asp-action="History">📄 Lịch sử đặt vé</a>
+                        <a asp-controller="Auth" asp-action="Logout">🚪 Đăng xuất</a>
+                    </div>
+                </div>
             }
             else
             {
@@ -73,4 +124,203 @@
     </footer>
 
 </body>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const isLoggedIn = @(Context.Session.GetInt32("UserId") != null ? "true" : "false");
+
+    const input = document.getElementById("searchInput");
+    const resultBox = document.getElementById("searchResult");
+    const movieBox = document.getElementById("movieBox");
+
+    const userToggle = document.getElementById("userToggle");
+    const userDropdown = document.getElementById("userDropdown");
+    const userMenu = document.querySelector(".user-menu");
+
+    // Hàm gọi API tìm kiếm
+    async function fetchSearch(keyword) {
+        if (keyword.length > 0) {
+            const res = await fetch(`/Movie/Search?keyword=${keyword}`);
+            const data = await res.json();
+            showDropdown(data, false); // false = không phải lịch sử
+        } else {
+            fetchHistory(); // Nếu xóa hết chữ thì quay về hiện lịch sử
+        }
+    }
+
+    // Hàm gọi API lịch sử
+    async function fetchHistory() {
+        if (!isLoggedIn) {
+            resultBox.style.display = "none";
+            return;
+        }
+        const res = await fetch("/Movie/GetHistory");
+        const data = await res.json();
+        showDropdown(data, true); // true = là lịch sử
+    }
+
+    // ===== SEARCH CLICK (Khi click vào thanh search) =====
+    input.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (userDropdown) userDropdown.style.display = "none";
+
+        let keyword = input.value.trim();
+        if (keyword.length > 0) {
+            // SỬA LỖI: Nếu có chữ, click vào phải hiện kết quả tìm kiếm theo chữ đó
+            fetchSearch(keyword);
+        } else {
+            // Nếu trống, hiện lịch sử
+            fetchHistory();
+        }
+    });
+
+    // ===== SEARCH KEYUP (Khi gõ phím) =====
+    input.addEventListener("keyup", function () {
+        let keyword = input.value.trim();
+
+        if (keyword.length > 0) {
+            fetchSearch(keyword);
+        } else {
+            // SỬA LỖI: Khi xóa hết ký tự, hiện lại lịch sử
+            fetchHistory();
+        }
+    });
+
+    // ===== USER TOGGLE =====
+    if (userToggle) {
+        userToggle.addEventListener("click", function (e) {
+            e.stopPropagation();
+
+            // 🔥 đóng search dropdown
+            resultBox.style.display = "none";
+
+            userDropdown.style.display =
+                userDropdown.style.display === "block" ? "none" : "block";
+        });
+    }
+
+    // ===== CLICK OUTSIDE (CHUNG) =====
+    document.addEventListener("click", function (e) {
+
+        // 🔥 search
+        if (!movieBox.contains(e.target)) {
+            resultBox.style.display = "none";
+        }
+
+        // 🔥 user
+        if (userMenu && !userMenu.contains(e.target)) {
+            userDropdown.style.display = "none";
+        }
+    });
+
+    // ===== CHỐNG CLICK TRONG DROPDOWN =====
+    resultBox.addEventListener("click", function (e) {
+        e.stopPropagation();
+    });
+
+    if (userDropdown) {
+        userDropdown.addEventListener("click", function (e) {
+            e.stopPropagation();
+        });
+    }
+
+    // ===== RENDER DROPDOWN =====
+    function showDropdown(data, isHistory) {
+        resultBox.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            // Nếu là tìm kiếm mà không ra kết quả thì ẩn, 
+            // nếu là lịch sử mà trống thì cũng ẩn
+            resultBox.style.display = "none";
+            return;
+        }
+
+        resultBox.style.display = "block";
+
+        data.forEach(item => {
+            let div = document.createElement("div");
+            div.classList.add("dropdown-item");
+
+            div.innerHTML = `
+                <img src="/images/${item.poster}" />
+                <span class="movie-name">${item.movieName}</span>
+                ${isHistory ? `<span class="delete-btn" data-id="${item.idMovie}">✖</span>` : ''}
+            `;
+
+            div.onclick = async function (e) {
+                if (e.target.classList.contains("delete-btn")) return;
+                
+                // Chỉ lưu lịch sử khi nhấn vào phim từ kết quả tìm kiếm
+                if (isLoggedIn && !isHistory) {
+                    await fetch(`/Movie/SaveHistory?movieId=${item.idMovie}`);
+                }
+                window.location.href = `/Movie/Detail/${item.idMovie}`;
+            };
+
+            if (isHistory) {
+                div.querySelector(".delete-btn").onclick = function (e) {
+                    e.stopPropagation();
+                    fetch(`/Movie/DeleteHistory?movieId=${item.idMovie}`)
+                        .then(() => {
+                            div.remove();
+                            if (resultBox.querySelectorAll(".dropdown-item").length === 0) {
+                                resultBox.style.display = "none";
+                            }
+                        });
+                };
+            }
+            resultBox.appendChild(div);
+        });
+    }
+
+});
+window.addEventListener("pageshow", function (event) {
+    const input = document.getElementById("searchInput");
+    const resultBox = document.getElementById("searchResult");
+
+    // 🔥 reset khi quay lại (back)
+    if (event.persisted) {
+        input.value = "";
+        resultBox.style.display = "none";
+    }
+});
+
+function scrollGrid(btn, direction) {
+    const wrapper = btn.closest('.movie-grid-wrapper');
+    const grid = wrapper.querySelector('.movie-grid');
+    const cards = grid.querySelectorAll('.movie-card');
+    
+    if (cards.length < 2) return; // Không đủ phim thì không lặp
+
+    const cardWidth = cards[0].offsetWidth + 20; // 20 là gap
+
+    if (direction === 1) {
+        // ẤN QUA PHẢI: Cuộn sang phải, sau đó lấy phim đầu tiên bỏ xuống cuối
+        grid.scrollTo({
+            left: cardWidth,
+            behavior: 'smooth'
+        });
+
+        // Đợi hiệu ứng cuộn xong (khoảng 300ms) thì di chuyển phần tử thật
+        setTimeout(() => {
+            grid.appendChild(grid.firstElementChild); // Bốc thằng đầu bỏ xuống cuối
+            grid.scrollTo({ left: 0, behavior: 'auto' }); // Reset vị trí cuộn ngầm
+        }, 300);
+
+    } else {
+        // ẤN QUA TRÁI: Lấy thằng cuối bỏ lên đầu trước, sau đó mới cuộn
+        grid.prepend(grid.lastElementChild); // Bốc thằng cuối bỏ lên đầu
+        grid.scrollTo({ left: cardWidth, behavior: 'auto' }); // Nhảy ngầm tới vị trí thứ 2
+        
+        // Cuộn mượt về vị trí đầu (thằng vừa được thêm)
+        setTimeout(() => {
+            grid.scrollTo({
+                left: 0,
+                behavior: 'smooth'
+            });
+        }, 10);
+    }
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

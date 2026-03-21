@@ -1,0 +1,132 @@
+/* Cấu trúc Flexbox chính */
+.payment-page { 
+    display: flex !important; 
+    align-items: stretch !important; /* Quan trọng: Ép các cột cao bằng nhau */
+    gap: 30px !important; 
+    margin-top: 20px !important;
+    color: white !important;
+}
+
+/* Cột trái */
+.payment-left { 
+    flex: 2 !important; 
+}
+
+/* Cột phải */
+.payment-right { 
+    flex: 1 !important; 
+    background: #1b1f3a !important; /* Đồng màu với movie-card trong Layout */
+    padding: 25px !important; 
+    border-radius: 15px !important;
+    border: 1px solid #2a2a40 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Các khối thông tin bên trái */
+.checkout-info-block { 
+    background: #1c1c2e !important; /* Tím đen đậm hơn một chút */
+    padding: 20px !important; 
+    border-radius: 15px !important; 
+    margin-bottom: 20px !important;
+    border: 1px solid #2a2a40 !important;
+}
+
+.text-yellow { color: yellow !important; }
+.section-title { border-left: 4px solid yellow; padding-left: 15px; margin-bottom: 25px; font-size: 1.5rem; }
+
+/* Dàn hàng ngang cho cụm nút */
+.checkout-actions {
+    display: flex !important;
+    gap: 15px !important;
+    margin-top: 20px !important;
+}
+.checkout-actions form { margin: 0 !important; }
+
+/* Nút bấm chuẩn style Layout */
+.btn-yellow-action {
+    background: yellow !important;
+    color: black !important;
+    border: none !important;
+    padding: 12px 25px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+}
+
+.btn-yellow-action:hover {
+    background: #ffff33 !important; /* Vàng sáng hơn */
+    box-shadow: 0 6px 20px rgba(255, 255, 0, 0.4) !important;
+    color: #000 !important;
+}
+
+.btn-yellow-action:active {
+    transform: translateY(1px) !important; /* Hiệu ứng nhấn xuống */
+}
+
+.btn-cancel-action {
+    background: transparent !important;
+    color: #ff4d4d !important;
+    border: 1px solid #ff4d4d !important;
+    padding: 12px 25px !important;
+    border-radius: 20px !important;
+    font-weight: bold !important;
+}
+
+.btn-cancel-action:hover {
+    background: #ff4d4d !important; /* Đổ nền đỏ khi hover */
+    color: white !important; /* Chữ chuyển sang trắng */
+    box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3) !important;
+}
+
+.btn-cancel-action:active {
+    transform: translateY(1px) !important;
+}
+
+/* Select box tối */
+.custom-select-dark {
+    width: 100% !important;
+    max-width: 300px !important;
+    background: #0b1020 !important;
+    color: white !important;
+    border: 1px solid #333 !important;
+    padding: 10px !important;
+    border-radius: 20px !important;
+}
+
+/* Sidebar Movie Card */
+.movie-card-sidebar {
+    text-align: center;
+    flex-grow: 1; /* Để nội dung này chiếm hết khoảng không gian còn lại */
+}
+
+.sidebar-poster {
+    width: 100% !important;
+    max-width: 250px;
+    border-radius: 10px !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+}
+
+.sidebar-details {
+    text-align: left;
+    margin-top: 15px;
+    line-height: 1.8;
+}
+
+.status-tag {
+    background: #2a2a40;
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+}
+
+/* Ép form không được nhảy dòng */
+.m-0 { margin: 0 !important; display: inline-block !important; }
+/* Ép tất cả các nút có class btn hoặc button hiện bàn tay */
+.payment-page button, 
+.payment-page .btn,
+.payment-page .btn-yellow-action,
+.payment-page .btn-cancel-action {
+    cursor: pointer !important;
+}

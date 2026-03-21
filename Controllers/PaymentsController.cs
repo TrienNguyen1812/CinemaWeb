@@ -109,5 +109,31 @@ namespace CinemaWeb.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        // POST: Payments/ConfirmPayment/5 - Xác nhận thanh toán tiền mặt
+        // POST: Payments/ConfirmPayment/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmPayment(int id)
+        {
+            var payment = await _context.Payments.Include(p => p.Order).FirstOrDefaultAsync(p => p.IdPayment == id);
+            
+            // So sánh bằng hằng số (Constants)
+            if (payment != null && 
+                payment.PaymentMethod == PaymentConstants.Cash && 
+                payment.Status == PaymentConstants.StatusPending)
+            {
+                payment.Status = PaymentConstants.StatusPaid;
+                
+                if (payment.Order != null)
+                {
+                    payment.Order.Status = PaymentConstants.StatusPaid;
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["Success"] = "Đã xác nhận thanh toán thành công!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

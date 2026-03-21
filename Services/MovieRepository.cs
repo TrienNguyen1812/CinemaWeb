@@ -12,11 +12,26 @@ namespace CinemaWeb.Services
             _context = context;
         }
 
+        public IEnumerable<Movie> GetAllMovies()
+        {
+            return _context.Movies.ToList();
+        }
+
         public IEnumerable<Movie> GetNowShowingMovies()
         {
+            var today = DateTime.Today;
             return _context.Movies
-                           .Where(m => m.ReleaseDate <= DateTime.Now)
-                           .ToList();
+                .Where(m => (m.Status == MovieStatus.Showing) || 
+                            (m.Status == MovieStatus.ComingSoon && m.ReleaseDate <= today))
+                .ToList();
+        }
+
+        public IEnumerable<Movie> GetComingSoonMovies()
+        {
+            var today = DateTime.Today;
+            return _context.Movies
+                .Where(m => m.Status == MovieStatus.ComingSoon && m.ReleaseDate > today)
+                .ToList();
         }
 
         public Movie? GetById(int id)
@@ -26,8 +41,21 @@ namespace CinemaWeb.Services
         }
         public IEnumerable<Movie> GetNowShowingMoviesPaged(int page, int pageSize)
         {
+            var today = DateTime.Today;
             return _context.Movies
-                .Where(m => m.ReleaseDate <= DateTime.Now)
+                .Where(m => (m.Status == MovieStatus.Showing) || 
+                            (m.Status == MovieStatus.ComingSoon && m.ReleaseDate <= today)) // Thêm điều kiện này cho giống hàm GetNowShowingMovies
+                .OrderByDescending(m => m.ReleaseDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+        }
+
+        public IEnumerable<Movie> GetComingSoonMoviesPaged(int page, int pageSize)
+        {
+            var today = DateTime.Today;
+            return _context.Movies
+                .Where(m => m.Status == MovieStatus.ComingSoon && m.ReleaseDate > today)
                 .OrderByDescending(m => m.ReleaseDate)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -37,7 +65,13 @@ namespace CinemaWeb.Services
         public int CountNowShowingMovies()
         {
             return _context.Movies
-                .Count(m => m.ReleaseDate <= DateTime.Now);
+                .Count(m => m.Status == MovieStatus.Showing);
+        }
+
+        public int CountComingSoonMovies()
+        {
+            return _context.Movies
+                .Count(m => m.Status == MovieStatus.ComingSoon);
         }
 
         public Movie? GetMovieDetail(int id)

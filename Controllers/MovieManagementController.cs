@@ -79,16 +79,49 @@ namespace CinemaWeb.Controllers
         // UPDATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Movie movie)
+        public async Task<IActionResult> Edit(int id, Movie movie, IFormFile? posterFile)
         {
             if (id != movie.IdMovie) return NotFound();
 
-            if (!ModelState.IsValid)
-                return View(movie);
+            // 1. Lấy dữ liệu phim cũ từ DB để giữ lại tên Poster cũ nếu không upload ảnh mới
+            var existingMovie = await _context.Movies.AsNoTracking().FirstOrDefaultAsync(m => m.IdMovie == id);
+            if (existingMovie == null) return NotFound();
 
-            _context.Update(movie);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (posterFile != null && posterFile.Length > 0)
+            {
+                // Xử lý upload ảnh mới giống như bên hàm Create
+                var fileName = Path.GetFileName(posterFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await posterFile.CopyToAsync(stream);
+                }
+                movie.Poster = fileName;
+            }
+            else
+            {
+                // Nếu không chọn ảnh mới, giữ lại tên ảnh cũ
+                movie.Poster = existingMovie.Poster;
+            }
+
+            // 2. Kiểm tra ModelState (Xóa lỗi Poster nếu chúng ta đã có ảnh cũ)
+            ModelState.Remove("posterFile"); 
+            ModelState.Remove("Poster"); // Để tránh bị báo lỗi Required
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(movie);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                }
+            }
+            return View(movie);
         }
 
         // DELETE - GET
@@ -109,5 +142,6 @@ namespace CinemaWeb.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
     }
 }

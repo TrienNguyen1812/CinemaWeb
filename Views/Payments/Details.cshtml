@@ -1,0 +1,44 @@
+﻿@model CinemaWeb.Models.Payment
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<div class="payment-container">
+    <div class="payment-title">Chi tiết Thanh Toán</div>
+
+    <dl class="row">
+        <dt class="col-sm-3">Phương thức</dt>
+        <dd class="col-sm-9">@Model.PaymentMethod</dd>
+
+        <dt class="col-sm-3">Số tiền</dt>
+        <dd class="col-sm-9">@Model.Price</dd>
+
+        <dt class="col-sm-3">Trạng thái</dt>
+        <dd class="col-sm-9">@Model.Status</dd>
+
+        <dt class="col-sm-3">Mã GD</dt>
+        <dd class="col-sm-9">@Model.TransactionCode</dd>
+
+        <dt class="col-sm-3">Thời gian</dt>
+        <dd class="col-sm-9">@Model.PaymentTime</dd>
+    </dl>
+
+    <div class="d-flex gap-2">
+        @* @if (Model.PaymentMethod != null && Model.PaymentMethod.Contains("Tiền mặt") && 
+            Model.Status != null && Model.Status.Contains("Chờ xác nhận"))
+        {
+            <form asp-action="ConfirmPayment" asp-route-id="@Model.IdPayment" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success">Xác nhận đã nhận tiền</button>
+            </form>
+        } *@
+        @if (Model.PaymentMethod == PaymentConstants.Cash && Model.Status == PaymentConstants.StatusPending)
+        {
+            <form asp-action="ConfirmPayment" asp-route-id="@Model.IdPayment" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success" onclick="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán bằng tiền mặt?');">Xác nhận tiền mặt</button>
+            </form>
+        }
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>

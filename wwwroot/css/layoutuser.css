@@ -17,6 +17,7 @@
 .logo {
     font-size: 24px;
     font-weight: bold;
+    text-decoration: none;
 }
 
     .logo span {
@@ -27,6 +28,12 @@
     margin: 0 15px;
     color: white;
     text-decoration: none;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .header-right input {
@@ -59,33 +66,6 @@
         margin-bottom: 20px;
     }
 
-/* MOVIES */
-.movie-list {
-    display: flex;
-    gap: 20px;
-}
-
-.movie-card {
-    width: 200px;
-    background: #1b1f3a;
-    padding: 10px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-    .movie-card img {
-        width: 100%;
-        border-radius: 10px;
-    }
-
-    .movie-card button {
-        margin-top: 10px;
-        padding: 8px;
-        background: yellow;
-        border: none;
-        border-radius: 20px;
-    }
-
 /* PROMO */
 .promo-list {
     display: flex;
@@ -109,10 +89,94 @@
     display: flex;
     justify-content: space-around;
 }
+
 .hello-user {
     color: white;
-    margin-right: 12px;
+    user-select: none;
+    -webkit-user-select: none; /* Chrome, Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* Internet Explorer/Edge */
+}
+
+.user-menu {
+    position: relative;
+    cursor: pointer;
+}
+
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 35px;
+    right: 0;
+    background: #1c1c2e;
+    border-radius: 8px;
+    min-width: 180px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.user-dropdown a {
+    display: block; /* 🔥 để nó xuống dòng */
+    padding: 12px;
+    color: white;
+    text-decoration: none;
+}
+
+.user-dropdown a:hover {
+    background: #2a2a40;
+}
+/* SEARCH */
+.search-box {
+    position: relative;
+    width: 300px;
+}
+.search-box input {
+    width: 100%;
+    padding: 7px;
+    border-radius: 20px;
+    border: none;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    width: 300px;
+    background: #1c1c2e; /* 🔥 tím đen */
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    z-index: 999;
+    overflow: hidden;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    border-bottom: 1px solid #333;
+}
+
+.dropdown-item:hover {
+    background: #2a2a40;
+}
+
+.dropdown-item img {
+    width: 40px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.dropdown-item .movie-name {
+    flex: 1;
+}
+
+.dropdown-item .delete-btn {
+    color: #ff4d4d;
     font-size: 14px;
-    white-space: nowrap;
+    cursor: pointer;
 }
 

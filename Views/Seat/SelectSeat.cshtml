@@ -1,66 +1,63 @@
 ﻿@model CinemaWeb.Models.Showtime
 
-<h2>Chọn ghế</h2>
+@{
+    ViewData["Title"] = "Chọn ghế";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
 
-<label>Số lượng vé:</label>
-<input type="number" id="ticketCount" min="1" value="1" />
+<link rel="stylesheet" href="~/css/selectseat.css" />
 
-<div class="screen">MÀN HÌNH</div>
-
-<form asp-controller="Combo" asp-action="SelectCombo" method="post">
-
-    <div class="seat-map">
-
-        @foreach (var seat in Model.ScreeningRoom.Seats)
-        {
-            <button type="button"
-                    class="seat"
-                    data-seat="@seat.IdSeat">
-                @seat.SeatRow@seat.SeatNumber
-            </button>
-        }
-
+<div class="booking-container">
+    <div class="movie-header-info">
+        <h2>Chọn ghế</h2>
+        <div>
+            <label>Số lượng vé:</label>
+            <input type="number" id="ticketCount" min="1" value="1" class="ticket-input" />
+        </div>
     </div>
 
-    <input type="hidden" name="seatIds" id="seatIds" />
+    <div class="screen-wrapper">
+        <div class="screen"></div>
+        <div class="screen-text">MÀN HÌNH</div>
+    </div>
 
-    <br />
+    <form asp-controller="Combo" asp-action="SelectCombo" method="post">
 
-    <button type="submit" class="btn btn-primary">
-        Tiếp tục
-    </button>
+        <input type="hidden" name="showtimeId" value="@Model.IdShowtime" />
+        <div id="seatIdsContainer"></div>
 
-</form>
-<style>
-    .screen{
-    text-align:center;
-    padding:10px;
-    background:black;
-    color:white;
-    margin-bottom:20px;
-}
+        <div class="seat-map-wrapper">
+            <div class="seat-map">
+                @* Sắp xếp lại danh sách ghế để hiển thị đúng thứ tự A1, A2... A10 *@
+                @foreach (var seat in Model.ScreeningRoom.Seats
+                    .OrderBy(s => s.SeatRow)
+                    .ThenBy(s => s.SeatNumber.Length)
+                    .ThenBy(s => s.SeatNumber))
+                {
+                    <button type="button"
+                            class="seat"
+                            data-seat="@seat.IdSeat">
+                        @seat.SeatRow@seat.SeatNumber
+                    </button>
+                }
+            </div>
+        </div>
 
-.seat-map{
-    display:grid;
-    grid-template-columns: repeat(10,50px);
-    gap:10px;
-}
+        <div class="seat-legend">
+            <div class="legend-item"><span class="seat-demo"></span> Trống</div>
+            <div class="legend-item"><span class="seat-demo selected"></span> Đang chọn</div>
+            <div class="legend-item"><span class="seat-demo booked"></span> Đã đặt</div>
+        </div>
 
-.seat{
-    width:50px;
-    height:50px;
-    background:#ccc;
-    border:none;
-}
+        <div class="booking-footer">
+            <button type="submit" class="btn-continue">
+                Tiếp tục
+            </button>
+        </div>
 
-.seat.selected{
-    background:green;
-}
+    </form>
+</div>
 
-.seat.booked{
-    background:red;
-}
-</style>
 <script>
     let selectedSeats = [];
 
@@ -70,13 +67,13 @@
 
             let maxTicket = parseInt(document.getElementById("ticketCount").value);
 
-            if(btn.classList.contains("selected")){
+            if (btn.classList.contains("selected")) {
                 btn.classList.remove("selected");
                 selectedSeats = selectedSeats.filter(id => id != btn.dataset.seat);
             }
-            else{
+            else {
 
-                if(selectedSeats.length >= maxTicket){
+                if (selectedSeats.length >= maxTicket) {
                     alert("Bạn chỉ được chọn " + maxTicket + " ghế");
                     return;
                 }
@@ -85,6 +82,26 @@
                 selectedSeats.push(btn.dataset.seat);
             }
 
+        });
+
+    });
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+        if (selectedSeats.length === 0) {
+            event.preventDefault();
+            alert('Vui lòng chọn ít nhất 1 ghế.');
+            return;
+        }
+
+        const container = document.getElementById('seatIdsContainer');
+        container.innerHTML = '';
+
+        selectedSeats.forEach(function (seatId) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'seatIds';
+            input.value = seatId;
+            container.appendChild(input);
         });
 
     });

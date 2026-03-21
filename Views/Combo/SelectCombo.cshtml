@@ -1,50 +1,111 @@
 ﻿@model IEnumerable<CinemaWeb.Models.Combo>
-
-<h2>Chọn Combo</h2>
-
-<form asp-controller="Payment" asp-action="Checkout" method="post">
-
-<div class="combo-list">
-
-@foreach (var combo in Model)
-{
-    <div class="combo-card">
-
-        <img src="~/images/@combo.Image" width="150"/>
-
-        <h4>@combo.ComboName</h4>
-
-        <p>@combo.Description</p>
-
-        <p><b>@combo.Price.ToString("N0") đ</b></p>
-
-        <input type="number"
-               name="combos[@combo.IdCombo]"
-               value="0"
-               min="0"/>
-
-    </div>
+@{
+    ViewData["Title"] = "Chọn Combo";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
 }
+<link rel="stylesheet" href="~/css/selectcombo.css" />
 
+<div class="combo-container">
+    <div class="combo-header">
+        <h2>Chọn Combo</h2>
+        <p>Thêm bắp nước để trải nghiệm xem phim trọn vẹn hơn!</p>
+    </div>
+
+    <form asp-controller="Payment" asp-action="Checkout" method="post" id="comboForm">
+        <input type="hidden" name="showtimeId" value="@ViewBag.ShowtimeId" />
+
+        @foreach (var seatId in (List<int>)ViewBag.SeatIds)
+        {
+            <input type="hidden" name="seatIds" value="@seatId" />
+        }
+
+        <div class="combo-list">
+            @foreach (var combo in Model)
+            {
+                <div class="combo-card">
+                    <div class="combo-img-wrapper">
+                        <img src="~/@combo.Image" alt="@combo.ComboName" />
+                    </div>
+                    <div class="combo-info">
+                        <h4>@combo.ComboName</h4>
+                        <p class="description">@combo.Description</p>
+                        <p class="price"><strong>@combo.Price.ToString("N0")</strong> đ</p>
+                        
+                        <div class="quantity-control">
+                            <input type="number"
+                                   class="combo-qty"
+                                   data-comboid="@combo.IdCombo"
+                                   name="combos[@combo.IdCombo]"
+                                   value="0"
+                                   min="0" />
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="combo-summary">
+            <h5>Combo đã chọn:</h5>
+            <ul id="selectedComboList">
+                <li>Chưa có combo nào được chọn</li>
+            </ul>
+        </div>
+
+        <div class="footer-action">
+            <button type="submit" class="btn-submit">
+                Tiếp tục thanh toán
+            </button>
+        </div>
+    </form>
 </div>
 
-<br />
+<script>
+    function updateSelectedComboSummary() {
+        const items = document.querySelectorAll('.combo-qty');
+        const list = document.getElementById('selectedComboList');
+        list.innerHTML = '';
 
-<button type="submit" class="btn btn-primary">
-    Tiếp tục
-</button>
+        let hasCombo = false;
 
-</form>
-<style>
-   .combo-list{
-    display:flex;
-    gap:20px;
-}
+        items.forEach(input => {
+            const qty = parseInt(input.value || '0', 10);
+            if (qty > 0) {
+                const comboId = input.dataset.comboid;
+                const card = input.closest('.combo-card');
+                const name = card?.querySelector('h4')?.innerText || `Combo ${comboId}`;
+                const priceText = card?.querySelector('p strong')?.innerText || '';
 
-.combo-card{
-    border:1px solid #ddd;
-    padding:15px;
-    width:200px;
-    text-align:center;
-}
-</style>
+                const li = document.createElement('li');
+                li.textContent = `${name} x ${qty} ${priceText}`;
+                list.appendChild(li);
+                hasCombo = true;
+            }
+        });
+
+        if (!hasCombo) {
+            const li = document.createElement('li');
+            li.textContent = 'Chưa có combo nào được chọn';
+            list.appendChild(li);
+        }
+    }
+
+    document.querySelectorAll('.combo-qty').forEach(input => {
+        input.addEventListener('input', () => {
+            if (parseInt(input.value || '0', 10) < 0) input.value = '0';
+            updateSelectedComboSummary();
+        });
+    });
+
+    document.getElementById('comboForm').addEventListener('submit', function (event) {
+        const form = event.target;
+        const combos = form.querySelectorAll('.combo-qty');
+
+        combos.forEach(input => {
+            if (parseInt(input.value || '0', 10) <= 0) {
+                input.remove();
+            }
+        });
+    });
+
+    updateSelectedComboSummary();
+</script>

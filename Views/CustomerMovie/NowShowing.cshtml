@@ -1,24 +1,69 @@
-﻿@model IEnumerable<CinemaWeb.Models.Movie>
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model IEnumerable<CinemaWeb.Models.Movie>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
+    ViewData["Title"] = "Danh sách phim";
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
 }
 
-<h2>TẤT CẢ PHIM ĐANG CHIẾU</h2>
+<div class="now-showing-container">
+    <div class="text-center">
+        <h2>DANH SÁCH TẤT CẢ CÁC PHIM</h2>
+    </div>
 
-<div class="movie-list">
-    @foreach (var movie in Model)
-    {
-        <div class="movie-card">
-            <img src="~/images/@movie.Poster" alt="@movie.MovieName" />
+    <div class="movie-grid-detail">
+        @foreach (var movie in Model)
+        {
+            <div class="movie-card">
+                <div class="movie-poster-wrapper">
+                    <img src="~/images/@movie.Poster" alt="@movie.MovieName" />
+                    
+                    @* Bổ sung nhãn trạng thái để người dùng dễ phân biệt *@
+                    @if (movie.Status == "Đang chiếu")
+                    {
+                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">Đang chiếu</span>
+                    }
+                    else if (movie.Status == "Sắp chiếu")
+                    {
+                        <span class="badge bg-warning text-dark position-absolute top-0 start-0 m-2">Sắp chiếu</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary position-absolute top-0 start-0 m-2">Ngừng chiếu</span>
+                    }
+                </div>
 
-            <h4>@movie.MovieName</h4>
+                <div class="movie-info">
+                    <h4>@movie.MovieName</h4>
 
-            <a asp-controller="Movie"
-               asp-action="Detail"
-               asp-route-id="@movie.IdMovie"
-               class="btn">
-                Đặt vé
-            </a>
-        </div>
-    }
+                    @if (movie.Status == MovieStatus.Showing)
+                    {
+                        @* LOGIC CHO PHIM ĐANG CHIẾU: KIỂM TRA ĐĂNG NHẬP ĐỂ ĐẶT VÉ *@
+                        if (HttpContextAccessor.HttpContext.Session.GetInt32("UserId") != null)
+                        {
+                            <a asp-controller="Movie" asp-action="Detail" asp-route-id="@movie.IdMovie" class="btn-booking text-center">
+                                <i class="fas fa-ticket-alt"></i> Đặt vé
+                            </a>
+                        }
+                        else
+                        {
+                            <a asp-controller="Auth" asp-action="Login" class="btn-booking text-center" 
+                               onclick="return confirm('Vui lòng đăng nhập để đặt vé!')">
+                                <i class="fas fa-ticket-alt"></i> Đặt vé
+                            </a>
+                        }
+                    }
+                    else
+                    {
+                        @* LOGIC CHO PHIM SẮP CHIẾU & NGỪNG CHIẾU: CHỈ XEM CHI TIẾT *@
+                        <a asp-controller="Movie" asp-action="Detail" asp-route-id="@movie.IdMovie" class="btn-booking text-center" style="background: linear-gradient(90deg, #03a9f4, #00bcd4); color: white;">
+                            <i class="fas fa-info-circle"></i> Xem chi tiết
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>

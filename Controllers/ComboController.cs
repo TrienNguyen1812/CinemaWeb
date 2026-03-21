@@ -14,6 +14,11 @@ namespace CinemaWeb.Controllers
 
         public IActionResult SelectCombo(int showtimeId, List<int> seatIds)
         {
+            if (HttpContext.Session.GetString("UserName") == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             var combos = _context.Combos.ToList();
 
             ViewBag.SeatIds = seatIds;

@@ -2,74 +2,88 @@
 @{
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
 }
-<div class="container mt-4">
+<link rel="stylesheet" href="~/css/detailmovie.css" />
 
-    <div class="row">
+<div class="movie-detail-wrapper">
+    <div class="movie-hero">
+        <div class="container">
+            <div class="row align-items-start">
+                <div class="col-md-3 col-sm-5 col-6 mx-auto mx-md-0 mb-4 mb-md-0">
+                    <div class="poster-container">
+                        <img src="~/images/@Model.Poster" class="main-poster" alt="@Model.MovieName" />
+                        <div class="age-badge">@Model.Age</div>
+                    </div>
+                </div>
 
-        <!-- Poster -->
-        <div class="col-md-3">
-            <img src="~/images/@Model.Poster" class="img-fluid"/>
+                <div class="col-md-9 col-sm-12 movie-meta">
+                    <h1 class="movie-title">@Model.MovieName</h1>
+
+                    @if (Model.Status == MovieStatus.Showing)
+                    {
+                        <span class="status-badge status-now">
+                            <i class="fas fa-play-circle"></i> Đang chiếu
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge status-soon">
+                            <i class="fas fa-calendar-check"></i> Sắp chiếu
+                        </span>
+                    }
+                    
+                    <div class="meta-tags">
+                        <span class="tag"><i class="fas fa-film"></i> @Model.Category</span>
+                        <span class="tag"><i class="far fa-clock"></i> @Model.Duration phút</span>
+                        <span class="tag"><i class="far fa-calendar-alt"></i> @Model.ReleaseDate.ToString("dd/MM/yyyy")</span>
+                    </div>
+
+                    <div class="movie-description">
+                        <h5>Nội dung phim</h5>
+                        <p>@Model.Description</p>
+                    </div>
+
+                    <div class="trailer-section">
+                        <h5>Trailer</h5>
+                        <div class="video-container">
+                            <video controls>
+                                <source src="~/trailers/@Model.Trailer" type="video/mp4">
+                                Trình duyệt của bạn không hỗ trợ video.
+                            </video>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Movie info -->
-        <div class="col-md-9">
-
-            <h2>@Model.MovieName</h2>
-
-            <p><b>Thể loại:</b> @Model.Category</p>
-
-            <p><b>Thời lượng:</b> @Model.Duration phút</p>
-
-            <p><b>Ngày khởi chiếu:</b> @Model.ReleaseDate.ToString("dd/MM/yyyy")</p>
-
-            <p><b>Độ tuổi:</b> @Model.Age</p>
-
-            <p>@Model.Description</p>
-
-            <!-- Trailer -->
-            <iframe width="560" height="315"
-                    src="@Model.Trailer"
-                    frameborder="0"
-                    allowfullscreen>
-            </iframe>
-
-        </div>
-
     </div>
 
-    <hr />
+    <div class="showtime-section container">
+        <h3 class="section-title"><i class="fas fa-clock text-yellow"></i> Lịch Chiếu</h3>
 
-    <h3>Lịch Chiếu</h3>
+        @{
+            var cinemas = Model.Showtimes.GroupBy(s => s.ScreeningRoom.Cinema.CinemaName);
+        }
 
-    @{
-        var cinemas = Model.Showtimes
-            .GroupBy(s => s.ScreeningRoom.Cinema.CinemaName);
-    }
-
-    @foreach (var cinema in cinemas)
-    {
-        <div class="cinema-block mb-3">
-
-            <h5>@cinema.Key</h5>
-
-            @foreach (var show in cinema)
+        <div class="cinema-list">
+            @foreach (var cinema in cinemas)
             {
-                <a class="btn btn-outline-primary m-1"
-                   asp-controller="Seat"
-                   asp-action="SelectSeat"
-                   asp-route-id="@show.IdShowtime">
-
-                    @show.StartTime.ToString("HH:mm")
-
-                </a>
+                <div class="cinema-item">
+                    <div class="cinema-info">
+                        <i class="fas fa-map-marker-alt text-yellow"></i>
+                        <strong>@cinema.Key</strong>
+                    </div>
+                    <div class="time-slots">
+                        @foreach (var show in cinema)
+                        {
+                            <a class="time-link"
+                               asp-controller="Seat"
+                               asp-action="SelectSeat"
+                               asp-route-id="@show.IdShowtime">
+                                @show.StartTime.ToString("HH:mm")
+                            </a>
+                        }
+                    </div>
+                </div>
             }
-
         </div>
-    }
-
+    </div>
 </div>
-<style>.cinema-block{
-    padding:15px;
-    border:1px solid #ddd;
-    border-radius:8px;
-}</style>

@@ -1,0 +1,116 @@
+/* ===== CONTAINER ===== */
+.history-container {
+    max-width: 800px; /* Thu nhỏ chiều rộng để nhìn giống list hơn */
+    margin: 40px auto;
+    background: #1e1e2f;
+    padding: 30px;
+    border-radius: 15px;
+    color: #fff;
+}
+
+.history-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #f5c518; /* Màu vàng Layout */
+    font-weight: bold;
+}
+
+/* ===== ORDER LIST ===== */
+.order-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ===== ORDER BLOCK (THE CHỈNH) ===== */
+.order-block {
+    display: block;
+    background: #2c2c3e; /* Màu card tối */
+    border: 1px solid #3d3d5c;
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none !important; /* Bỏ gạch chân thẻ a */
+    color: inherit !important;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Hiệu ứng khi di chuột vào cả khối */
+.order-block:hover {
+    background: #35354d;
+    transform: translateY(-5px);
+    border-color: #f5c518;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* Header của Block */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #555;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.order-id {
+    font-weight: bold;
+    color: #f5c518;
+    font-size: 1.1rem;
+}
+
+.order-date {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* Body của Block */
+.order-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.order-price .label {
+    color: #ccc;
+    font-size: 0.95rem;
+}
+
+.order-price .value {
+    display: block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+/* Footer (Nút giả) */
+.order-footer {
+    text-align: right;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    color: #f5c518;
+    font-weight: 500;
+}
+
+/* ===== BADGE ===== */
+.badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.bg-secondary { background: #6c757d !important; color: #fff !important; }
+.bg-warning { background: #ffc107 !important; color: #fff !important; }
+.bg-success { background: #28a745 !important; color: #fff !important; }
+.bg-danger { background: #dc3545 !important; color: #fff !important; }
+
+/* ===== EMPTY STATE ===== */
+.no-order {
+    text-align: center;
+    padding: 50px 20px;
+    color: #888;
+    background: #2c2c3e;
+    border-radius: 12px;
+}

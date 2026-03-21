@@ -1,54 +1,77 @@
-﻿@model IEnumerable<CinemaWeb.Models.Movie>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@model IEnumerable<CinemaWeb.Models.Movie>
 
-@if (Model != null && Model.Any())
-{
-    <div class="movie-list">
-        @foreach (var movie in Model)
+<div class="now-showing-container">
+    <div style="text-align: center;">
+        <h2>PHIM ĐANG CHIẾU</h2>
+    </div>
+
+    <div class="movie-grid-wrapper" style="position: relative">
+        @* Nút điều hướng *@
+        <button class="nav-btn prev-btn" onclick="scrollGrid(this, -1)">&#10094;</button>
+        
+        @if (Model != null && Model.Any())
         {
-            <div class="movie-card">
-                <img src="~/images/@(movie.Poster ?? "default.jpg")" />
+            <div class="movie-grid">
+                @foreach (var movie in Model)
+                {
+                    <div class="movie-card">
+                        <div class="movie-poster-wrapper">
+                            <img src="~/images/@(movie.Poster ?? "default.jpg")" alt="@movie.MovieName" />
+                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(255, 0, 0, 0.8); color: white; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold;">
+                                ĐANG CHIẾU
+                            </div>
+                        </div>
 
-                <h4>@movie.MovieName</h4>
+                        <div class="movie-info">
+                            <h4>@movie.MovieName</h4>
+                            
+                            <div class="movie-meta" style="color: #ccc; font-size: 0.85rem; margin-bottom: 15px;">
+                                <span>@movie.Category</span> • <span>@movie.Duration phút</span>
+                            </div>
 
-                <!-- Nút đặt vé -->
-                <a asp-controller="Movie"
-                   asp-action="Detail"
-                   asp-route-id="@movie.IdMovie"
-                   class="btn-book">
-                    Đặt vé
-                </a>
+                            @* LOGIC KIỂM TRA ĐĂNG NHẬP QUA SESSION *@
+                            @if (HttpContextAccessor.HttpContext.Session.GetInt32("UserId") != null)
+                            {
+                                <a asp-controller="Movie" asp-action="Detail" asp-route-id="@movie.IdMovie" class="btn-booking text-center">
+                                    <i class="fas fa-ticket-alt"></i> ĐẶT VÉ NGAY
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Auth" asp-action="Login" 
+                                   asp-route-returnUrl="@Url.Action("Detail", "Movie", new { id = movie.IdMovie })"
+                                   class="btn-booking text-center" 
+                                   onclick="return confirm('Vui lòng đăng nhập để đặt vé!')">
+                                    <i class="fas fa-ticket-alt"></i> ĐẶT VÉ NGAY
+                                </a>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
-        }
-    </div>
 
-    <div class="pagination">
-        @for (int i = 1; i <= (ViewBag.TotalPages ?? 0); i++)
+            @* Phân trang (Chỉ hiện nếu không phải Slider vô tận hoặc theo ý đồ của bạn) *@
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="pagination-container" style="text-align: center; margin-top: 40px;">
+                    @for (int i = 1; i <= (ViewBag.TotalPages ?? 0); i++)
+                    {
+                        <a asp-action="NowShowingPreview" 
+                           asp-route-page="@i" 
+                           style="display: inline-block; padding: 8px 15px; margin: 0 5px; border: 1px solid #ffeb3b; border-radius: 5px; text-decoration: none; color: @(i == ViewBag.CurrentPage ? "#000" : "#ffeb3b"); background: @(i == ViewBag.CurrentPage ? "#ffeb3b" : "transparent"); font-weight: bold;">
+                            @i
+                        </a>
+                    }
+                </div>
+            }
+        }
+        else
         {
-            <a asp-action="NowShowingPreview"
-               asp-route-page="@i"
-               class="@(i == ViewBag.CurrentPage ? "active" : "")">
-                @i
-            </a>
+            <p style="text-align: center; color: #ccc; width: 100%;">Hiện chưa có phim đang chiếu.</p>
         }
+
+        <button class="nav-btn next-btn" onclick="scrollGrid(this, 1)">&#10095;</button>
     </div>
-}
-else
-{
-    <p>Hiện chưa có phim đang chiếu</p>
-}
-
-<style>.btn-book{
-    display:inline-block;
-    margin-top:8px;
-    padding:8px 12px;
-    background:#f5b50a;
-    color:#000;
-    font-weight:bold;
-    text-decoration:none;
-    border-radius:5px;
-}
-
-.btn-book:hover{
-    background:#ffcc33;
-}
-</style>
+</div>

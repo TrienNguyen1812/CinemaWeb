@@ -1,147 +1,177 @@
-﻿@{
+﻿@model CinemaWeb.Models.DashboardViewModel
+
+@{
     ViewData["Title"] = "Dashboard";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 
 <div class="container-fluid">
-    <h3 class="fw-bold mb-4">Dashboard Overview</h3>
+    <h3 class="fw-bold mb-4">Tổng quan hệ thống</h3>
 
-    <!-- Top Summary Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
-            <div class="card text-center p-3">
-                <h6 class="text-muted">Total Revenue</h6>
-                <h3 class="fw-bold text-primary">₫256M</h3>
-                <small class="text-success">+12% vs last month</small>
+            <div class="card text-center p-3 shadow-sm border-0">
+                <h6 class="text-muted">Tổng doanh thu</h6>
+                <h3 class="fw-bold text-primary">@Model.TotalRevenue.ToString("N0")₫</h3>
+                <small class="text-success"><i class="fas fa-arrow-up"></i> +12% so với tháng trước</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center p-3">
-                <h6 class="text-muted">Sales Analytics</h6>
-                <h3 class="fw-bold text-success">8,451</h3>
-                <small class="text-muted">Completed Orders</small>
+            <div class="card text-center p-3 shadow-sm border-0">
+                <h6 class="text-muted">Tổng đơn hàng</h6>
+                <h3 class="fw-bold text-success">@Model.TotalOrders.ToString("N0")</h3>
+                <small class="text-muted">Đã hoàn tất thanh toán</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center p-3">
-                <h6 class="text-muted">Total Customers</h6>
-                <h3 class="fw-bold text-warning">4,569</h3>
-                <small class="text-muted">Active Customers</small>
+            <div class="card text-center p-3 shadow-sm border-0">
+                <h6 class="text-muted">Tổng khách hàng</h6>
+                <h3 class="fw-bold text-warning">@Model.TotalCustomers.ToString("N0")</h3>
+                <small class="text-muted">Tài khoản đang hoạt động</small>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card text-center p-3">
-                <h6 class="text-muted">Daily Sales</h6>
-                <h3 class="fw-bold text-info">158</h3>
-                <small class="text-muted">Today</small>
+            <div class="card text-center p-3 shadow-sm border-0">
+                <h6 class="text-muted">Vé bán hôm nay</h6>
+                <h3 class="fw-bold text-info">@Model.DailySales.ToString("N0")</h3>
+                <small class="text-muted">Cập nhật mới nhất</small>
             </div>
         </div>
     </div>
 
-    <!-- Middle Charts -->
     <div class="row g-3 mb-4">
         <div class="col-md-6">
-            <div class="card p-4">
-                <h6 class="fw-bold mb-3">In-Store Sales</h6>
+            <div class="card p-4 shadow-sm border-0">
+                <h6 class="fw-bold mb-3">Số lượng vé bán (Tháng)</h6>
                 <canvas id="barChart"></canvas>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card p-4">
-                <h6 class="fw-bold mb-3">Your Revenue</h6>
+            <div class="card p-4 shadow-sm border-0">
+                <h6 class="fw-bold mb-3">Biến động doanh thu (Tháng)</h6>
                 <canvas id="lineChart"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Lists -->
     <div class="row g-3">
         <div class="col-md-4">
-            <div class="card p-3">
-                <h6 class="fw-bold mb-3">Top Sellers</h6>
+            <div class="card p-3 shadow-sm border-0">
+                <h6 class="fw-bold mb-3">Khách hàng thân thiết</h6>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item d-flex align-items-center">
-                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
-                        <div><strong>Nguyễn Văn A</strong><br><small>10.5M ₫</small></div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center">
-                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
-                        <div><strong>Trần Thị B</strong><br><small>8.9M ₫</small></div>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center">
-                        @* <img src="https://via.placeholder.com/40" class="rounded-circle me-2" /> *@
-                        <div><strong>Phạm Hữu C</strong><br><small>7.4M ₫</small></div>
-                    </li>
+                    @if (Model.TopCustomers != null && Model.TopCustomers.Any())
+                    {
+                        foreach (var customer in Model.TopCustomers)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                <div>
+                                    <strong>@customer.CustomerName</strong><br>
+                                    <small class="text-muted">@customer.TicketCount vé đã mua</small>
+                                </div>
+                                <span class="badge bg-primary rounded-pill">@customer.TotalSpent.ToString("N0")₫</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <li class="list-group-item text-center text-muted">Chưa có dữ liệu</li>
+                    }
                 </ul>
             </div>
         </div>
 
         <div class="col-md-8">
-            <div class="card p-3">
-                <h6 class="fw-bold mb-3">Latest Projects</h6>
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Project</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Gaming PC Build</td>
-                            <td>01/09/2025</td>
-                            <td>15/09/2025</td>
-                            <td><span class="badge bg-success">Completed</span></td>
-                        </tr>
-                        <tr>
-                            <td>SSD Upgrade</td>
-                            <td>05/10/2025</td>
-                            <td>12/10/2025</td>
-                            <td><span class="badge bg-info">Ongoing</span></td>
-                        </tr>
-                        <tr>
-                            <td>Workstation Setup</td>
-                            <td>20/10/2025</td>
-                            <td>28/10/2025</td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="card p-3 shadow-sm border-0">
+                <h6 class="fw-bold mb-3">Giao dịch đặt vé mới nhất</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã Đơn</th>
+                                <th>Khách hàng / Phim</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                            {
+                                foreach (var order in Model.RecentOrders)
+                                {
+                                    <tr>
+                                        <td><strong>#@order.OrderId</strong></td>
+                                        <td>@order.MovieName</td>
+                                        <td>@order.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>@order.TotalPrice.ToString("N0")₫</td>
+                                        <td>
+                                            @if (order.Status == "Completed" || order.Status == "Paid")
+                                            {
+                                                <span class="badge bg-success">Đã thanh toán</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning text-dark">@order.Status</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">Không có đơn hàng nào gần đây</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // --- Bar Chart ---
+        // Lấy dữ liệu từ Model để đưa vào Javascript
+        const chartLabels = @Html.Raw(Json.Serialize(Model.ChartLabels));
+        const revenueData = @Html.Raw(Json.Serialize(Model.RevenueData));
+        const orderData = @Html.Raw(Json.Serialize(Model.OrderData));
+
+        // --- Bar Chart (Số lượng vé) ---
         new Chart(document.getElementById('barChart'), {
             type: 'bar',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: chartLabels,
                 datasets: [{
-                    label: 'In-Store Sales',
-                    data: [12, 19, 8, 15, 20, 25],
-                    backgroundColor: 'rgba(54,162,235,0.6)',
-                    borderRadius: 6
+                    label: 'Số đơn hàng',
+                    data: orderData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
                 }]
             },
-            options: { scales: { y: { beginAtZero: true } } }
+            options: { 
+                scales: { y: { beginAtZero: true } },
+                plugins: { legend: { display: false } }
+            }
         });
 
-        // --- Line Chart ---
+        // --- Line Chart (Doanh thu) ---
         new Chart(document.getElementById('lineChart'), {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: chartLabels,
                 datasets: [{
-                    label: 'Revenue',
-                    data: [5, 7, 9, 14, 10, 17],
-                    fill: false,
+                    label: 'Doanh thu (₫)',
+                    data: revenueData,
+                    fill: true,
+                    backgroundColor: 'rgba(75, 192, 192, 0.1)',
                     borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.3
+                    tension: 0.3,
+                    pointRadius: 4
                 }]
             },
             options: {
