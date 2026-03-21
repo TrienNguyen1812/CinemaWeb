@@ -24,6 +24,11 @@ namespace CinemaWeb.Models
 
         public ScreeningRoom? ScreeningRoom { get; set; }
 
+        [Required]
+        [ForeignKey("Cinema")]
+        public int IdCinema { get; set; }
+
+        public Cinema? Cinema { get; set; }
         public ICollection<Ticket>? Tickets { get; set; }
     }
 }
