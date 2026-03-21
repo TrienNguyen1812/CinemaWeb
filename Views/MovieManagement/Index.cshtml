@@ -16,6 +16,7 @@
             <th>Tên phim</th>
             <th>Thể loại</th>
             <th>Thời lượng</th>
+            <th>Trạng thái</th>
             <th>Hành động</th>
         </tr>
 
@@ -23,11 +24,26 @@
         {
             <tr>
                 <td>
-                    <img src="~/@item.Poster" width="80" />
+                    <img src="~/images/@item.Poster" width="80" />
                 </td>
                 <td>@item.MovieName</td>
                 <td>@item.Category</td>
                 <td>@item.Duration phút</td>
+                <td>
+                    @if (item.Status == MovieStatus.Showing)
+                    {
+                        <span class="badge bg-success">Đang chiếu</span>
+                    }
+                    else if (item.Status == MovieStatus.ComingSoon)
+                    {
+                        <span class="badge bg-warning">Sắp chiếu</span>
+                    }
+                    else if (item.Status == MovieStatus.Ended)
+                    {
+                        <span class="badge bg-secondary">Ngừng chiếu</span>
+                    }
+                </td>
+
                 <td>
                     <a asp-action="Details" asp-route-id="@item.IdMovie" class="btn btn-info btn-sm btn-action">Xem</a>
                     <a asp-action="Edit" asp-route-id="@item.IdMovie" class="btn btn-warning btn-sm btn-action">Sửa</a>

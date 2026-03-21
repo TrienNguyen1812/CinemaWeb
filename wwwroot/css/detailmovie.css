@@ -186,3 +186,48 @@
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(245, 197, 24, 0.2);
 }
+/* --- TRẠNG THÁI PHIM --- */
+.status-badge {
+    margin-bottom: 15px;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.5px;
+}
+
+/* Màu cho Đang chiếu (Đỏ rực rỡ) */
+.status-now {
+    background: rgba(220, 53, 69, 0.2);
+    color: #ff4d5e;
+    border: 1px solid rgba(220, 53, 69, 0.5);
+    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+}
+
+/* Màu cho Sắp chiếu (Xanh dương hoặc Cam) */
+.status-soon {
+    background: rgba(13, 110, 253, 0.2);
+    color: #3d8bff;
+    border: 1px solid rgba(13, 110, 253, 0.5);
+}
+
+/* Animation nhẹ cho badge Đang chiếu để thu hút sự chú ý */
+.status-now i {
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@media (max-width: 768px) {
+    .movie-meta .d-flex {
+        justify-content: center;
+    }
+}

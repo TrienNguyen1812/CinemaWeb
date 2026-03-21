@@ -242,7 +242,7 @@ document.addEventListener("DOMContentLoaded", function () {
             div.classList.add("dropdown-item");
 
             div.innerHTML = `
-                <img src="/${item.poster}" />
+                <img src="/images/${item.poster}" />
                 <span class="movie-name">${item.movieName}</span>
                 ${isHistory ? `<span class="delete-btn" data-id="${item.idMovie}">✖</span>` : ''}
             `;
@@ -284,6 +284,43 @@ window.addEventListener("pageshow", function (event) {
         resultBox.style.display = "none";
     }
 });
+
+function scrollGrid(btn, direction) {
+    const wrapper = btn.closest('.movie-grid-wrapper');
+    const grid = wrapper.querySelector('.movie-grid');
+    const cards = grid.querySelectorAll('.movie-card');
+    
+    if (cards.length < 2) return; // Không đủ phim thì không lặp
+
+    const cardWidth = cards[0].offsetWidth + 20; // 20 là gap
+
+    if (direction === 1) {
+        // ẤN QUA PHẢI: Cuộn sang phải, sau đó lấy phim đầu tiên bỏ xuống cuối
+        grid.scrollTo({
+            left: cardWidth,
+            behavior: 'smooth'
+        });
+
+        // Đợi hiệu ứng cuộn xong (khoảng 300ms) thì di chuyển phần tử thật
+        setTimeout(() => {
+            grid.appendChild(grid.firstElementChild); // Bốc thằng đầu bỏ xuống cuối
+            grid.scrollTo({ left: 0, behavior: 'auto' }); // Reset vị trí cuộn ngầm
+        }, 300);
+
+    } else {
+        // ẤN QUA TRÁI: Lấy thằng cuối bỏ lên đầu trước, sau đó mới cuộn
+        grid.prepend(grid.lastElementChild); // Bốc thằng cuối bỏ lên đầu
+        grid.scrollTo({ left: cardWidth, behavior: 'auto' }); // Nhảy ngầm tới vị trí thứ 2
+        
+        // Cuộn mượt về vị trí đầu (thằng vừa được thêm)
+        setTimeout(() => {
+            grid.scrollTo({
+                left: 0,
+                behavior: 'smooth'
+            });
+        }, 10);
+    }
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

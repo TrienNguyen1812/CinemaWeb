@@ -10,13 +10,26 @@
             <div class="row align-items-start">
                 <div class="col-md-3 col-sm-5 col-6 mx-auto mx-md-0 mb-4 mb-md-0">
                     <div class="poster-container">
-                        <img src="~/@Model.Poster" class="main-poster" alt="@Model.MovieName" />
-                        <div class="age-badge">@Model.Age+</div>
+                        <img src="~/images/@Model.Poster" class="main-poster" alt="@Model.MovieName" />
+                        <div class="age-badge">@Model.Age</div>
                     </div>
                 </div>
 
                 <div class="col-md-9 col-sm-12 movie-meta">
                     <h1 class="movie-title">@Model.MovieName</h1>
+
+                    @if (Model.Status == MovieStatus.Showing)
+                    {
+                        <span class="status-badge status-now">
+                            <i class="fas fa-play-circle"></i> Đang chiếu
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="status-badge status-soon">
+                            <i class="fas fa-calendar-check"></i> Sắp chiếu
+                        </span>
+                    }
                     
                     <div class="meta-tags">
                         <span class="tag"><i class="fas fa-film"></i> @Model.Category</span>
@@ -33,7 +46,7 @@
                         <h5>Trailer</h5>
                         <div class="video-container">
                             <video controls>
-                                <source src="~/@Model.Trailer" type="video/mp4">
+                                <source src="~/trailers/@Model.Trailer" type="video/mp4">
                                 Trình duyệt của bạn không hỗ trợ video.
                             </video>
                         </div>

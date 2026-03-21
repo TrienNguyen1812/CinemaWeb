@@ -32,6 +32,13 @@
         <label>Độ tuổi</label>
         <input asp-for="Age" />
 
+        <label>Trạng thái</label>
+        <select asp-for="Status" class="form-control">
+            <option value="@MovieStatus.Showing">Đang chiếu</option>
+            <option value="@MovieStatus.ComingSoon">Sắp chiếu</option>
+            <option value="@MovieStatus.Ended">Ngừng chiếu</option> 
+        </select>
+
         <button type="submit">💾 Lưu</button>
     </form>
 </div>

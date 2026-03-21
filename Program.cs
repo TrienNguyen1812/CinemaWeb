@@ -28,6 +28,9 @@ builder.Services.AddScoped<CinemaWeb.Services.Notifications.INotificationObserve
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSession();
 
+// Đăng ký Background Service
+builder.Services.AddHostedService<MovieStatusWorker>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

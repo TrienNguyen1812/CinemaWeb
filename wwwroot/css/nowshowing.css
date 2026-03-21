@@ -4,6 +4,7 @@
     padding: 40px;
     max-width: 1200px;
     margin: 0 auto;
+    position: relative;
 }
 
 .now-showing-container h2 {
@@ -19,12 +20,65 @@
 }
 
 /* Sử dụng Grid để tự động chia cột */
-.movie-grid {
+.movie-grid-detail {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 30px;
     justify-content: center;
 }
+/* Container bọc ngoài Grid */
+.movie-grid-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Chỉnh lại movie-grid để nó dàn hàng ngang */
+.movie-grid {
+    display: flex !important; /* Thay vì dùng grid, dùng flex để kéo ngang */
+    flex-direction: row !important;
+    flex-wrap: nowrap !important; /* Không xuống hàng */
+    overflow: hidden;
+    scroll-behavior: auto;
+    gap: 20px;
+    padding: 20px 5px;
+    scrollbar-width: none; /* Ẩn thanh cuộn trên Firefox */
+    scroll-snap-type: x mandatory; /* Hít vào từng card phim */
+    -ms-overflow-style: none;
+}
+
+.movie-grid::-webkit-scrollbar {
+    display: none; /* Ẩn thanh cuộn trên Chrome/Safari */
+}
+
+.movie-card {
+    flex: 0 0 280px; /* Cố định độ rộng mỗi card phim là 280px */
+    max-width: 280px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    transition: transform 0.3s ease;
+}
+
+/* Nút bấm qua lại */
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(245, 197, 24, 0.8);
+    color: #000;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 100;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.nav-btn:hover { background: #f5c518; scale: 1.1; }
+.prev-btn { left: -20px; }
+.next-btn { right: -20px; }
 
 .movie-card {
     background: #1b1f3a;

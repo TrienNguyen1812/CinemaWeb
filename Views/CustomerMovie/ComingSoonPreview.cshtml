@@ -1,0 +1,49 @@
+@model IEnumerable<CinemaWeb.Models.Movie>
+
+<div class="now-showing-container">
+    @* Tiêu đề đồng bộ style *@
+    <div style="text-align: center;">
+        <h2 style="border-bottom: 2px solid #ff9800;">PHIM SẮP CHIẾU</h2>
+    </div>
+
+    <div class="movie-grid-wrapper" style="position: relative">
+        <button class="nav-btn prev-btn" onclick="scrollGrid(this, -1)">&#10094;</button>
+            @if (Model != null && Model.Any())
+            {
+                <div class="movie-grid">
+                    @foreach (var movie in Model)
+                    {
+                        <div class="movie-card">
+                            <div class="movie-poster-wrapper">
+                                @* Poster phim *@
+                                <img src="~/images/@(movie.Poster ?? "default.jpg")" alt="@movie.MovieName" />
+                                
+                                @* Nhãn trạng thái màu Cam/Vàng cho Sắp chiếu *@
+                                <div style="position: absolute; top: 10px; left: 10px; background: rgba(255, 152, 0, 0.9); color: black; padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; font-weight: bold;">
+                                    DỰ KIẾN: @movie.ReleaseDate.ToString("dd/MM")
+                                </div>
+                            </div>
+
+                            <div class="movie-info">
+                                <h4>@movie.MovieName</h4>
+                                
+                                <div class="movie-meta" style="color: #ccc; font-size: 0.85rem; margin-bottom: 15px;">
+                                    <span>@movie.Category</span> • <span>@movie.Duration phút</span>
+                                </div>
+
+                                @* Nút Xem chi tiết (đổi màu khác một chút để phân biệt với Đặt vé) *@
+                                <a asp-controller="Movie" asp-action="Detail" asp-route-id="@movie.IdMovie" class="btn-booking text-center" style="background: linear-gradient(90deg, #03a9f4, #00bcd4); color: white;">
+                                    <i class="fas fa-info-circle"></i> XEM CHI TIẾT
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p style="text-align: center; color: #ccc;">Hiện chưa có phim sắp chiếu.</p>
+            }
+        <button class="nav-btn next-btn" onclick="scrollGrid(this, 1)">&#10095;</button>
+    </div>
+</div>
