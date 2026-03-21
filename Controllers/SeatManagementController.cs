@@ -78,23 +78,22 @@ namespace CinemaWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Seat seat)
         {
-            // ❗ Check thiếu thuộc tính
-            if (string.IsNullOrEmpty(seat.SeatRow) ||
-                string.IsNullOrEmpty(seat.SeatNumber) ||
+            // Logic kiểm tra dữ liệu
+            if (string.IsNullOrEmpty(seat.SeatRow) || 
+                string.IsNullOrEmpty(seat.SeatNumber) || 
                 string.IsNullOrEmpty(seat.TypeSeat))
             {
                 ModelState.AddModelError("", "Vui lòng nhập đầy đủ thông tin ghế");
             }
 
-            // ❗ Check trùng ghế trong cùng rạp
             bool isExist = await _context.Seats.AnyAsync(s =>
-                s.IdRoom == seat.IdRoom &&
-                s.SeatRow == seat.SeatRow &&
-                s.SeatNumber == seat.SeatNumber);
+            s.IdRoom == seat.IdRoom && // Phải khớp mã phòng
+            s.SeatRow == seat.SeatRow &&
+            s.SeatNumber == seat.SeatNumber);
 
             if (isExist)
             {
-                ModelState.AddModelError("", "Ghế này đã tồn tại trong rạp");
+                ModelState.AddModelError("", $"Ghế {seat.SeatRow}{seat.SeatNumber} đã tồn tại trong phòng này.");
             }
 
             if (ModelState.IsValid)
@@ -104,7 +103,7 @@ namespace CinemaWeb.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Cinemas = _context.Cinemas.ToList();
+            ViewBag.Rooms = _context.ScreeningRooms.ToList(); 
             return View(seat);
         }
 
@@ -116,7 +115,8 @@ namespace CinemaWeb.Controllers
             var seat = await _context.Seats.FindAsync(id);
             if (seat == null) return NotFound();
 
-            ViewBag.Cinemas = _context.Cinemas.ToList();
+            // ❗ SỬA TẠI ĐÂY: Dùng ViewBag.Rooms cho đồng bộ với View
+            ViewBag.Rooms = _context.ScreeningRooms.ToList(); 
             return View(seat);
         }
 
@@ -136,7 +136,7 @@ namespace CinemaWeb.Controllers
 
             if (isExist)
             {
-                ModelState.AddModelError("", "Ghế này đã tồn tại trong rạp");
+                ModelState.AddModelError("", $"Ghế {seat.SeatRow}{seat.SeatNumber} đã tồn tại trong phòng này.");
             }
 
             if (ModelState.IsValid)
@@ -145,17 +145,16 @@ namespace CinemaWeb.Controllers
                 {
                     _context.Update(seat);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Seats.Any(e => e.IdSeat == seat.IdSeat))
-                        return NotFound();
+                    if (!_context.Seats.Any(e => e.IdSeat == seat.IdSeat)) return NotFound();
                     else throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Cinemas = _context.Cinemas.ToList();
+            ViewBag.Rooms = _context.ScreeningRooms.ToList();
             return View(seat);
         }
 

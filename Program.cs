@@ -17,6 +17,8 @@ builder.Services.AddDbContext<DbContexts>(options =>
 );
 
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<CreateOrderCommandHandler>();
 
 // Observer pattern services for notification
