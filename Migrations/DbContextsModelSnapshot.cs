@@ -268,9 +268,6 @@ namespace CinemaWeb.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSeat"), 1L, 1);
 
-                    b.Property<int>("IdCinema")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdRoom")
                         .HasColumnType("int");
 
@@ -287,8 +284,6 @@ namespace CinemaWeb.Migrations
                         .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdSeat");
-
-                    b.HasIndex("IdCinema");
 
                     b.HasIndex("IdRoom");
 
@@ -459,19 +454,11 @@ namespace CinemaWeb.Migrations
 
             modelBuilder.Entity("CinemaWeb.Models.Seat", b =>
                 {
-                    b.HasOne("CinemaWeb.Models.Cinema", "Cinema")
-                        .WithMany("Seats")
-                        .HasForeignKey("IdCinema")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("CinemaWeb.Models.ScreeningRoom", "ScreeningRoom")
                         .WithMany("Seats")
                         .HasForeignKey("IdRoom")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Cinema");
 
                     b.Navigation("ScreeningRoom");
                 });
@@ -525,8 +512,6 @@ namespace CinemaWeb.Migrations
             modelBuilder.Entity("CinemaWeb.Models.Cinema", b =>
                 {
                     b.Navigation("ScreeningRooms");
-
-                    b.Navigation("Seats");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Combo", b =>

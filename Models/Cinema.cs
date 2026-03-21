@@ -16,6 +16,5 @@ namespace CinemaWeb.Models
         public string Address { get; set; }
 
         public ICollection<ScreeningRoom>? ScreeningRooms { get; set; }
-        public ICollection<Seat>? Seats { get; set; }
     }
 }

@@ -4,7 +4,7 @@
 
 namespace CinemaWeb.Migrations
 {
-    public partial class FixRelationshipManually : Migration
+    public partial class SyncStateManual : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
