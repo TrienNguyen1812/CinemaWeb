@@ -101,6 +101,7 @@
     display: inline-block;
 }
 
+.bg-secondary { background: #6c757d !important; color: #fff !important; }
 .bg-warning { background: #ffc107 !important; color: #fff !important; }
 .bg-success { background: #28a745 !important; color: #fff !important; }
 .bg-danger { background: #dc3545 !important; color: #fff !important; }

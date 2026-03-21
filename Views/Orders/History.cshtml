@@ -33,7 +33,11 @@
                         </div>
                         
                         <div class="order-status">
-                            @if (item.Status == PaymentConstants.OrderPending)
+                            @if (item.Status == PaymentConstants.OrderDelay)
+                            {
+                                <span class="badge bg-secondary">Chờ xử lý</span>
+                            }
+                            else if (item.Status == PaymentConstants.OrderPending)
                             {
                                 <span class="badge bg-warning">Chờ thanh toán</span>
                             }

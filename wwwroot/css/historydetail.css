@@ -148,6 +148,7 @@
     text-transform: uppercase;
 }
 
+.order-badge.delay { background: #6c757d; color: #fff; }
 .order-badge.paid { background: #28a745; color: #fff; }
 .order-badge.pending { background: #ffc107; color: #fff; }
 .order-badge.cancelled { background: #dc3545; color: #fff; }

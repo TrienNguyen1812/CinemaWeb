@@ -156,7 +156,7 @@ namespace CinemaWeb.Controllers
             if (order == null) return NotFound();
 
             // 👉 nếu chưa thanh toán → quay lại checkout
-            if (order.Status == "Pending")
+            if (order.Status == PaymentConstants.OrderDelay)
             {
                 return RedirectToAction("Checkout", "Payment", new { orderId = id });
             }

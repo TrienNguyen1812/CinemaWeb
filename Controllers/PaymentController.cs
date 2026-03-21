@@ -34,12 +34,12 @@ namespace CinemaWeb.Controllers
         public IActionResult Checkout(IFormCollection form)
         {
             var expiredOrders = _context.Orders
-                .Where(o => o.Status == "Chờ thanh toán" && o.ExpiredAt < DateTime.Now)
+                .Where(o => o.Status == PaymentConstants.OrderDelay && o.ExpiredAt < DateTime.Now)
                 .ToList();
 
             foreach (var o in expiredOrders)
             {
-                o.Status = "Đã hủy";
+                o.Status = PaymentConstants.OrderCancelled;
             }
 
             _context.SaveChanges();
@@ -106,7 +106,7 @@ namespace CinemaWeb.Controllers
 
             if (order.ExpiredAt < DateTime.Now)
             {
-                order.Status = "Đã hủy";
+                order.Status = PaymentConstants.OrderCancelled;
                 _context.SaveChanges();
 
                 return RedirectToAction("Index", "Home");
@@ -170,12 +170,12 @@ namespace CinemaWeb.Controllers
 
             if (order == null) return NotFound();
 
-            if (order.Status != "Chờ thanh toán")
+            if (order.Status != PaymentConstants.OrderDelay)
                 return RedirectToAction("Index", "Home");
 
             if (order.ExpiredAt < DateTime.Now)
             {
-                order.Status = "Đã hủy";
+                order.Status = PaymentConstants.OrderCancelled;
                 _context.SaveChanges();
                 return RedirectToAction("Index", "Home");
             }
@@ -239,7 +239,7 @@ namespace CinemaWeb.Controllers
 
             if (order.ExpiredAt < DateTime.Now)
             {
-                order.Status = "Đã hủy";
+                order.Status = PaymentConstants.OrderCancelled;
                 _context.SaveChanges();
 
                 return BadRequest("Đơn đã hết hạn");

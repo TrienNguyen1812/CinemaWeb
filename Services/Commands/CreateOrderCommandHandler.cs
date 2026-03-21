@@ -34,7 +34,7 @@ namespace CinemaWeb.Services.Commands
             {
                 OrderTime = DateTime.Now,
                 ExpiredAt = DateTime.Now.AddMinutes(15), // Đặt thời gian hết hạn sau 15 phút
-                Status = "Pending",
+                Status = PaymentConstants.OrderDelay,
                 IdUser = command.IdUser,
                 TotalPrice = ticketTotal + comboTotal
             };
