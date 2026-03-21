@@ -34,6 +34,7 @@ namespace CinemaWeb.Controllers
                 return View();
             }
 
+            HttpContext.Session.SetString("UserId", user.IdUser.ToString());
             HttpContext.Session.SetString("UserName", user.FullName);
             HttpContext.Session.SetString("Role", user.Role);
 
