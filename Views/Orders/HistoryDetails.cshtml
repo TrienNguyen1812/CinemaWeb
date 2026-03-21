@@ -7,7 +7,18 @@
     <div class="detail-card">
         <div class="detail-header">
             <h2><i class="fas fa-ticket-alt"></i> Chi tiết đơn hàng</h2>
-            <span class="order-badge @Model.Status.ToLower()">@Model.Status</span>
+            @{
+                // Map trạng thái tiếng Việt sang tên class CSS tiếng Anh
+                string statusClass = Model.Status switch
+                {
+                    "Đã thanh toán" => "paid",
+                    "Chờ thanh toán" => "pending",
+                    "Đã hủy" => "cancelled",
+                    _ => "default"
+                };
+            }
+
+            <span class="order-badge @statusClass">@Model.Status</span>
         </div>
 
         <div class="detail-body">

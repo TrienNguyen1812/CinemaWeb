@@ -33,15 +33,15 @@
                         </div>
                         
                         <div class="order-status">
-                            @if (item.Status == "Chờ thanh toán")
+                            @if (item.Status == PaymentConstants.OrderPending)
                             {
-                                <span class="badge bg-warning">Chờ thanh toán</span>
+                                <span class="badge bg-warning">Chờ thanh toán</span>
                             }
-                            else if (item.Status == "Đã thanh toán")
+                            else if (item.Status == PaymentConstants.OrderPaid)
                             {
                                 <span class="badge bg-success">Đã thanh toán</span>
                             }
-                            else if (item.Status == "Đã hủy")
+                            else if (item.Status == PaymentConstants.OrderCancelled)
                             {
                                 <span class="badge bg-danger">Đã huỷ</span>
                             }

@@ -1,24 +1,51 @@
-﻿@model IEnumerable<CinemaWeb.Models.Movie>
+﻿@using Microsoft.EntityFrameworkCore.Metadata.Internal
+@model IEnumerable<CinemaWeb.Models.Movie>
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
 @{
+    ViewData["Title"] = "Phim đang chiếu";
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
 }
 
-<h2>TẤT CẢ PHIM ĐANG CHIẾU</h2>
+<div class="now-showing-container">
+    <div class="text-center">
+        <h2>TẤT CẢ PHIM ĐANG CHIẾU</h2>
+    </div>
 
-<div class="movie-list">
-    @foreach (var movie in Model)
-    {
-        <div class="movie-card">
-            <img src="~/@movie.Poster" alt="@movie.MovieName" />
+    <div class="movie-grid">
+        @foreach (var movie in Model)
+        {
+            <div class="movie-card">
+                <div class="movie-poster-wrapper">
+                    <img src="~/@movie.Poster" alt="@movie.MovieName" />
+                </div>
 
-            <h4>@movie.MovieName</h4>
+                <div class="movie-info">
+                    <h4>@movie.MovieName</h4>
 
-            <a asp-controller="Movie"
-               asp-action="Detail"
-               asp-route-id="@movie.IdMovie"
-               class="btn">
-                Đặt vé
-            </a>
-        </div>
-    }
+                    @* <a asp-controller="Movie"
+                       asp-action="Detail"
+                       asp-route-id="@movie.IdMovie"
+                       class="btn-booking text-center">
+                        <i class="fas fa-ticket-alt"></i> Đặt vé
+                    </a> *@
+                    @if (HttpContextAccessor.HttpContext.Session.GetInt32("UserId") != null)
+                    {
+                        <a asp-controller="Movie" asp-action="Detail" asp-route-id="@movie.IdMovie" class="btn-booking text-center">
+                            <i class="fas fa-ticket-alt"></i> Đặt vé
+                        </a>
+                    }
+                    else
+                    {
+                        @* Nếu chưa đăng nhập, bấm vào sẽ nhảy sang trang Login *@
+                        <a asp-controller="Auth" asp-action="Login" class="btn-booking text-center" 
+                        onclick="alert('Vui lòng đăng nhập để đặt vé!')">
+                            <i class="fas fa-ticket-alt"></i> Đặt vé
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 </div>

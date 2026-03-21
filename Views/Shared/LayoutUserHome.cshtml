@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="~/css/selectseat.css" />
     <link rel="stylesheet" href="~/css/selectcombo.css" />
     <link rel="stylesheet" href="~/css/success.css" />
+    <link rel="stylesheet" href="~/css/nowshowing.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 @{
     var session = HttpContextAccessor.HttpContext?.Session;
@@ -136,32 +137,53 @@ document.addEventListener("DOMContentLoaded", function () {
     const userDropdown = document.getElementById("userDropdown");
     const userMenu = document.querySelector(".user-menu");
 
-    // ===== SEARCH CLICK =====
-    input.addEventListener("click", function (e) {
-        e.stopPropagation();
+    // Hàm gọi API tìm kiếm
+    async function fetchSearch(keyword) {
+        if (keyword.length > 0) {
+            const res = await fetch(`/Movie/Search?keyword=${keyword}`);
+            const data = await res.json();
+            showDropdown(data, false); // false = không phải lịch sử
+        } else {
+            fetchHistory(); // Nếu xóa hết chữ thì quay về hiện lịch sử
+        }
+    }
 
-        // 🔥 đóng user dropdown
-        if (userDropdown) userDropdown.style.display = "none";
-
+    // Hàm gọi API lịch sử
+    async function fetchHistory() {
         if (!isLoggedIn) {
-            resultBox.innerHTML = "";
+            resultBox.style.display = "none";
             return;
         }
+        const res = await fetch("/Movie/GetHistory");
+        const data = await res.json();
+        showDropdown(data, true); // true = là lịch sử
+    }
 
-        fetch("/Movie/GetHistory")
-            .then(res => res.json())
-            .then(data => showDropdown(data));
+    // ===== SEARCH CLICK (Khi click vào thanh search) =====
+    input.addEventListener("click", function (e) {
+        e.stopPropagation();
+        if (userDropdown) userDropdown.style.display = "none";
+
+        let keyword = input.value.trim();
+        if (keyword.length > 0) {
+            // SỬA LỖI: Nếu có chữ, click vào phải hiện kết quả tìm kiếm theo chữ đó
+            fetchSearch(keyword);
+        } else {
+            // Nếu trống, hiện lịch sử
+            fetchHistory();
+        }
     });
 
-    // ===== SEARCH KEYUP =====
+    // ===== SEARCH KEYUP (Khi gõ phím) =====
     input.addEventListener("keyup", function () {
-        let keyword = input.value;
+        let keyword = input.value.trim();
 
-        if (keyword.length === 0) return;
-
-        fetch(`/Movie/Search?keyword=${keyword}`)
-            .then(res => res.json())
-            .then(data => showDropdown(data));
+        if (keyword.length > 0) {
+            fetchSearch(keyword);
+        } else {
+            // SỬA LỖI: Khi xóa hết ký tự, hiện lại lịch sử
+            fetchHistory();
+        }
     });
 
     // ===== USER TOGGLE =====
@@ -202,11 +224,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ===== RENDER =====
-    function showDropdown(data) {
+    // ===== RENDER DROPDOWN =====
+    function showDropdown(data, isHistory) {
         resultBox.innerHTML = "";
 
         if (!data || data.length === 0) {
+            // Nếu là tìm kiếm mà không ra kết quả thì ẩn, 
+            // nếu là lịch sử mà trống thì cũng ẩn
             resultBox.style.display = "none";
             return;
         }
@@ -220,26 +244,31 @@ document.addEventListener("DOMContentLoaded", function () {
             div.innerHTML = `
                 <img src="/${item.poster}" />
                 <span class="movie-name">${item.movieName}</span>
-                <span class="delete-btn" data-id="${item.idMovie}">✖</span>
+                ${isHistory ? `<span class="delete-btn" data-id="${item.idMovie}">✖</span>` : ''}
             `;
 
             div.onclick = async function (e) {
                 if (e.target.classList.contains("delete-btn")) return;
-
-                if (isLoggedIn) {
+                
+                // Chỉ lưu lịch sử khi nhấn vào phim từ kết quả tìm kiếm
+                if (isLoggedIn && !isHistory) {
                     await fetch(`/Movie/SaveHistory?movieId=${item.idMovie}`);
                 }
-
                 window.location.href = `/Movie/Detail/${item.idMovie}`;
             };
 
-            div.querySelector(".delete-btn").onclick = function (e) {
-                e.stopPropagation();
-
-                fetch(`/Movie/DeleteHistory?movieId=${item.idMovie}`)
-                    .then(() => div.remove());
-            };
-
+            if (isHistory) {
+                div.querySelector(".delete-btn").onclick = function (e) {
+                    e.stopPropagation();
+                    fetch(`/Movie/DeleteHistory?movieId=${item.idMovie}`)
+                        .then(() => {
+                            div.remove();
+                            if (resultBox.querySelectorAll(".dropdown-item").length === 0) {
+                                resultBox.style.display = "none";
+                            }
+                        });
+                };
+            }
             resultBox.appendChild(div);
         });
     }

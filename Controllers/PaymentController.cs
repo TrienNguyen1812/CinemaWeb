@@ -258,26 +258,26 @@ namespace CinemaWeb.Controllers
             if (paymentType.ToLower() == "cash")
             {
                 status = PaymentConstants.StatusPending;
-                orderStatus = "Chờ thanh toán";
+                orderStatus = PaymentConstants.OrderPending;
                 transCode = "CASH-" + DateTime.Now.Ticks;
             }
             else if (paymentType.ToLower() == "vnpay")
             {
                 status = PaymentConstants.StatusPaid;
-                orderStatus = "Đã thanh toán";
+                orderStatus = PaymentConstants.OrderPaid;
                 transCode = "LOCAL-VNPAY-" + DateTime.Now.Ticks;
             }
             else if (paymentType.ToLower() == "momo")
             {
                 // Chế độ fake Momo local
                 status = PaymentConstants.StatusPaid;
-                orderStatus = "Đã thanh toán";
+                orderStatus = PaymentConstants.OrderPaid;
                 transCode = "LOCAL-MOMO-" + DateTime.Now.Ticks;
             }
             else
             {
                 status = PaymentConstants.StatusPaid;
-                orderStatus = "Đã thanh toán";
+                orderStatus = PaymentConstants.OrderPaid;
                 transCode = "TX" + DateTime.Now.Ticks;
             }
 

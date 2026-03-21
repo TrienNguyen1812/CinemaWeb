@@ -149,7 +149,7 @@
 }
 
 .order-badge.paid { background: #28a745; color: #fff; }
-.order-badge.pending { background: #ffc107; color: #000; }
+.order-badge.pending { background: #ffc107; color: #fff; }
 .order-badge.cancelled { background: #dc3545; color: #fff; }
 
 /* Responsive */
