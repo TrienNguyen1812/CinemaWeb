@@ -29,7 +29,7 @@ public class OrderRepository : IOrderRepository
     {
         var today = DateTime.Today;
         return _context.Orders
-            .Count(o => o.OrderTime.Date == today);
+            .Count(o => o.OrderTime.Date == today && o.Status == PaymentConstants.OrderPaid);
     }
 
     // 4. Lấy doanh thu 6 tháng gần nhất để vẽ biểu đồ

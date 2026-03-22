@@ -5,16 +5,12 @@
 </section>
 
 <section class="section container">
-    <div class="d-flex justify-content-between align-items-end mb-3">
-        <h2 class="m-0" style="color:#f5c518">PHIM ĐANG CHIẾU</h2>
-    </div>
     @await Html.PartialAsync("~/Views/CustomerMovie/NowShowingPreview.cshtml", (IEnumerable<Movie>)ViewBag.NowShowing)
 </section>
 
 <hr style="border-color: rgba(255,255,255,0.1)" />
 
 <section class="section container">
-    <h2 style="color:#f5c518" class="mb-3">PHIM SẮP CHIẾU</h2>
     @await Html.PartialAsync("~/Views/CustomerMovie/ComingSoonPreview.cshtml", (IEnumerable<Movie>)ViewBag.ComingSoon)
 </section>
 

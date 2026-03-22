@@ -60,7 +60,7 @@
         <h3 class="section-title">Thông tin phim</h3>
         <div class="movie-card-sidebar">
             @if (!string.IsNullOrEmpty(Model.Poster)) {
-                <img src="~/@Model.Poster" alt="Poster" class="sidebar-poster" />
+                <img src="~/images/@Model.Poster" alt="Poster" class="sidebar-poster" />
             }
             <h4 class="text-yellow">@Model.MovieName</h4>
             <div class="sidebar-details">

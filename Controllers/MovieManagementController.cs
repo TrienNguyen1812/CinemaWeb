@@ -38,7 +38,7 @@ namespace CinemaWeb.Controllers
 
         // CREATE - POST
         [HttpPost]
-        public async Task<IActionResult> Create(Movie movie, IFormFile posterFile)
+        public async Task<IActionResult> Create(Movie movie, IFormFile posterFile, IFormFile trailerFile)
         {
             if (posterFile == null || posterFile.Length == 0)
             {
@@ -46,20 +46,35 @@ namespace CinemaWeb.Controllers
                 return View(movie);
             }
 
+            if (trailerFile == null || trailerFile.Length == 0)
+            {
+                ModelState.AddModelError("Trailer", "Trailer là bắt buộc");
+                return View(movie);
+            }
+
             // 👉 LẤY TÊN FILE GỐC
-            var fileName = Path.GetFileName(posterFile.FileName); // marvel.jpg
+            var posterFileName = Path.GetFileName(posterFile.FileName); // marvel.jpg
+            var trailerFileName = Path.GetFileName(trailerFile.FileName); // marvel_trailer.mp4
 
             // 👉 ĐƯỜNG DẪN LƯU
-            var path = Path.Combine(Directory.GetCurrentDirectory(),
-                                    "wwwroot/images", fileName);
+            var posterPath = Path.Combine(Directory.GetCurrentDirectory(),
+                                    "wwwroot/images", posterFileName);
+                var trailerPath = Path.Combine(Directory.GetCurrentDirectory(),
+                                    "wwwroot/trailers", trailerFileName);
 
-            using (var stream = new FileStream(path, FileMode.Create))
+            using (var stream = new FileStream(posterPath, FileMode.Create))
             {
                 await posterFile.CopyToAsync(stream);
             }
 
+            using (var stream = new FileStream(trailerPath, FileMode.Create))
+            {
+                await trailerFile.CopyToAsync(stream);
+            }
+
             // 👉 GÁN CHO DB
-            movie.Poster = fileName;
+            movie.Poster = posterFileName;
+            movie.Trailer = trailerFileName;
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
