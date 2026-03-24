@@ -94,7 +94,7 @@ namespace CinemaWeb.Controllers
         // UPDATE - POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Movie movie, IFormFile? posterFile)
+        public async Task<IActionResult> Edit(int id, Movie movie, IFormFile? posterFile, IFormFile? trailerFile)
         {
             if (id != movie.IdMovie) return NotFound();
 
@@ -122,6 +122,24 @@ namespace CinemaWeb.Controllers
             // 2. Kiểm tra ModelState (Xóa lỗi Poster nếu chúng ta đã có ảnh cũ)
             ModelState.Remove("posterFile"); 
             ModelState.Remove("Poster"); // Để tránh bị báo lỗi Required
+
+            if (trailerFile != null && trailerFile.Length > 0)
+            {
+                var fileName = Path.GetFileName(trailerFile.FileName);
+                var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/trailers", fileName);
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    await trailerFile.CopyToAsync(stream);
+                }
+                movie.Trailer = fileName;
+            }
+            else
+            {
+                movie.Trailer = existingMovie.Trailer;
+            }
+
+            ModelState.Remove("trailerFile");
+            ModelState.Remove("Trailer");
 
             if (ModelState.IsValid)
             {

@@ -26,7 +26,7 @@ namespace CinemaWeb.Services
                     CustomerName = u.FullName, // Hoặc u.UserName tùy Model của bạn
                     TotalSpent = u.Orders.Where(o => o.Status == PaymentConstants.OrderPaid)
                                         .Sum(o => (decimal?)o.TotalPrice) ?? 0,
-                    TicketCount = u.Orders.SelectMany(o => o.Tickets).Count()
+                    TicketCount = u.Orders.Where(o => o.Status == PaymentConstants.OrderPaid).SelectMany(o => o.Tickets).Count()
                 })
                 .OrderByDescending(c => c.TotalSpent)
                 .Take(count)
