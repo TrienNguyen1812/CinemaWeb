@@ -8,11 +8,13 @@ namespace CinemaWeb.Controllers
     {
         private readonly IOrderRepository _orderRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IMovieRepository _movieRepository;
 
-        public AdminController(IOrderRepository orderRepository, ICustomerRepository customerRepository)
+        public AdminController(IOrderRepository orderRepository, ICustomerRepository customerRepository, IMovieRepository movieRepository)
         {
             _orderRepository = orderRepository;
             _customerRepository = customerRepository;
+            _movieRepository = movieRepository;
         }
         public IActionResult Index()
         {
@@ -23,11 +25,12 @@ namespace CinemaWeb.Controllers
                 TotalCustomers = _customerRepository.CountActiveCustomers(),
                 DailySales = _orderRepository.CountTodaySales(),
 
-                ChartLabels = new List<string> { "Jan", "Feb", "Mar", "Apr", "May", "Jun" },
+                ChartLabels = _orderRepository.GetChartLabels(),
                 RevenueData = _orderRepository.GetRevenueByMonth(),
                 OrderData = _orderRepository.GetOrdersByMonth(),
 
                 // Lấy dữ liệu thật ở đây
+                TopMovies = _movieRepository.GetTopMovies(3),
                 TopCustomers = _customerRepository.GetTopCustomers(3), 
                 RecentOrders = _orderRepository.GetRecentOrders(5)
             };

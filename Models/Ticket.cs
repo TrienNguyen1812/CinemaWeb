@@ -14,6 +14,8 @@ namespace CinemaWeb.Models
 
         [Required, Column(TypeName = "numeric(10,2)")]
         public decimal FinalPrice { get; set; }
+        [Required, Column(TypeName = "date")]
+        public DateTime WatchDate { get; set; }
 
         [Required]
         public int IdShowtime { get; set; }

@@ -32,10 +32,22 @@ public class OrderRepository : IOrderRepository
             .Count(o => o.OrderTime.Date == today && o.Status == PaymentConstants.OrderPaid);
     }
 
+    public List<string> GetChartLabels()
+    {
+        var labels = new List<string>();
+        for (int i = 5; i >= 0; i--)
+        {
+            var date = DateTime.Today.AddMonths(-i);
+            labels.Add(date.ToString("MMM")); // Ví dụ: "Jan"
+        }
+        return labels;
+
+    }
+
     // 4. Lấy doanh thu 6 tháng gần nhất để vẽ biểu đồ
     public List<decimal> GetRevenueByMonth()
     {
-        var result = new List<decimal>();
+        var revenue = new List<decimal>();
         var now = DateTime.Today;
 
         for (int i = 5; i >= 0; i--)
@@ -47,9 +59,9 @@ public class OrderRepository : IOrderRepository
                             o.Status == PaymentConstants.OrderPaid)
                 .Sum(o => (decimal?)o.TotalPrice) ?? 0;
             
-            result.Add(total);
+            revenue.Add(total);
         }
-        return result;
+        return revenue;
     }
 
     // 5. Lấy số lượng đơn hàng 6 tháng gần nhất
@@ -69,6 +81,7 @@ public class OrderRepository : IOrderRepository
         }
         return result;
     }
+
 
     public List<RecentOrderDto> GetRecentOrders(int count)
     {

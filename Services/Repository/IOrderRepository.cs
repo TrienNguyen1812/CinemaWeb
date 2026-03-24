@@ -7,5 +7,6 @@ public interface IOrderRepository
     int CountTodaySales();
     List<decimal> GetRevenueByMonth();
     List<int> GetOrdersByMonth();
+    List<string> GetChartLabels();
     List<RecentOrderDto> GetRecentOrders(int count);
 }

@@ -1,0 +1,42 @@
+@model CinemaWeb.Models.Combo
+
+@{
+    ViewData["Title"] = "Chi tiết Combo";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}
+<link rel="stylesheet" href="~/css/combo.css" />
+
+<div class="combo-container">
+    <div class="combo-header">
+        <h2>Thông tin chi tiết Combo</h2>
+        <div class="combo-actions">
+            <a asp-action="Edit" asp-route-id="@Model.IdCombo" class="btn btn-warning">Sửa thông tin</a>
+            <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="details-card">
+        <div class="text-center">
+            <img src="~/images/@Model.Image" alt="@Model.ComboName" class="details-img" />
+        </div>
+
+        <div class="details-info">
+            <span class="info-label">Tên Combo:</span>
+            <div class="info-value fw-bold">@Model.ComboName</div>
+
+            <span class="info-label">Mô tả sản phẩm:</span>
+            <div class="info-value text-muted">@Model.Description</div>
+
+            <span class="info-label">Giá bán niêm yết:</span>
+            <div class="price-tag">@Model.Price.ToString("N0") VNĐ</div>
+            
+            @* <div class="mt-4 p-3 bg-light rounded">
+                <small class="text-muted italic">
+                    * Lưu ý: Giá trên đã bao gồm thuế VAT và áp dụng cho toàn hệ thống rạp.
+                </small>
+            </div> *@
+        </div>
+    </div>
+</div>

@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="~/css/selectcombo.css" />
     <link rel="stylesheet" href="~/css/success.css" />
     <link rel="stylesheet" href="~/css/nowshowing.css" />
+    <link rel="stylesheet" href="~/css/info.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 @{
     var session = HttpContextAccessor.HttpContext?.Session;
@@ -84,7 +85,8 @@
                     </a>
 
                     <div class="user-dropdown" id="userDropdown">
-                        <a asp-controller="Orders" asp-action="History">📄 Lịch sử đặt vé</a>
+                        <a asp-controller="CustomerInfo" asp-action="Details" asp-route-id="@Context.Session.GetInt32("UserId")">👤 Thông tin cá nhân</a>
+                        <a asp-controller="History" asp-action="History">📄 Lịch sử đặt vé</a>
                         <a asp-controller="Auth" asp-action="Logout">🚪 Đăng xuất</a>
                     </div>
                 </div>
@@ -122,7 +124,7 @@
             <a href="#">Cinestar TP.HCM</a>
         </div>
     </footer>
-
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -292,6 +294,10 @@ function scrollGrid(btn, direction) {
     
     if (cards.length < 2) return; // Không đủ phim thì không lặp
 
+    if (grid.scrollWidth <= grid.clientWidth) {
+        return; 
+    }
+
     const cardWidth = cards[0].offsetWidth + 20; // 20 là gap
 
     if (direction === 1) {
@@ -321,6 +327,28 @@ function scrollGrid(btn, direction) {
         }, 10);
     }
 }
+
+// Hàm ẩn/hiện nút điều hướng dựa trên độ tràn của phim
+function checkNavigationButtons() {
+    const wrappers = document.querySelectorAll('.movie-grid-wrapper');
+    wrappers.forEach(wrapper => {
+        const grid = wrapper.querySelector('.movie-grid');
+        const prevBtn = wrapper.querySelector('.prev-btn');
+        const nextBtn = wrapper.querySelector('.next-btn');
+        
+        if (grid.scrollWidth <= grid.clientWidth) {
+            if(prevBtn) prevBtn.style.display = 'none';
+            if(nextBtn) nextBtn.style.display = 'none';
+        } else {
+            if(prevBtn) prevBtn.style.display = 'block';
+            if(nextBtn) nextBtn.style.display = 'block';
+        }
+    });
+}
+
+// Chạy khi trang load xong và khi co giãn màn hình
+window.addEventListener('load', checkNavigationButtons);
+window.addEventListener('resize', checkNavigationButtons);
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </html>

@@ -2,16 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
     public class PaymentsController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
 
-        public PaymentsController(DbContexts context)
+        public PaymentsController(DbContexts context, INotificationSubject notificationSubject)
         {
             _context = context;
+            _notificationSubject = notificationSubject;
         }
 
         // GET: Payments
@@ -124,14 +127,19 @@ namespace CinemaWeb.Controllers
                 payment.Status == PaymentConstants.StatusPending)
             {
                 payment.Status = PaymentConstants.StatusPaid;
-                
-                if (payment.Order != null)
-                {
-                    payment.Order.Status = PaymentConstants.StatusPaid;
-                }
+                try {
+                    if (payment.Order != null)
+                    {
+                        payment.Order.Status = PaymentConstants.StatusPaid;
+                    }
 
-                await _context.SaveChangesAsync();
-                TempData["Success"] = "Đã xác nhận thanh toán thành công!";
+                    await _context.SaveChangesAsync();
+                    _notificationSubject.Publish("Xác nhận thanh toán thành công!", "success");
+                }
+                catch (Exception ex)
+                {
+                    _notificationSubject.Publish("Lỗi khi xác nhận thanh toán: " + ex.Message, "error");
+                }
             }
             return RedirectToAction(nameof(Index));
         }

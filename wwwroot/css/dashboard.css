@@ -60,3 +60,34 @@ h3.fw-bold {
         display: none;
     }
 }
+
+/* Điều chỉnh lại Rank Badge để chứa được cả Icon và Số */
+.rank-badge {
+    padding: 5px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px; /* Bo tròn dạng thanh dài */
+    font-weight: bold;
+    font-size: 0.75rem;
+    min-width: 55px; /* Đảm bảo độ rộng cố định để bảng thẳng hàng */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    color: #fff;
+}
+
+/* Giữ nguyên các màu Gradient cũ */
+.rank-gold { background: linear-gradient(135deg, #FFD700, #DAA520); }
+.rank-silver { background: linear-gradient(135deg, #C0C0C0, #808080); }
+.rank-bronze { background: linear-gradient(135deg, #CD7F32, #A0522D); }
+
+.rank-default {
+    background: #f8f9fa;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+/* Khoảng cách giữa icon và số */
+.rank-badge i {
+    font-size: 0.8rem;
+    margin-right: 4px;
+}

@@ -3,19 +3,18 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
-
-<div class="room-container">
+<link rel="stylesheet" href="~/css/showtime.css" />
+<div class="showtime-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="room-title">Quản Lý Suất Chiếu</h2>
+        <h2 class="showtime-title">Quản Lý Suất Chiếu</h2>
         <a class="btn btn-success" asp-action="Create">+ Thêm Suất Chiếu</a>
     </div>
 
-    <table class="table table-bordered table-hover room-table">
+    <table class="table table-bordered table-hover showtime-table">
     <thead>
         <tr>
             <th>Phim</th>
             <th>Phòng</th>
-            <th>Ngày</th>
             <th>Giờ</th>
             <th>Giá</th>
             <th>Thao tác</th>
@@ -27,7 +26,6 @@
     <tr>
         <td>@item.Movie?.MovieName</td>
         <td>@item.ScreeningRoom?.RoomName</td>
-        <td>@item.StartFilm.ToString("dd/MM/yyyy")</td>
         <td>@item.StartTime</td>
         <td>@item.Price.ToString("N0") đ</td>
         <td>

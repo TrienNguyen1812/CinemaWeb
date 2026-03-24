@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
@@ -9,11 +10,13 @@ namespace CinemaWeb.Controllers
     {
         private readonly DbContexts _context;
         private readonly ILogger<MovieManagementController> _logger;
+        private readonly INotificationSubject _notificationSubject;
 
-        public MovieManagementController(DbContexts context, ILogger<MovieManagementController> logger)
+        public MovieManagementController(DbContexts context, ILogger<MovieManagementController> logger, INotificationSubject notificationSubject)
         {
             _context = context;
             _logger = logger;
+            _notificationSubject = notificationSubject;
         }
 
         // READ - danh sách phim
@@ -78,7 +81,7 @@ namespace CinemaWeb.Controllers
 
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
-
+            _notificationSubject.Publish("Thêm phim mới thành công!", "success");
             return RedirectToAction(nameof(Index));
         }
 
@@ -147,6 +150,7 @@ namespace CinemaWeb.Controllers
                 {
                     _context.Update(movie);
                     await _context.SaveChangesAsync();
+                    _notificationSubject.Publish("Cập nhật phim thành công!", "info");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
@@ -173,6 +177,7 @@ namespace CinemaWeb.Controllers
             var movie = await _context.Movies.FindAsync(id);
             _context.Movies.Remove(movie);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Xóa phim thành công!", "warning");
             return RedirectToAction(nameof(Index));
         }
         

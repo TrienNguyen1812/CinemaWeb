@@ -19,12 +19,14 @@
             <input type="hidden" name="seatIds" value="@seatId" />
         }
 
+            <input type="hidden" name="watchDate" value="@ViewBag.WatchDate" />
+
         <div class="combo-list">
             @foreach (var combo in Model)
             {
                 <div class="combo-card">
                     <div class="combo-img-wrapper">
-                        <img src="~/@combo.Image" alt="@combo.ComboName" />
+                        <img src="~/images/@combo.Image" alt="@combo.ComboName" />
                     </div>
                     <div class="combo-info">
                         <h4>@combo.ComboName</h4>
@@ -45,10 +47,15 @@
         </div>
 
         <div class="combo-summary">
-            <h5>Combo đã chọn:</h5>
+            <h5>Chi tiết tạm tính:</h5>
             <ul id="selectedComboList">
                 <li>Chưa có combo nào được chọn</li>
             </ul>
+            <hr />
+            <div class="total-display">
+                <strong>Tổng cộng: </strong>
+                <span id="totalAmountText" class="text-yellow" style="font-size: 1.5rem;">0</span> đ
+            </div>
         </div>
 
         <div class="footer-action">
@@ -60,23 +67,41 @@
 </div>
 
 <script>
+    // Giả sử suất chiếu muộn được giảm 20% (NightPricing) 
+    // Bạn có thể lấy giá trị này từ ViewBag nếu Backend đã tính toán
+    const discountRate = 0.9;
+
+    function formatNumber(num) {
+        return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+    }
+
     function updateSelectedComboSummary() {
         const items = document.querySelectorAll('.combo-qty');
         const list = document.getElementById('selectedComboList');
+        const totalDisplay = document.getElementById('totalAmountText');
+        
         list.innerHTML = '';
-
         let hasCombo = false;
+        let runningTotal = 0;
 
         items.forEach(input => {
             const qty = parseInt(input.value || '0', 10);
             if (qty > 0) {
-                const comboId = input.dataset.comboid;
                 const card = input.closest('.combo-card');
-                const name = card?.querySelector('h4')?.innerText || `Combo ${comboId}`;
-                const priceText = card?.querySelector('p strong')?.innerText || '';
+                const name = card?.querySelector('h4')?.innerText || 'Combo';
+                
+                // Lấy giá gốc từ text và chuyển về số
+                const priceText = card?.querySelector('.price strong')?.innerText.replace(/,/g, '') || '0';
+                let pricePerUnit = parseFloat(priceText);
+                
+                // Áp dụng Pricing Strategy (nếu có)
+                pricePerUnit = pricePerUnit * discountRate;
+
+                const subtotal = pricePerUnit * qty;
+                runningTotal += subtotal;
 
                 const li = document.createElement('li');
-                li.textContent = `${name} x ${qty} ${priceText}`;
+                li.innerHTML = `${name} x ${qty} <span class="float-end">${formatNumber(subtotal)} đ</span>`;
                 list.appendChild(li);
                 hasCombo = true;
             }
@@ -87,25 +112,31 @@
             li.textContent = 'Chưa có combo nào được chọn';
             list.appendChild(li);
         }
+
+        totalDisplay.innerText = formatNumber(runningTotal);
     }
 
+    // Lắng nghe sự kiện thay đổi số lượng
     document.querySelectorAll('.combo-qty').forEach(input => {
         input.addEventListener('input', () => {
             if (parseInt(input.value || '0', 10) < 0) input.value = '0';
             updateSelectedComboSummary();
         });
+        
+        // Thêm sự kiện click cho các nút tăng giảm nếu bạn dùng input type number
+        input.addEventListener('change', updateSelectedComboSummary);
     });
 
+    // Xử lý trước khi submit: Loại bỏ các input bằng 0 để gửi dữ liệu gọn hơn
     document.getElementById('comboForm').addEventListener('submit', function (event) {
-        const form = event.target;
-        const combos = form.querySelectorAll('.combo-qty');
-
+        const combos = this.querySelectorAll('.combo-qty');
         combos.forEach(input => {
             if (parseInt(input.value || '0', 10) <= 0) {
-                input.remove();
+                input.disabled = true; // Dùng disabled thay vì remove để tránh lỗi UI nếu submit thất bại
             }
         });
     });
 
+    // Chạy lần đầu khi load trang
     updateSelectedComboSummary();
 </script>

@@ -1,6 +1,7 @@
 ﻿@model CinemaWeb.Models.Movie
 @{
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+    var timeSlots = ViewBag.UniqueTimeSlots as List<CinemaWeb.Models.Showtime>;
 }
 <link rel="stylesheet" href="~/css/detailmovie.css" />
 
@@ -57,31 +58,36 @@
     </div>
 
     <div class="showtime-section container">
-        <h3 class="section-title"><i class="fas fa-clock text-yellow"></i> Lịch Chiếu</h3>
-
-        @{
-            var cinemas = Model.Showtimes.GroupBy(s => s.ScreeningRoom.Cinema.CinemaName);
-        }
+        <h3 class="section-title"><i class="fas fa-clock text-yellow"></i> Chọn Giờ Chiếu</h3>
 
         <div class="cinema-list">
-            @foreach (var cinema in cinemas)
+            @if (timeSlots != null && timeSlots.Any())
             {
-                <div class="cinema-item">
-                    <div class="cinema-info">
-                        <i class="fas fa-map-marker-alt text-yellow"></i>
-                        <strong>@cinema.Key</strong>
+                @foreach (var cinemaGroup in timeSlots.GroupBy(s => s.ScreeningRoom.Cinema.CinemaName))
+                {
+                    <div class="cinema-item">
+                        <div class="cinema-info" style="margin-bottom: 20px;">
+                            <i class="fas fa-map-marker-alt text-yellow"></i>
+                            <strong>@cinemaGroup.Key</strong>
+                        </div>
+                        <div class="time-slots">
+                            @foreach (var slot in cinemaGroup.OrderBy(s => s.StartTime))
+                            {
+                                <a class="time-link" 
+                                   asp-controller="Seat" 
+                                   asp-action="SelectSeat" 
+                                   asp-route-id="@slot.IdShowtime">
+                                    @slot.StartTime.ToString(@"hh\:mm")
+                                </a>
+                            }
+                        </div>
                     </div>
-                    <div class="time-slots">
-                        @foreach (var show in cinema)
-                        {
-                            <a class="time-link"
-                               asp-controller="Seat"
-                               asp-action="SelectSeat"
-                               asp-route-id="@show.IdShowtime">
-                                @show.StartTime.ToString("HH:mm")
-                            </a>
-                        }
-                    </div>
+                }
+            }
+            else
+            {
+                <div class="alert alert-secondary text-center">
+                    Hiện tại chưa có lịch chiếu khả dụng cho phim này.
                 </div>
             }
         </div>

@@ -1,0 +1,94 @@
+/* CONTAINER CHI TIẾT */
+.info-container {
+    background: #1c1c2e; /* Cùng tông màu với dropdown của bạn */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    max-width: 800px;
+    margin: 40px auto;
+    border: 1px solid #2a2a40;
+}
+
+.info-title {
+    color: yellow; /* Màu chủ đạo của logo */
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* ĐỊNH DẠNG CÁC DÒNG THÔNG TIN (DL, DT, DD) */
+.info-row dt {
+    color: #888ab5; /* Màu chữ nhạt cho nhãn */
+    font-weight: 600;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a40;
+}
+
+.info-row dd {
+    color: white;
+    padding: 10px 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid #2a2a40;
+}
+
+/* FORM EDIT */
+.info-form label {
+    color: #888ab5;
+    margin-top: 15px;
+    display: block;
+    font-weight: bold;
+}
+
+.info-form .form-control {
+    background: #0b1020;
+    border: 1px solid #3556c4;
+    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 5px;
+}
+
+.info-form .form-control:focus {
+    background: #1c1c2e;
+    border-color: yellow;
+    box-shadow: 0 0 8px rgba(255, 255, 0, 0.2);
+    color: white;
+}
+
+/* NÚT BẤM */
+.btn-user {
+    padding: 10px 25px;
+    border-radius: 20px;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-user-yellow {
+    background: yellow;
+    color: black;
+}
+
+.btn-user-outline {
+    background: transparent;
+    border: 1px solid #888ab5;
+    color: #888ab5;
+}
+
+.btn-user:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* VALIDATION */
+.text-danger {
+    color: #ff4d4d !important;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block;
+}

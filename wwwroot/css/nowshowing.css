@@ -38,7 +38,7 @@
     display: flex !important; /* Thay vì dùng grid, dùng flex để kéo ngang */
     flex-direction: row !important;
     flex-wrap: nowrap !important; /* Không xuống hàng */
-    overflow: hidden;
+    overflow-x: hidden;
     scroll-behavior: auto;
     gap: 20px;
     padding: 20px 5px;

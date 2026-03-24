@@ -4,20 +4,22 @@
     ViewData["Title"] = "Quản lý Combo";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
+<link rel="stylesheet" href="~/css/combo.css" />
 
 <div class="combo-container">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="combo-header">
         <h2>Quản lý Combo</h2>
 
-        <a asp-action="Create" class="btn btn-primary">
-            ➕ Thêm Combo
-        </a>
+        <div class="combo-actions">
+            <a asp-action="Create" class="btn btn-primary">
+                ➕ Thêm Combo
+            </a>
+        </div>
     </div>
 
-    <table class="table table-bordered table-hover">
-
-        <thead class="table-dark">
+    <table class="combo-table">
+        <thead>
             <tr>
                 <th>Hình</th>
                 <th>Tên Combo</th>
@@ -28,62 +30,47 @@
         </thead>
 
         <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <img src="~/images/@item.Image"
+                             class="combo-img-preview" /> </td>
 
-        @foreach (var item in Model)
-        {
-            <tr>
+                    <td class="fw-bold">
+                        @item.ComboName
+                    </td>
 
-                <td>
-                    <img src="~/images/@item.Image"
-                         width="100"
-                         style="border-radius:8px"/>
-                </td>
+                    <td class="text-start"> @item.Description
+                    </td>
 
-                <td>
-                    @item.ComboName
-                </td>
+                    <td>
+                        <b>@item.Price.ToString("N0") đ</b>
+                    </td>
 
-                <td>
-                    @item.Description
-                </td>
+                    <td>
+                        <div class="d-flex gap-1 justify-content-center">
+                            <a asp-action="Details"
+                               asp-route-id="@item.IdCombo"
+                               class="btn btn-info">
+                                Xem
+                            </a>
 
-                <td>
-                    <b>@item.Price.ToString("N0") đ</b>
-                </td>
+                            <a asp-action="Edit"
+                               asp-route-id="@item.IdCombo"
+                               class="btn btn-warning">
+                                Sửa
+                            </a>
 
-                <td>
-
-                    <a asp-action="Edit"
-                       asp-route-id="@item.IdCombo"
-                       class="btn btn-warning btn-sm">
-                        Sửa
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.IdCombo"
-                       class="btn btn-danger btn-sm">
-                        Xóa
-                    </a>
-
-                </td>
-
-            </tr>
-        }
-
+                            <a asp-action="Delete"
+                               asp-route-id="@item.IdCombo"
+                               class="btn btn-danger">
+                                Xóa
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
         </tbody>
-
     </table>
-
 </div>
-
-<style>
-
-.combo-container{
-    padding:20px;
-}
-
-table img{
-    object-fit:cover;
-}
-
-</style>

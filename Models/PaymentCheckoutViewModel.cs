@@ -9,7 +9,7 @@ namespace CinemaWeb.Models
         public string ComboName { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-        public decimal Subtotal => Price * Quantity;
+        public decimal Subtotal { get; set; }
     }
 
     public class PaymentCheckoutViewModel
@@ -29,5 +29,6 @@ namespace CinemaWeb.Models
 
         public decimal Total { get; set; }
         public string Status { get; set; }
+        public DateTime ExpiredAt { get; set; }
     }
 }

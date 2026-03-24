@@ -1,61 +1,74 @@
 ﻿using CinemaWeb.Models;
+using CinemaWeb.Services.Strategies;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace CinemaWeb.Services.Commands
 {
     public class CreateOrderCommandHandler
     {
         private readonly DbContexts _context;
+        private readonly TicketPriceService _ticketPriceService;
 
-        public CreateOrderCommandHandler(DbContexts context)
+        public CreateOrderCommandHandler(DbContexts context, TicketPriceService ticketPriceService)
         {
             _context = context;
+            _ticketPriceService = ticketPriceService;
         }
 
         public int Handle(CreateOrderCommand command)
         {
+            // 1. Lấy thông tin suất chiếu để lấy giá vé
             var show = _context.Showtimes
-                .First(x => x.IdShowtime == command.IdShowtime);
+                .FirstOrDefault(x => x.IdShowtime == command.IdShowtime);
 
-            var ticketTotal = (command.SeatIds?.Count ?? 0) * show.Price;
-            var comboTotal = 0m;
+            if (show == null) throw new Exception("Suất chiếu không tồn tại");
 
-            if (command.Combos != null)
-            {
-                foreach (var combo in command.Combos)
-                {
-                    if (combo.Value <= 0) continue;
-                    var comboEntity = _context.Combos.Find(combo.Key);
-                    if (comboEntity != null)
-                        comboTotal += comboEntity.Price * combo.Value;
-                }
-            }
-
+            // 2. Tạo mới đơn hàng (Order)
             var order = new Order
             {
                 OrderTime = DateTime.Now,
-                ExpiredAt = DateTime.Now.AddMinutes(15), // Đặt thời gian hết hạn sau 15 phút
+                ExpiredAt = DateTime.Now.AddMinutes(15), 
                 Status = PaymentConstants.OrderDelay,
                 IdUser = command.IdUser,
-                TotalPrice = ticketTotal + comboTotal
+                TotalPrice = 0
             };
 
             _context.Orders.Add(order);
-            _context.SaveChanges();
+            _context.SaveChanges(); // Lưu để lấy IdOrder vừa tạo tự động
 
+            decimal runningTotal = 0m;
+
+            // 3. Tạo các vé (Tickets) và GÁN WATCHDATE
             foreach (var seatId in command.SeatIds ?? new List<int>())
             {
+                var seat = _context.Seats.Find(seatId);
+                if (seat == null) continue;
+
+                IPricingStrategy pricingStrategy = new NormalPricing();
+                if (seat.TypeSeat.Trim() == "VIP") pricingStrategy = new VipPricing();
+                if (show.StartTime.Hours >=22 || show.StartTime.Hours < 5) pricingStrategy = new NightPricing();
+
+                decimal finalTicketPrice = _ticketPriceService.CalculatePrice(show.Price, pricingStrategy);
+                runningTotal += finalTicketPrice;
+
                 var ticket = new Ticket
                 {
                     IdSeat = seatId,
                     IdShowtime = command.IdShowtime,
                     IdOrder = order.IdOrder,
                     OriginalPrice = show.Price,
-                    FinalPrice = show.Price
+                    FinalPrice = finalTicketPrice,
+                    // QUAN TRỌNG: Lưu ngày chiếu mà khách đã chọn vào đây
+                    WatchDate = command.WatchDate 
                 };
 
                 _context.Tickets.Add(ticket);
             }
 
+            // 4. Lưu các Combo đã đặt
             foreach (var combo in command.Combos ?? new Dictionary<int, int>())
             {
                 if (combo.Value <= 0) continue;
@@ -70,6 +83,7 @@ namespace CinemaWeb.Services.Commands
                 _context.OrderCombos.Add(orderCombo);
             }
 
+            // 5. Lưu tất cả Tickets và OrderCombos vào DB
             _context.SaveChanges();
 
             return order.IdOrder;

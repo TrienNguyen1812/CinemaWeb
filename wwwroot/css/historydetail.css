@@ -1,161 +1,137 @@
-/* Container chính */
-.container-detail {
-    max-width: 650px;
-    margin: 50px auto;
-    padding: 0 15px;
-}
-
-/* Thẻ Card chứa nội dung */
-.detail-card {
-    background: #1e1e2f;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    border: 1px solid #3d3d5c;
-    color: #fff;
-}
-
-/* Header của đơn hàng */
-.detail-header {
-    background: #2c2c3e;
-    padding: 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #3d3d5c;
-}
-
-.detail-header h2 {
-    margin: 0;
-    font-size: 1.4rem;
-    color: #f5c518; /* Màu vàng Layout */
-}
-
-/* Body */
-.detail-body {
-    padding: 30px;
-}
-
-.info-group {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-}
-
-.info-item {
+.ticket-container {
+    padding: 50px 0;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    background: #1a1a2e;
 }
 
-.info-item label {
-    font-size: 0.85rem;
-    color: #aaa;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.ticket {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    color: #333;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
 }
 
-.info-item .value {
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-.text-yellow {
-    color: #f5c518 !important;
-    font-weight: bold !important;
-}
-
-/* Đường kẻ ngăn cách */
-.divider {
-    border: none;
-    border-top: 1px dashed #444;
-    margin: 25px 0;
-}
-
-/* Phần tổng tiền */
-.payment-summary {
-    background: rgba(245, 197, 24, 0.05);
-    padding: 20px;
-    border-radius: 12px;
-    border: 1px solid rgba(245, 197, 24, 0.2);
-}
-
-.total-row {
+.ticket-header {
+    background: #f5c518;
+    padding: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
-
-.total-row span:first-child {
-    font-size: 1rem;
-    color: #ccc;
-}
-
-.total-amount {
-    font-size: 1.6rem;
     font-weight: bold;
-    color: #f5c518;
 }
 
-/* Footer & Buttons */
-.detail-footer {
-    padding: 20px 30px 30px;
-    display: flex;
+.ticket-status.thành công { color: #2ecc71; }
+.ticket-status.hủy { color: #e74c3c; }
+
+.ticket-body { padding: 20px; }
+.movie-title { font-size: 1.5rem; margin-bottom: 5px; color: #1a1a2e; }
+.movie-meta { color: #888; font-size: 0.8rem; margin-bottom: 20px; }
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 15px;
+    margin-bottom: 20px;
 }
 
-.btn-back, .btn-print {
-    flex: 1;
-    padding: 12px;
-    border-radius: 12px;
+.info-item small { display: block; color: #aaa; font-size: 0.7rem; }
+.info-item span { font-weight: bold; font-size: 1rem; }
+.seat-list { color: #f5c518; }
+
+.ticket-divider {
+    height: 2px;
+    border-top: 2px dashed #ddd;
+    position: relative;
+    margin: 0 10px;
+}
+
+.ticket-divider::before, .ticket-divider::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    width: 20px;
+    height: 20px;
+    background: #1a1a2e; /* Khớp với màu nền trang */
+    border-radius: 50%;
+}
+.ticket-divider::before { left: -20px; }
+.ticket-divider::after { right: -20px; }
+
+.ticket-footer {
+    padding: 20px;
     text-align: center;
-    text-decoration: none;
-    font-weight: bold;
-    transition: 0.3s;
-    cursor: pointer;
-    border: none;
+    background: #f9f9f9;
+}
+
+.barcode-fake {
+    font-size: 2rem;
+    letter-spacing: 2px;
+    font-family: 'Libre Barcode 39', cursive; /* Hoặc font barcode bất kỳ */
+}
+
+.total-price h3 { color: #d32f2f; margin: 0; }
+
+/* Container chứa các nút */
+.text-center.mt-4 {
     display: flex;
+    justify-content: center;
+    gap: 15px; /* Khoảng cách giữa 2 nút */
+    margin-top: 30px !important;
+}
+
+/* Style chung cho nút */
+.btn-ticket-action {
+    padding: 12px 25px;
+    border-radius: 30px; /* Bo tròn kiểu hiện đại */
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    text-decoration: none;
+    border: none;
 }
 
-.btn-back {
-    background: #3d3d5c;
-    color: #fff;
+/* Nút Quay lại lịch sử (Viền vàng) */
+.btn-outline-light {
+    background: transparent;
+    border: 2px solid #f5c518 !important;
+    color: #f5c518 !important;
 }
 
-.btn-back:hover {
-    background: #4d4d7a;
-}
-
-.btn-print {
-    background: #f5c518;
-    color: #000;
-}
-
-.btn-print:hover {
-    background: #ffdb4d;
+.btn-outline-light:hover {
+    background: rgba(245, 197, 24, 0.1);
     transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(245, 197, 24, 0.2);
 }
 
-/* Badge Trạng thái */
-.order-badge {
-    padding: 6px 15px;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    text-transform: uppercase;
+/* Nút In vé / Lưu PDF (Nền vàng chữ đen) */
+.btn-warning {
+    background: #f5c518 !important;
+    color: #1a1a2e !important;
+    box-shadow: 0 4px 15px rgba(245, 197, 24, 0.3);
 }
 
-.order-badge.delay { background: #6c757d; color: #fff; }
-.order-badge.paid { background: #28a745; color: #fff; }
-.order-badge.pending { background: #ffc107; color: #fff; }
-.order-badge.cancelled { background: #dc3545; color: #fff; }
+.btn-warning:hover {
+    background: #ffdb4d !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(245, 197, 24, 0.4);
+}
 
-/* Responsive */
-@media (max-width: 500px) {
-    .detail-footer {
+/* Responsive cho mobile */
+@media (max-width: 480px) {
+    .text-center.mt-4 {
         flex-direction: column;
+        padding: 0 20px;
+    }
+    .btn-ticket-action {
+        width: 100%;
     }
 }

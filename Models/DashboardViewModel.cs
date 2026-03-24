@@ -17,6 +17,8 @@ namespace CinemaWeb.Models
 
         // Đổi tên từ LatestProjects thành RecentOrders (Các đơn đặt vé mới nhất)
         public List<RecentOrderDto> RecentOrders { get; set; }
+        // Trong DashboardViewModel của bạn, thêm:
+        public List<TopMovieDto> TopMovies { get; set; } = new List<TopMovieDto>();
     }
         public class TopCustomerDto
     {
@@ -33,4 +35,13 @@ namespace CinemaWeb.Models
         public decimal TotalPrice { get; set; }
         public string Status { get; set; } // Ví dụ: Đã thanh toán, Chờ xử lý...
     }
+
+    public class TopMovieDto
+    {
+        public int Rank { get; set; }
+        public string MovieName { get; set; }
+        public int TotalTickets { get; set; }
+        public decimal TotalRevenue { get; set; }
+    }
+
 }

@@ -1,5 +1,6 @@
 ﻿using CinemaWeb.Models;
 using CinemaWeb.Services.Builders;
+using CinemaWeb.Services.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,13 @@ namespace CinemaWeb.Controllers
     public class SeatManagementController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
+
+        public SeatManagementController(DbContexts context, INotificationSubject notificationSubject)
+        {
+            _context = context;
+            _notificationSubject = notificationSubject;
+        }
 
         public IActionResult GenerateSeats()
         {
@@ -35,11 +43,6 @@ namespace CinemaWeb.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("Index");
-        }
-
-        public SeatManagementController(DbContexts context)
-        {
-            _context = context;
         }
 
         // GET: Seat
@@ -83,7 +86,12 @@ namespace CinemaWeb.Controllers
                 string.IsNullOrEmpty(seat.SeatNumber) || 
                 string.IsNullOrEmpty(seat.TypeSeat))
             {
-                ModelState.AddModelError("", "Vui lòng nhập đầy đủ thông tin ghế");
+                ModelState.AddModelError("", "Vui lòng điền đầy đủ thông tin ghế.");
+            }
+
+             if (seat.IdRoom == 0)
+            {
+                ModelState.AddModelError("", "Vui lòng chọn phòng.");
             }
 
             bool isExist = await _context.Seats.AnyAsync(s =>
@@ -100,6 +108,7 @@ namespace CinemaWeb.Controllers
             {
                 _context.Add(seat);
                 await _context.SaveChangesAsync();
+                _notificationSubject.Publish("Thêm ghế thành công!", "success");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -145,12 +154,13 @@ namespace CinemaWeb.Controllers
                 {
                     _context.Update(seat);
                     await _context.SaveChangesAsync();
+                    _notificationSubject.Publish("Cập nhật ghế thành công!", "info");
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Seats.Any(e => e.IdSeat == seat.IdSeat)) return NotFound();
-                    else throw;
+                    if (!_context.Seats.Any(e => e.IdSeat == seat.IdSeat)) 
+                        _notificationSubject.Publish("Ghế không tồn tại!", "error");
                 }
             }
 
@@ -190,6 +200,7 @@ namespace CinemaWeb.Controllers
 
             _context.Seats.Remove(seat);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Xóa ghế thành công!", "warning");
             return RedirectToAction(nameof(Index));
         }
     }

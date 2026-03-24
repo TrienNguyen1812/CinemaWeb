@@ -2,6 +2,9 @@
 @{
     ViewData["Title"] = "Thanh toán";
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+    
+    // Giả sử mức giảm giá cố định 10% từ OrderPriceService để hiển thị trên UI
+    decimal discountAmount = (Model.TicketTotal + Model.ComboTotal) * 0.1m;
 }
 
 <div class="payment-page">
@@ -13,11 +16,12 @@
             <p><strong>Suất chiếu:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</p>
             <p><strong>Số vé:</strong> @Model.TicketCount</p>
             <p><strong>Ghế:</strong> <span class="text-yellow">@string.Join(", ", Model.SeatNames)</span></p>
+            <p class="small text-muted">* Giá vé đã bao gồm phụ phí ghế VIP hoặc giảm giá suất chiếu muộn (nếu có).</p>
         </div>
 
         <div class="checkout-info-block">
             <h4>Combo đã chọn</h4>
-            @if (Model.Combos.Any()) {
+            @if (Model.Combos != null && Model.Combos.Any()) {
                 <ul class="combo-list">
                     @foreach (var combo in Model.Combos) {
                         <li>@combo.ComboName x @combo.Quantity <span class="price-tag">(@combo.Subtotal.ToString("N0") đ)</span></li>
@@ -28,21 +32,40 @@
             }
         </div>
 
+        @* Hiển thị chi tiết tính toán từ Decorator Pattern *@
         <div class="checkout-info-block summary-block">
-            <div class="price-row"><span>Tổng vé:</span> <span>@Model.TicketTotal.ToString("N0") đ</span></div>
-            <div class="price-row"><span>Tổng combo:</span> <span>@Model.ComboTotal.ToString("N0") đ</span></div>
-            <div class="price-row total"><span>Tổng thanh toán:</span> <span class="text-yellow">@Model.Total.ToString("N0") đ</span></div>
+            <div class="price-row">
+                <span>Tạm tính vé:</span> 
+                <span>@Model.TicketTotal.ToString("N0") đ</span>
+            </div>
+            <div class="price-row">
+                <span>Tạm tính combo:</span> 
+                <span>@Model.ComboTotal.ToString("N0") đ</span>
+            </div>
+            
+            @if (discountAmount > 0) {
+                <div class="price-row text-danger">
+                    <span>Giảm giá (10%):</span> 
+                    <span>- @discountAmount.ToString("N0") đ</span>
+                </div>
+            }
+
+            <div class="price-row total">
+                <span>Tổng thanh toán:</span> 
+                <span class="text-yellow">@Model.Total.ToString("N0") đ</span>
+            </div>
         </div>
 
         <form asp-controller="Payment" asp-action="ProcessPayment" method="post" id="mainPaymentForm">
             <input type="hidden" name="orderId" value="@Model.OrderId" />
-            <input type="hidden" name="total" value="@Model.Total" />
+            @* Đã loại bỏ input 'total' để tránh khách hàng can thiệp giá từ F12 *@
+            
             <div class="payment-method-box">
                 <label>Phương thức thanh toán:</label>
                 <select name="paymentType" class="custom-select-dark">
-                    <option value="cash">Tiền mặt</option>
-                    <option value="momo">Momo</option>
-                    <option value="vnpay">VNPay</option>
+                    <option value="cash">Tiền mặt (Tại quầy)</option>
+                    <option value="momo">Ví điện tử MoMo</option>
+                    <option value="vnpay">Cổng thanh toán VNPay</option>
                 </select>
             </div>
         </form>
@@ -51,7 +74,7 @@
             <button type="submit" form="mainPaymentForm" class="btn-yellow-action">Xác nhận thanh toán</button>
             <form asp-action="CancelOrder" method="post" class="m-0">
                 <input type="hidden" name="orderId" value="@Model.OrderId" />
-                <button type="submit" class="btn-cancel-action">Huỷ vé</button>
+                <button type="submit" class="btn-cancel-action" onclick="return confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')">Huỷ vé</button>
             </form>
         </div>
     </div>
@@ -64,18 +87,66 @@
             }
             <h4 class="text-yellow">@Model.MovieName</h4>
             <div class="sidebar-details">
-                <p><strong>Ngày:</strong> @Model.ShowtimeDate.ToString("dd/MM/yyyy")</p>
+                <p><strong>Ngày xem:</strong> @(ViewBag.WatchDate != null ? DateTime.Parse(ViewBag.WatchDate).ToString("dd/MM/yyyy") : Model.ShowtimeDate.ToString("dd/MM/yyyy"))</p>
                 <p><strong>Giờ:</strong> @Model.ShowtimeTime</p>
                 <p><strong>Trạng thái:</strong> <span class="status-tag">@Model.Status</span></p>
+            </div>
+            
+            @* Countdown Timer *@
+            <div class="expiry-timer mt-3 text-center">
+                <p class="mb-1">Đơn hàng hết hạn sau:</p>
+                <h4 id="countdown" class="text-danger font-weight-bold">15:00</h4>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    // Chặn quay lại trang trước để tránh lỗi duplicate order
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", function () {
-        window.location.href = "/"; 
+    // 1. Logic Đếm ngược 15 phút
+    function startCountdown() {
+        // Lấy thời gian hết hạn từ Model (truyền từ C# sang JS)
+        // Lưu ý: Đảm bảo Model.ExpiredAt được định dạng chuẩn ISO
+        const expiryDate = new Date('@Model.ExpiredAt.ToString("yyyy-MM-ddTHH:mm:ss")').getTime();
+
+        const timerInterval = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = expiryDate - now;
+
+            // Tính toán phút và giây
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Hiển thị ra màn hình
+            const display = document.getElementById("countdown");
+            if (display) {
+                display.innerHTML = (minutes < 10 ? "0" + minutes : minutes) + ":" + 
+                                   (seconds < 10 ? "0" + seconds : seconds);
+            }
+
+            // Nếu hết thời gian
+            if (distance < 0) {
+                clearInterval(timerInterval);
+                if (display) display.innerHTML = "00:00";
+                
+                alert("Đơn hàng của bạn đã hết hạn thanh toán. Vui lòng đặt lại vé!");
+                
+                // Tự động submit form hủy hoặc chuyển hướng
+                window.location.href = '@Url.Action("Index", "Home")';
+            }
+        }, 1000);
+    }
+
+    // 2. Chặn quay lại trang trước (Tránh lỗi logic đơn hàng)
+    function disableBack() {
+        history.pushState(null, null, location.href);
+        window.addEventListener("popstate", function () {
+            window.location.href = "/"; 
+        });
+    }
+
+    // Chạy các hàm khi trang load xong
+    document.addEventListener("DOMContentLoaded", function() {
+        startCountdown();
+        disableBack();
     });
 </script>

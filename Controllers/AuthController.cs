@@ -1,5 +1,6 @@
 ﻿using CinemaWeb.Models;
 using CinemaWeb.Services;
+using CinemaWeb.Services.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -9,9 +10,11 @@ namespace CinemaWeb.Controllers
     {
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly AuthService _authService;
+        private readonly INotificationSubject _notificationSubject;
 
-        public AuthController(IServiceScopeFactory scopeFactory)
+        public AuthController(INotificationSubject notificationSubject,IServiceScopeFactory scopeFactory)
         {
+            _notificationSubject = notificationSubject;
             _scopeFactory = scopeFactory;
             _authService = AuthService.GetInstance(_scopeFactory);
         }
@@ -78,6 +81,8 @@ namespace CinemaWeb.Controllers
 
             // gọi Singleton service
             _authService.Register(user);
+
+            _notificationSubject.Publish("Đăng ký tài khoản thành công!", "success");
 
             return RedirectToAction("Login");
         }

@@ -10,11 +10,8 @@ namespace CinemaWeb.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int IdShowtime { get; set; }
 
-        [Required, Column(TypeName = "date")]
-        public DateTime StartFilm { get; set; }
-
-        [Required, Column(TypeName = "datetime")]
-        public DateTime StartTime { get; set; }
+        [Required, Column(TypeName = "time")]
+        public TimeSpan StartTime { get; set; }
 
         [Required, Column(TypeName = "numeric(10,2)")]
         public decimal Price { get; set; }

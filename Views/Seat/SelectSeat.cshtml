@@ -1,8 +1,16 @@
 ﻿@model CinemaWeb.Models.Showtime
+@using CinemaWeb.Helpers
 
 @{
     ViewData["Title"] = "Chọn ghế";
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+
+    var dates = Enumerable.Range(0, 7).Select(i => DateTime.Today.AddDays(i)).ToList();
+    var selectedDateStr = Context.Request.Query["date"].ToString();
+    if (string.IsNullOrEmpty(selectedDateStr)) 
+    {
+        selectedDateStr = DateTime.Today.ToString("yyyy-MM-dd");
+    }
 }
 
 <link rel="stylesheet" href="~/css/selectseat.css" />
@@ -16,55 +24,83 @@
         </div>
     </div>
 
+    @* Bộ chọn ngày *@
+    <div class="date-selector">
+        <p class="text-start"><strong><i class="fas fa-calendar-alt"></i> Chọn ngày xem:</strong></p>
+        <div class="d-flex justify-content-between w-100 gap-2">
+            @foreach (var date in dates)
+            {
+                var dateValue = date.ToString("yyyy-MM-dd");
+                <a href="@Url.Action("SelectSeat", "Seat", new { id = Model.IdShowtime, date = dateValue })" 
+                class="btn date-item flex-fill @(selectedDateStr == dateValue ? "btn-primary" : "")">
+                    <strong>@date.ToString("dd/MM")</strong>
+                    <small>
+                        @if (date == DateTime.Today) {
+                            @:HÔM NAY
+                        } else {
+                            @date.ToVietnameseDayOfWeek().ToUpper()
+                        }
+                    </small>
+                </a>
+            }
+        </div>
+    </div>
+
     <div class="screen-wrapper">
         <div class="screen"></div>
         <div class="screen-text">MÀN HÌNH</div>
     </div>
 
     <form asp-controller="Combo" asp-action="SelectCombo" method="post">
-
+        <input type="hidden" name="watchDate" value="@selectedDateStr" />
         <input type="hidden" name="showtimeId" value="@Model.IdShowtime" />
         <div id="seatIdsContainer"></div>
 
         <div class="seat-map-wrapper">
             <div class="seat-map">
-                @* Sắp xếp lại danh sách ghế để hiển thị đúng thứ tự A1, A2... A10 *@
                 @foreach (var seat in Model.ScreeningRoom.Seats
                     .OrderBy(s => s.SeatRow)
                     .ThenBy(s => s.SeatNumber.Length)
                     .ThenBy(s => s.SeatNumber))
                 {
+                    var isBooked = seat.Tickets != null && seat.Tickets.Any(t => 
+                        t.IdShowtime == Model.IdShowtime && 
+                        t.WatchDate.ToString("yyyy-MM-dd") == selectedDateStr &&
+                        t.Order?.Status != "Đã hủy");
+                    
+                    // Kiểm tra loại ghế để thêm class CSS
+                    var isVip = seat.TypeSeat?.Trim().ToUpper() == "VIP";
+
                     <button type="button"
-                            class="seat"
-                            data-seat="@seat.IdSeat">
+                            class="seat @(isBooked ? "booked" : "") @(isVip ? "vip" : "")"
+                            data-seat="@seat.IdSeat"
+                            data-type="@seat.TypeSeat"
+                            @(isBooked ? "disabled" : "")>
                         @seat.SeatRow@seat.SeatNumber
                     </button>
                 }
             </div>
         </div>
 
+        @* Chú thích ghế - Cập nhật thêm loại VIP *@
         <div class="seat-legend">
-            <div class="legend-item"><span class="seat-demo"></span> Trống</div>
+            <div class="legend-item"><span class="seat-demo"></span> Thường</div>
+            <div class="legend-item"><span class="seat-demo vip"></span> Ghế VIP</div>
             <div class="legend-item"><span class="seat-demo selected"></span> Đang chọn</div>
             <div class="legend-item"><span class="seat-demo booked"></span> Đã đặt</div>
         </div>
 
         <div class="booking-footer">
-            <button type="submit" class="btn-continue">
-                Tiếp tục
-            </button>
+            <button type="submit" class="btn-continue">Tiếp tục</button>
         </div>
-
     </form>
 </div>
 
 <script>
     let selectedSeats = [];
 
-    document.querySelectorAll(".seat").forEach(btn => {
-
+    document.querySelectorAll(".seat:not(.booked)").forEach(btn => {
         btn.addEventListener("click", () => {
-
             let maxTicket = parseInt(document.getElementById("ticketCount").value);
 
             if (btn.classList.contains("selected")) {
@@ -72,18 +108,14 @@
                 selectedSeats = selectedSeats.filter(id => id != btn.dataset.seat);
             }
             else {
-
                 if (selectedSeats.length >= maxTicket) {
-                    alert("Bạn chỉ được chọn " + maxTicket + " ghế");
+                    alert("Bạn chỉ được chọn tối đa " + maxTicket + " ghế.");
                     return;
                 }
-
                 btn.classList.add("selected");
                 selectedSeats.push(btn.dataset.seat);
             }
-
         });
-
     });
 
     document.querySelector('form').addEventListener('submit', function (event) {
@@ -95,7 +127,6 @@
 
         const container = document.getElementById('seatIdsContainer');
         container.innerHTML = '';
-
         selectedSeats.forEach(function (seatId) {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -103,6 +134,5 @@
             input.value = seatId;
             container.appendChild(input);
         });
-
     });
 </script>

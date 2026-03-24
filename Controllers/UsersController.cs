@@ -41,75 +41,15 @@ namespace CinemaWeb.Controllers
         // POST: User/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Movie movie, IFormFile posterFile)
+        public async Task<IActionResult> Create(int id, User user)
         {
-            // ===== MODELSTATE DEBUG =====
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                Console.WriteLine("❌ MODELSTATE INVALID (MOVIE)");
-
-                foreach (var entry in ModelState)
-                {
-                    foreach (var error in entry.Value.Errors)
-                    {
-                        Console.WriteLine($"FIELD: {entry.Key} - ERROR: {error.ErrorMessage}");
-                    }
-                }
-
-                return View(movie);
-            }
-
-            // ===== POSTER CHECK =====
-            if (posterFile == null || posterFile.Length == 0)
-            {
-                Console.WriteLine("❌ POSTER FILE IS NULL OR EMPTY");
-                ModelState.AddModelError("Poster", "Poster không được để trống");
-                return View(movie);
-            }
-
-            try
-            {
-                // ===== UPLOAD POSTER =====
-                string uploadPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot/images/movies"
-                );
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                    Console.WriteLine("📁 CREATE FOLDER images/movies");
-                }
-
-                string fileName = Guid.NewGuid().ToString()
-                                + Path.GetExtension(posterFile.FileName);
-
-                string filePath = Path.Combine(uploadPath, fileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await posterFile.CopyToAsync(stream);
-                }
-
-                movie.Poster = fileName;
-
-                // ===== SAVE DB =====
-                _context.Movies.Add(movie);
+                _context.Add(user);
                 await _context.SaveChangesAsync();
-
-                Console.WriteLine("✅ CREATE MOVIE SUCCESS");
-                Console.WriteLine($"NEW MOVIE ID = {movie.IdMovie}");
-
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("❌ EXCEPTION WHILE SAVING MOVIE");
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.InnerException?.Message);
-
-                return View(movie);
-            }
+            return View(user);
         }
 
         // GET: User/Edit/5

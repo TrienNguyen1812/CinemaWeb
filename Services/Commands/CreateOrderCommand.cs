@@ -9,5 +9,7 @@
         public List<int> SeatIds { get; set; }
 
         public Dictionary<int, int> Combos { get; set; }
+
+        public DateTime WatchDate { get; set; }
     }
 }

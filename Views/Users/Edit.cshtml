@@ -3,7 +3,8 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
-<h2>Edit User</h2>
+<link rel="stylesheet" href="~/css/room.css" />
+<h2>Chỉnh sửa thông tin người dùng</h2>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="IdUser" />
@@ -43,8 +44,8 @@
     </div>
 
     <br />
-    <button type="submit" class="btn btn-success">Save</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <button type="submit" class="btn btn-success">Lưu</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </form>
 
 @section Scripts {

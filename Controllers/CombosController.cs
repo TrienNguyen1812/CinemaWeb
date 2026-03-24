@@ -1,22 +1,33 @@
 ﻿using CinemaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
     public class CombosController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
 
-        public CombosController(DbContexts context)
+        public CombosController(DbContexts context, INotificationSubject notificationSubject)
         {
             _context = context;
+            _notificationSubject = notificationSubject;
         }
 
         public IActionResult Index()
         {
             var combos = _context.Combos.ToList();
             return View(combos);
+        }
+
+        // DETAILS
+        public async Task<IActionResult> Details(int id)
+        {
+            var combo = await _context.Combos.FindAsync(id);
+            if (combo == null) return NotFound();
+            return View(combo);
         }
 
         [HttpGet]
@@ -45,7 +56,7 @@ namespace CinemaWeb.Controllers
 
             _context.Combos.Add(combo);
             _context.SaveChanges();
-
+            _notificationSubject.Publish("Thêm combo thành công!", "success");
             return RedirectToAction("Index");
         }
 
@@ -80,7 +91,7 @@ namespace CinemaWeb.Controllers
 
             _context.Combos.Update(combo);
             _context.SaveChanges();
-
+            _notificationSubject.Publish("Cập nhật combo thành công!", "info");
             return RedirectToAction("Index");
         }
 
@@ -105,7 +116,7 @@ namespace CinemaWeb.Controllers
 
             _context.Combos.Remove(combo);
             _context.SaveChanges();
-
+            _notificationSubject.Publish("Xóa combo thành công!", "warning");
             return RedirectToAction("Index");
         }
     }

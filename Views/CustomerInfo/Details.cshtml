@@ -1,0 +1,30 @@
+@model CinemaWeb.Models.User
+@{
+    ViewData["Title"] = "Thông tin cá nhân";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+}
+
+<div class="info-container">
+    <h2 class="info-title">Thông tin tài khoản</h2>
+
+    <div class="card-body">
+        <dl class="row info-row">
+            <dt class="col-sm-4">Họ và Tên</dt>
+            <dd class="col-sm-8">@Model.FullName</dd>
+
+            <dt class="col-sm-4">Email</dt>
+            <dd class="col-sm-8">@Model.Email</dd>
+
+            <dt class="col-sm-4">Số điện thoại</dt>
+            <dd class="col-sm-8">@Model.PhoneNumber</dd>
+
+            <dt class="col-sm-4">Loại tài khoản</dt>
+            <dd class="col-sm-8"><span style="color: yellow;">@Model.Role</span></dd>
+        </dl>
+    </div>
+
+    <div class="text-center mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.IdUser" class="btn-user btn-user-yellow">Chỉnh sửa thông tin</a>
+        <a href="/" class="btn-user btn-user-outline">Quay lại trang chủ</a>
+    </div>
+</div>

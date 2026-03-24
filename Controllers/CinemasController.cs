@@ -1,17 +1,19 @@
 ﻿using CinemaWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
     public class CinemasController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
 
-        public CinemasController(DbContexts context)
+        public CinemasController(DbContexts context, INotificationSubject notificationSubject)
         {
             _context = context;
+            _notificationSubject = notificationSubject;
         }
 
         // ================= LIST =================
@@ -31,15 +33,26 @@ namespace CinemaWeb.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Cinema cinema)
         {
-            // 👉 Kiểm tra thiếu thuộc tính
-            if (!ModelState.IsValid)
+            try
             {
+                if (ModelState.IsValid)
+                {
+                    _context.Cinemas.Add(cinema);
+                    await _context.SaveChangesAsync();
+                    _notificationSubject.Publish("Thêm rạp chiếu thành công!", "success");
+                    return RedirectToAction(nameof(Index));
+                }
+                _notificationSubject.Publish("Dữ liệu nhập vào chưa đúng, vui lòng kiểm tra lại!", "warning");
                 return View(cinema);
             }
-
-            _context.Cinemas.Add(cinema);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            catch (Exception ex)
+            {
+                // Log lỗi nếu cần
+                _notificationSubject.Publish("Không thể thêm rạp chiếu. Vui lòng thử lại!", "error");
+    
+                ModelState.AddModelError("", "Lỗi chi tiết: " + ex.Message);
+            }
+            return View(cinema);
         }
 
         // ================= DETAILS =================
@@ -75,6 +88,7 @@ namespace CinemaWeb.Controllers
 
             _context.Update(cinema);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Cập nhật rạp chiếu thành công!", "info");
             return RedirectToAction(nameof(Index));
         }
 
@@ -96,6 +110,7 @@ namespace CinemaWeb.Controllers
             {
                 _context.Cinemas.Remove(cinema);
                 await _context.SaveChangesAsync();
+                _notificationSubject.Publish("Xóa rạp chiếu thành công!", "warning");
             }
             return RedirectToAction(nameof(Index));
         }

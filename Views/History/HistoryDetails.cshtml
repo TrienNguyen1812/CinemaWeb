@@ -1,0 +1,75 @@
+@model CinemaWeb.Models.Order
+@{
+    ViewData["Title"] = "Vé điện tử";
+    Layout = "~/Views/Shared/LayoutUserHome.cshtml";
+    var firstTicket = Model.Tickets.FirstOrDefault();
+}
+
+<link rel="stylesheet" href="~/css/eticket.css" />
+
+<div class="ticket-container">
+    <div class="ticket">
+        <div class="ticket-header">
+            <div class="cinema-brand">CINESTAR</div>
+            <div class="ticket-status @Model.Status.ToLower()">@Model.Status</div>
+        </div>
+
+        <div class="ticket-body">
+            <div class="movie-info">
+                <h2 class="movie-title">@firstTicket?.Showtime?.Movie?.MovieName</h2>
+                <p class="movie-meta">2D | Phụ đề Tiếng Việt</p>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <small>NGÀY CHIẾU</small>
+                    <span>@firstTicket?.WatchDate.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="info-item">
+                    <small>GIỜ CHIẾU</small>
+                    <span>@firstTicket?.Showtime?.StartTime.ToString(@"hh\:mm")</span>
+                </div>
+                <div class="info-item">
+                    <small>PHÒNG</small>
+                    <span>@firstTicket?.Showtime?.ScreeningRoom?.RoomName</span>
+                </div>
+                <div class="info-item">
+                    <small>GHẾ</small>
+                    <span class="seat-list">@string.Join(", ", Model.Tickets.Select(t => $"{t.Seat.SeatRow}{t.Seat.SeatNumber}"))</span>
+                </div>
+            </div>
+
+            <div class="order-details">
+                <p><strong>Rạp:</strong> Cinestar Hub - TP. Hồ Chí Minh</p>
+                <p><strong>Khách hàng:</strong> @Model.User?.FullName - @Model.User?.PhoneNumber</p>
+                @if (Model.OrderCombos.Any())
+                {
+                    <p><strong>Combo:</strong> @string.Join(", ", Model.OrderCombos.Select(c => $"{c.Combo.ComboName} x{c.Quantity}"))</p>
+                }
+            </div>
+        </div>
+
+        <div class="ticket-divider"></div>
+
+        <div class="ticket-footer">
+            <div class="barcode-area">
+                <div class="barcode-fake">|| |||| | ||||| ||| | ||</div>
+                <div class="ticket-id">ID: @(firstTicket?.IdTicket ?? 0)</div>
+                <p class="scan-msg">Vui lòng đưa mã này cho nhân viên soát vé</p>
+            </div>
+            <div class="total-price">
+                <small>TỔNG TIỀN</small>
+                <h3>@Model.TotalPrice.ToString("N0") đ</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a asp-action="History" class="btn btn-ticket-action btn-outline-light">
+            <i class="fas fa-arrow-left me-2"></i> Quay lại lịch sử
+        </a>
+        @* <button onclick="window.print()" class="btn btn-ticket-action btn-warning">
+            <i class="fas fa-print me-2"></i> In vé / Lưu PDF
+        </button> *@
+    </div>
+</div>

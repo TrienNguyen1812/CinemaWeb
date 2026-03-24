@@ -20,7 +20,7 @@
         <div class="order-list">
             @foreach (var item in Model)
             {
-                <a asp-controller="Orders" asp-action="RedirectOrder" asp-route-id="@item.IdOrder" class="order-block">
+                <a asp-controller="History" asp-action="RedirectOrder" asp-route-id="@item.IdOrder" class="order-block">
                     <div class="order-header">
                         <span class="order-id">Mã đơn: #@item.IdOrder</span>
                         <span class="order-date">@item.OrderTime.ToString("dd/MM/yyyy HH:mm")</span>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Collections.Generic;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
@@ -14,15 +15,18 @@ namespace CinemaWeb.Controllers
     {
         private readonly DbContexts _context;
         private readonly CreateOrderCommandHandler _handler;
-        private readonly Services.Notifications.INotificationSubject _notificationSubject;
+        private readonly INotificationSubject _notificationSubject;
+        private readonly PaymentService _paymentService;
 
         public PaymentController(DbContexts context, CreateOrderCommandHandler handler,
-            Services.Notifications.INotificationSubject notificationSubject,
-            IEnumerable<Services.Notifications.INotificationObserver> observers)
+            INotificationSubject notificationSubject,
+            IEnumerable<INotificationObserver> observers,
+            PaymentService paymentService)
         {
             _context = context;
             _handler = handler;
             _notificationSubject = notificationSubject;
+            _paymentService = paymentService;
 
             foreach (var observer in observers)
             {
@@ -53,7 +57,28 @@ namespace CinemaWeb.Controllers
             if (!int.TryParse(form["showtimeId"], out var showtimeId))
                 return BadRequest("showtimeId không hợp lệ");
 
+            DateTime watchDate = DateTime.Now;
+            if (DateTime.TryParse(form["watchDate"], out var parsedDate))
+            {
+                watchDate = parsedDate;
+            }
+
             var seatIds = form["seatIds"].Select(x => int.TryParse(x, out var s) ? s : 0).Where(x => x > 0).ToList();
+            var bookedSeats = _context.Tickets
+                .Include(t => t.Order)
+                .Where(t => t.IdShowtime == showtimeId && seatIds.Contains(t.IdSeat) && t.WatchDate.Date == watchDate.Date)
+                .Where(t => t.Order.Status != PaymentConstants.OrderCancelled) // Không tính vé của đơn đã hủy
+                .Select(t => t.Seat.SeatRow + t.Seat.SeatNumber)
+                .ToList();
+
+            if (bookedSeats.Any())
+            {
+                string seatNames = string.Join(", ", bookedSeats);
+                _notificationSubject.Publish($"Rất tiếc, ghế ({seatNames}) vừa có người khác đặt. Vui lòng chọn ghế khác!", "danger");
+                
+                // Quay lại trang chọn ghế của suất chiếu đó
+                return RedirectToAction("SelectSeat", "Seat", new { id = showtimeId });
+            }
             var combos = new Dictionary<int, int>();
 
             foreach (var key in form.Keys)
@@ -85,76 +110,24 @@ namespace CinemaWeb.Controllers
                 IdUser = userId.Value,
                 IdShowtime = showtimeId,
                 SeatIds = seatIds,
-                Combos = combos
+                Combos = combos,
+                WatchDate = watchDate
             };
 
             var orderId = _handler.Handle(command);
 
-            _notificationSubject.Publish($"Đặt vé thành công.", "success");
+            _notificationSubject.Publish($"Tạo vé thành công.", "success");
 
             var savedCombos = _context.OrderCombos.Where(oc => oc.IdOrder == orderId).Select(oc => new { oc.IdCombo, oc.Quantity }).ToList();
             ViewBag.SavedOrderCombos = savedCombos;
 
-            var order = _context.Orders
-                .Include(o => o.Tickets).ThenInclude(t => t.Seat)
-                .Include(o => o.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie)
-                .Include(o => o.OrderCombos).ThenInclude(oc => oc.Combo)
-                .FirstOrDefault(o => o.IdOrder == orderId);
+            var vm = _paymentService.GetPaymentDetails(orderId);
+    
+            if (vm == null) return NotFound();
 
-            if (order == null)
-                return NotFound();
-
-            if (order.ExpiredAt < DateTime.Now)
-            {
-                order.Status = PaymentConstants.OrderCancelled;
-                _context.SaveChanges();
-
-                return RedirectToAction("Index", "Home");
-            }
-
-            var firstShowtime = order.Tickets.FirstOrDefault()?.Showtime;
-
-            var orderCombos = order.OrderCombos?.ToList() ??
-                _context.OrderCombos.Include(oc => oc.Combo).Where(oc => oc.IdOrder == order.IdOrder).ToList();
-
-            var vm = new PaymentCheckoutViewModel
-            {
-                OrderId = order.IdOrder,
-                MovieName = firstShowtime?.Movie?.MovieName ?? "",
-                Poster = firstShowtime?.Movie?.Poster ?? "",
-                ShowtimeDate = firstShowtime?.StartFilm ?? DateTime.Now,
-                ShowtimeTime = firstShowtime != null ? firstShowtime.StartTime.ToString("HH:mm") : "",
-                TicketCount = order.Tickets.Count,
-                TicketTotal = order.Tickets.Sum(t => t.FinalPrice),
-                ComboTotal = orderCombos.Sum(oc => (oc.Combo?.Price ?? _context.Combos.Find(oc.IdCombo)?.Price ?? 0m) * oc.Quantity),
-                Total = order.TotalPrice,
-                Status = order.Status
-            };
-
-            foreach (var ticket in order.Tickets)
-            {
-                if (ticket.Seat != null)
-                    vm.SeatNames.Add($"{ticket.Seat.SeatRow}{ticket.Seat.SeatNumber}");
-            }
-
-            foreach (var orderCombo in orderCombos)
-            {
-                if (orderCombo.Quantity <= 0) continue;
-
-                var comboInfo = orderCombo.Combo ?? _context.Combos.Find(orderCombo.IdCombo);
-
-                vm.Combos.Add(new PaymentComboItem
-                {
-                    IdCombo = orderCombo.IdCombo,
-                    ComboName = comboInfo?.ComboName ?? "(Combo không xác định)",
-                    Quantity = orderCombo.Quantity,
-                    Price = comboInfo?.Price ?? 0m
-                });
-            }
-
-            ViewBag.OrderComboCount = orderCombos.Count;
-            ViewBag.OrderComboRaw = orderCombos.Select(oc => new { oc.IdCombo, oc.Quantity, ComboName = oc.Combo?.ComboName ?? _context.Combos.Find(oc.IdCombo)?.ComboName }).ToList();
-            ViewBag.ModelComboCount = vm.Combos.Count;
+            // Nếu bạn vẫn cần dùng ViewBag cho View hiện tại:
+            ViewBag.WatchDate = vm.ShowtimeDate.ToString("yyyy-MM-dd");
+            ViewBag.OrderComboCount = vm.Combos.Count;
 
             return View(vm);
         }
@@ -162,67 +135,13 @@ namespace CinemaWeb.Controllers
         [HttpGet]
         public IActionResult Checkout(int orderId)
         {
-            var order = _context.Orders
-                .Include(o => o.Tickets).ThenInclude(t => t.Seat)
-                .Include(o => o.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie)
-                .Include(o => o.OrderCombos).ThenInclude(oc => oc.Combo)
-                .FirstOrDefault(o => o.IdOrder == orderId);
+            var vm = _paymentService.GetPaymentDetails(orderId);
+    
+            if (vm == null) return NotFound();
 
-            if (order == null) return NotFound();
-
-            if (order.Status != PaymentConstants.OrderDelay)
-                return RedirectToAction("Index", "Home");
-
-            if (order.ExpiredAt < DateTime.Now)
-            {
-                order.Status = PaymentConstants.OrderCancelled;
-                _context.SaveChanges();
-                return RedirectToAction("Index", "Home");
-            }
-
-            var firstShowtime = order.Tickets.FirstOrDefault()?.Showtime;
-
-            var orderCombos = order.OrderCombos?.ToList() ??
-                _context.OrderCombos.Include(oc => oc.Combo).Where(oc => oc.IdOrder == order.IdOrder).ToList();
-
-            var vm = new PaymentCheckoutViewModel
-            {
-                OrderId = order.IdOrder,
-                MovieName = firstShowtime?.Movie?.MovieName ?? "",
-                Poster = firstShowtime?.Movie?.Poster ?? "",
-                ShowtimeDate = firstShowtime?.StartFilm ?? DateTime.Now,
-                ShowtimeTime = firstShowtime != null ? firstShowtime.StartTime.ToString("HH:mm") : "",
-                TicketCount = order.Tickets.Count,
-                TicketTotal = order.Tickets.Sum(t => t.FinalPrice),
-                ComboTotal = orderCombos.Sum(oc => (oc.Combo?.Price ?? _context.Combos.Find(oc.IdCombo)?.Price ?? 0m) * oc.Quantity),
-                Total = order.TotalPrice,
-                Status = order.Status
-            };
-
-            foreach (var ticket in order.Tickets)
-            {
-                if (ticket.Seat != null)
-                    vm.SeatNames.Add($"{ticket.Seat.SeatRow}{ticket.Seat.SeatNumber}");
-            }
-
-            foreach (var orderCombo in orderCombos)
-            {
-                if (orderCombo.Quantity <= 0) continue;
-
-                var comboInfo = orderCombo.Combo ?? _context.Combos.Find(orderCombo.IdCombo);
-
-                vm.Combos.Add(new PaymentComboItem
-                {
-                    IdCombo = orderCombo.IdCombo,
-                    ComboName = comboInfo?.ComboName ?? "(Combo không xác định)",
-                    Quantity = orderCombo.Quantity,
-                    Price = comboInfo?.Price ?? 0m
-                });
-            }
-
-            ViewBag.OrderComboCount = orderCombos.Count;
-            ViewBag.OrderComboRaw = orderCombos.Select(oc => new { oc.IdCombo, oc.Quantity, ComboName = oc.Combo?.ComboName ?? _context.Combos.Find(oc.IdCombo)?.ComboName }).ToList();
-            ViewBag.ModelComboCount = vm.Combos.Count;
+            // Nếu bạn vẫn cần dùng ViewBag cho View hiện tại:
+            ViewBag.WatchDate = vm.ShowtimeDate.ToString("yyyy-MM-dd");
+            ViewBag.OrderComboCount = vm.Combos.Count;
 
             return View(vm);
         }
@@ -230,147 +149,44 @@ namespace CinemaWeb.Controllers
         [HttpPost]
         public async Task<IActionResult> ProcessPayment(int orderId, string paymentType, decimal total)
         {
-            if (HttpContext.Session.GetString("UserName") == null)
-                return RedirectToAction("Login", "Auth");
-
             var order = _context.Orders.Find(orderId);
-            if (order == null)
-                return NotFound();
+            if (order == null) return NotFound();
 
+            // Thêm lại đoạn này để tránh khách thanh toán cho đơn đã hết hạn
             if (order.ExpiredAt < DateTime.Now)
             {
                 order.Status = PaymentConstants.OrderCancelled;
                 _context.SaveChanges();
-
-                return BadRequest("Đơn đã hết hạn");
+                _notificationSubject.Publish("Đơn hàng đã hết hạn thanh toán.", "danger");
+                return RedirectToAction("Index", "Home");
             }
-
-            if (order.TotalPrice != total)
-                return BadRequest("Số tiền thanh toán không hợp lệ.");
-
-            var payment = PaymentFactory.CreatePayment(paymentType);
-            payment.Pay(total);
-
-            string status;
-            string orderStatus;
-            string transCode;
-
-            if (paymentType.ToLower() == "cash")
+            try 
             {
-                status = PaymentConstants.StatusPending;
-                orderStatus = PaymentConstants.OrderPending;
-                transCode = "CASH-" + DateTime.Now.Ticks;
-            }
-            else if (paymentType.ToLower() == "vnpay")
-            {
-                status = PaymentConstants.StatusPaid;
-                orderStatus = PaymentConstants.OrderPaid;
-                transCode = "LOCAL-VNPAY-" + DateTime.Now.Ticks;
-            }
-            else if (paymentType.ToLower() == "momo")
-            {
-                // Chế độ fake Momo local
-                status = PaymentConstants.StatusPaid;
-                orderStatus = PaymentConstants.OrderPaid;
-                transCode = "LOCAL-MOMO-" + DateTime.Now.Ticks;
-            }
-            else
-            {
-                status = PaymentConstants.StatusPaid;
-                orderStatus = PaymentConstants.OrderPaid;
-                transCode = "TX" + DateTime.Now.Ticks;
-            }
+                // Chỉ cần gọi 1 dòng duy nhất để xử lý thanh toán và lưu DB
+                var paymentProcessor = PaymentFactory.CreatePayment(paymentType);
+                _paymentService.ExecutePayment(orderId, paymentType);
 
-            var paymentRecord = new Payment
-            {
-                PaymentMethod = paymentType.ToLower() switch
-                {
-                    "cash" => PaymentConstants.Cash,
-                    "momo" => PaymentConstants.Momo,
-                    "vnpay" => PaymentConstants.VNPay,
-                    _ => "Khác"
-                },
-                Price = total,
-                Status = status,
-                TransactionCode = transCode,
-                PaymentTime = DateTime.Now,
-                IdOrder = orderId
-            };
-
-            _context.Payments.Add(paymentRecord);
-            order.Status = orderStatus;
-            _context.SaveChanges();
-
-            _notificationSubject.Publish($"Thanh toán vé thành công.", "success");
-
-            if (paymentType.ToLower() == "cash")
-            {
-                ViewBag.Message = "Đã ghi nhận thanh toán tiền mặt: đang chờ xác nhận admin.";
-                _notificationSubject.Publish($"Vé đang chờ xác nhận admin.", "warning");
+                string msg = paymentProcessor.GetSuccessMessage();
+                _notificationSubject.Publish(msg, "success");
                 return RedirectToAction("Success", new { id = orderId });
             }
-
-            return RedirectToAction("Success", new { id = orderId });
+            catch (Exception ex)
+            {
+                _notificationSubject.Publish(ex.Message, "danger");
+                return RedirectToAction("Checkout", new { orderId = orderId });
+            }
         }
-
-        // Chức năng trả về và notify API Momo không còn dùng khi làm fake cục bộ, có thể xóa.
 
         [HttpGet]
         public IActionResult Success(int id)
         {
-            var order = _context.Orders
-                .Include(o => o.Payments)
-                .Include(o => o.Tickets).ThenInclude(t => t.Seat)
-                .Include(o => o.Tickets).ThenInclude(t => t.Showtime).ThenInclude(s => s.Movie)
-                .Include(o => o.OrderCombos).ThenInclude(oc => oc.Combo)
-                .FirstOrDefault(o => o.IdOrder == id);
+            var vm = _paymentService.GetPaymentDetails(id);
+    
+            if (vm == null) return NotFound();
 
-            if (order == null)
-                return NotFound();
-
-            var firstShowtime = order.Tickets.FirstOrDefault()?.Showtime;
-
-            var orderCombos = order.OrderCombos?.ToList() ??
-                _context.OrderCombos.Include(oc => oc.Combo).Where(oc => oc.IdOrder == order.IdOrder).ToList();
-
-            var vm = new PaymentCheckoutViewModel
-            {
-                OrderId = order.IdOrder,
-                MovieName = firstShowtime?.Movie?.MovieName ?? "",
-                Poster = firstShowtime?.Movie?.Poster ?? "",
-                ShowtimeDate = firstShowtime?.StartFilm ?? DateTime.Now,
-                ShowtimeTime = firstShowtime != null ? firstShowtime.StartTime.ToString("HH:mm") : "",
-                TicketCount = order.Tickets.Count,
-                TicketTotal = order.Tickets.Sum(t => t.FinalPrice),
-                ComboTotal = orderCombos.Sum(oc => (oc.Combo?.Price ?? _context.Combos.Find(oc.IdCombo)?.Price ?? 0m) * oc.Quantity),
-                Total = order.TotalPrice,
-                Status = order.Status
-            };
-
-            foreach (var ticket in order.Tickets)
-            {
-                if (ticket.Seat != null)
-                    vm.SeatNames.Add($"{ticket.Seat.SeatRow}{ticket.Seat.SeatNumber}");
-            }
-
-            foreach (var orderCombo in orderCombos)
-            {
-                if (orderCombo.Quantity <= 0) continue;
-
-                var comboInfo = orderCombo.Combo ?? _context.Combos.Find(orderCombo.IdCombo);
-
-                vm.Combos.Add(new PaymentComboItem
-                {
-                    IdCombo = orderCombo.IdCombo,
-                    ComboName = comboInfo?.ComboName ?? "(Combo không xác định)",
-                    Quantity = orderCombo.Quantity,
-                    Price = comboInfo?.Price ?? 0m
-                });
-            }
-
-            ViewBag.OrderComboCount = orderCombos.Count;
-            ViewBag.OrderComboRaw = orderCombos.Select(oc => new { oc.IdCombo, oc.Quantity, ComboName = oc.Combo?.ComboName ?? _context.Combos.Find(oc.IdCombo)?.ComboName }).ToList();
-            ViewBag.ModelComboCount = vm.Combos.Count;
+            // Nếu bạn vẫn cần dùng ViewBag cho View hiện tại:
+            ViewBag.WatchDate = vm.ShowtimeDate.ToString("yyyy-MM-dd");
+            ViewBag.OrderComboCount = vm.Combos.Count;
 
             return View(vm);
         }

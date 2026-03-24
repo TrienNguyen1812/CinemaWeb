@@ -82,5 +82,36 @@ namespace CinemaWeb.Services
                 .ThenInclude(r => r.Cinema)
                 .FirstOrDefault(m => m.IdMovie == id);
         }
+
+        public List<TopMovieDto> GetTopMovies(int topN)
+        {
+            int currentYear = DateTime.Now.Year;
+
+            var topMovies = _context.Tickets
+                .Include(t => t.Order) // Cần Include Order để check Status
+                .Include(t => t.Showtime).ThenInclude(s => s.Movie)
+                .Where(t => t.Showtime.Movie != null && 
+                            (t.Order.Status == PaymentConstants.OrderPaid) && // Chỉ tính vé đã trả tiền
+                            t.Order.OrderTime.Year == currentYear) // Chỉ tính trong năm hiện tại
+                .GroupBy(t => new { t.Showtime.Movie.IdMovie, t.Showtime.Movie.MovieName })
+                .Select(g => new TopMovieDto
+                {
+                    MovieName = g.Key.MovieName,
+                    TotalTickets = g.Count(),
+                    // Sử dụng FinalPrice (giá sau cùng) sẽ chính xác hơn Price gốc
+                    TotalRevenue = g.Sum(t => (decimal?)t.FinalPrice) ?? 0 
+                })
+                .OrderByDescending(m => m.TotalTickets)
+                .Take(topN)
+                .ToList();
+
+            // Gán thứ hạng
+            for (int i = 0; i < topMovies.Count; i++)
+            {
+                topMovies[i].Rank = i + 1;
+            }
+
+            return topMovies;
+        }
     }
 }

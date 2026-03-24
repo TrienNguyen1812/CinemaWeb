@@ -54,10 +54,10 @@
         </div>
     </div>
 
-    <div class="row g-3">
-        <div class="col-md-4">
-            <div class="card p-3 shadow-sm border-0">
-                <h6 class="fw-bold mb-3">Khách hàng thân thiết</h6>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm border-0 h-100">
+                <h6 class="fw-bold mb-3"><i class="fas fa-user-crown text-warning"></i> Khách hàng thân thiết</h6>
                 <ul class="list-group list-group-flush">
                     @if (Model.TopCustomers != null && Model.TopCustomers.Any())
                     {
@@ -72,55 +72,100 @@
                             </li>
                         }
                     }
-                    else
-                    {
-                        <li class="list-group-item text-center text-muted">Chưa có dữ liệu</li>
-                    }
                 </ul>
             </div>
         </div>
 
-        <div class="col-md-8">
-            <div class="card p-3 shadow-sm border-0">
-                <h6 class="fw-bold mb-3">Giao dịch đặt vé mới nhất</h6>
+        <div class="col-md-6">
+            <div class="card p-3 shadow-sm border-0 h-100">
+                <h6 class="fw-bold mb-3"><i class="fas fa-trophy text-warning me-2"></i> Phim bán chạy nhất năm @DateTime.Now.Year</h6>
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-sm table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th>Mã Đơn</th>
-                                <th>Khách hàng / Phim</th>
-                                <th>Ngày đặt</th>
-                                <th>Tổng tiền</th>
-                                <th>Trạng thái</th>
+                                <th style="width: 60px;">Hạng</th>
+                                <th>Tên phim</th>
+                                <th class="text-center">Số vé</th>
+                                <th class="text-end">Doanh thu</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @if (Model.RecentOrders != null && Model.RecentOrders.Any())
+                            @if (Model.TopMovies != null && Model.TopMovies.Any())
                             {
-                                foreach (var order in Model.RecentOrders)
+                                foreach (var movie in Model.TopMovies)
                                 {
+                                    // Xác định class dựa trên hạng
+                                    string rankClass = movie.Rank switch {
+                                        1 => "rank-gold",
+                                        2 => "rank-silver",
+                                        3 => "rank-bronze",
+                                        _ => "rank-default"
+                                    };
+
                                     <tr>
-                                        <td><strong>#@order.OrderId</strong></td>
-                                        <td>@order.MovieName</td>
-                                        <td>@order.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
-                                        <td>@order.TotalPrice.ToString("N0")₫</td>
                                         <td>
-                                            @if (order.Status == "Completed" || order.Status == "Paid")
-                                            {
-                                                <span class="badge bg-success">Đã thanh toán</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-warning text-dark">@order.Status</span>
-                                            }
+                                            <div class="rank-badge @rankClass">
+                                                @if(movie.Rank == 1) {
+                                                    <i class="fas fa-crown"></i> } else if(movie.Rank == 2) {
+                                                    <i class="fas fa-medal"></i>
+                                                } else if(movie.Rank == 3) {
+                                                    <i class="fas fa-award"></i>
+                                                }
+                                                <span class="ms-1">#@movie.Rank</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold text-truncate" style="max-width: 200px;" title="@movie.MovieName">
+                                                @movie.MovieName
+                                            </div>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-light text-dark border">@movie.TotalTickets.ToString("N0")</span>
+                                        </td>
+                                        <td class="text-end text-success fw-bold">
+                                            @movie.TotalRevenue.ToString("N0")₫
                                         </td>
                                     </tr>
                                 }
                             }
                             else
                             {
+                                <tr><td colspan="4" class="text-center text-muted py-4">Chưa có dữ liệu phim</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="card p-3 shadow-sm border-0">
+                <h6 class="fw-bold mb-3"><i class="fas fa-history text-info"></i> Giao dịch đặt vé mới nhất</h6>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Mã Đơn</th>
+                                <th>Phim</th>
+                                <th>Ngày đặt</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.RecentOrders) {
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted">Không có đơn hàng nào gần đây</td>
+                                    <td><strong>#@order.OrderId</strong></td>
+                                    <td>@order.MovieName</td>
+                                    <td>@order.OrderTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@order.TotalPrice.ToString("N0")₫</td>
+                                    <td>
+                                        <span class="badge @(order.Status == "Paid" || order.Status == "Completed" ? "bg-success" : "bg-warning")">
+                                            @order.Status
+                                        </span>
+                                    </td>
                                 </tr>
                             }
                         </tbody>

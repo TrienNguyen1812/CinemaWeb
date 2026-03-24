@@ -12,7 +12,7 @@ namespace CinemaWeb.Controllers
             _context = context;
         }
 
-        public IActionResult SelectCombo(int showtimeId, List<int> seatIds)
+        public IActionResult SelectCombo(int showtimeId, List<int> seatIds, string watchDate)
         {
             if (HttpContext.Session.GetString("UserName") == null)
             {
@@ -23,6 +23,9 @@ namespace CinemaWeb.Controllers
 
             ViewBag.SeatIds = seatIds;
             ViewBag.ShowtimeId = showtimeId;
+            ViewBag.WatchDate = watchDate;
+
+            HttpContext.Session.SetString("SelectedWatchDate", watchDate);
 
             return View(combos);
         }

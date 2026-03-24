@@ -15,5 +15,6 @@ namespace CinemaWeb.Services
         IEnumerable<Movie> GetAllMovies();
         Movie? GetById(int id);
         Movie? GetMovieDetail(int id);
+        List<TopMovieDto> GetTopMovies(int topN);
     }
 }

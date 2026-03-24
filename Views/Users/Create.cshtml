@@ -3,7 +3,8 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
-<h2>Create User</h2>
+<link rel="stylesheet" href="~/css/room.css" />
+<h2>Tạo người dùng</h2>
 
 <form asp-action="Create" method="post">
     <div class="form-group">
@@ -42,8 +43,8 @@
     </div>
 
     <br />
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-action="Index" class="btn btn-secondary">Back</a>
+    <button type="submit" class="btn btn-primary">Tạo</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </form>
 
 @section Scripts {

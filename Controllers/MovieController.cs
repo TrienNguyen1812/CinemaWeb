@@ -18,10 +18,23 @@ namespace CinemaWeb.Controllers
 
         public IActionResult Detail(int id)
         {
-            var movie = _movieRepository.GetMovieDetail(id);
+            // 1. Phải nạp đầy đủ các bảng liên quan để View có dữ liệu rạp/phòng
+            var movie = _context.Movies
+                .Include(m => m.Showtimes)
+                    .ThenInclude(s => s.ScreeningRoom)
+                        .ThenInclude(r => r.Cinema)
+                .FirstOrDefault(m => m.IdMovie == id);
 
-            if (movie == null)
-                return NotFound();
+            if (movie == null) return NotFound();
+
+            // 2. Lấy danh sách các khung giờ chiếu duy nhất để khách chọn (không phân biệt ngày)
+            var uniqueTimeSlots = movie.Showtimes
+                .GroupBy(s => new { s.StartTime, s.ScreeningRoom.Cinema.CinemaName })
+                .Select(g => g.First())
+                .OrderBy(s => s.StartTime)
+                .ToList();
+
+            ViewBag.UniqueTimeSlots = uniqueTimeSlots;
 
             return View(movie);
         }

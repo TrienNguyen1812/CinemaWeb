@@ -23,7 +23,7 @@
         </div>
         <div class="order-info-item">
             <span class="order-label">Suất chiếu:</span>
-            <span class="order-value">@Model.ShowtimeDate.ToString("dd/MM/yyyy") | @Model.ShowtimeTime</span>
+            <span class="order-value">@DateTime.Parse(ViewBag.WatchDate).ToString("dd/MM/yyyy") | @Model.ShowtimeTime</span>
         </div>
         <div class="order-info-item">
             <span class="order-label">Số vé:</span>

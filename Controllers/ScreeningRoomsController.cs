@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System;
+using CinemaWeb.Services.Notifications;
 
 namespace CinemaWeb.Controllers
 {
     public class ScreeningRoomsController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
 
-        public ScreeningRoomsController(DbContexts context)
+        public ScreeningRoomsController(DbContexts context, INotificationSubject notificationSubject)
         {
             _context = context;
+            _notificationSubject = notificationSubject;
         }
 
         // ===== INDEX =====
@@ -56,6 +59,7 @@ namespace CinemaWeb.Controllers
 
             _context.Add(room);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Thêm phòng chiếu thành công!", "success");
             return RedirectToAction(nameof(Index));
         }
 
@@ -85,6 +89,7 @@ namespace CinemaWeb.Controllers
 
             _context.Update(room);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Cập nhật phòng chiếu thành công!", "info");
             return RedirectToAction(nameof(Index));
         }
 
@@ -109,6 +114,7 @@ namespace CinemaWeb.Controllers
             var room = await _context.ScreeningRooms.FindAsync(id);
             _context.ScreeningRooms.Remove(room);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Xóa phòng chiếu thành công!", "warning");
             return RedirectToAction(nameof(Index));
         }
     }

@@ -20,6 +20,9 @@ builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<CreateOrderCommandHandler>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<TicketPriceService>();
+builder.Services.AddScoped<OrderPriceService>();
 
 // Observer pattern services for notification
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

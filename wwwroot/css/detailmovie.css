@@ -1,233 +1,92 @@
-/* Tổng thể wrapper */
+/* ================================================================
+   FILE: detailmovie.css (Bản Đảo Vị Trí: Poster Trái - Info Phải)
+   ================================================================ */
+
 .movie-detail-wrapper {
     color: #fff;
     padding-bottom: 50px;
+    background: #0b1020;
 }
 
-/* HERO SECTION */
 .movie-hero {
-    padding: 40px 0;
-    /* Hiệu ứng nền mờ nhẹ từ ảnh poster (nếu có thể dùng js lấy ảnh làm nền) hoặc dùng gradient tối */
-    background: linear-gradient(to bottom, rgba(11, 16, 32, 0.9), #0b1020);
+    padding: 60px 0;
+    background: linear-gradient(to bottom, rgba(28, 28, 46, 0.8), #0b1020);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* --- FIX POSTER NHỎ LẠI --- */
-.poster-container {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: transform 0.3s ease;
-    /* Khống chế độ rộng tối đa của poster */
-    max-width: 250px; 
-    margin: 0 auto; /* Căn giữa trên mobile */
+/* Căn giữa row và tạo khoảng cách */
+.movie-hero .container > .row {
+    display: flex;
+    justify-content: center; 
+    align-items: flex-start;
+    gap: 40px; 
 }
 
-/* Đảm bảo căn lề trái trên desktop */
-@media (min-width: 768px) {
-    .poster-container {
-        margin: 0;
-    }
+/* KHỐI THÔNG TIN (Bên phải) */
+.movie-detail-meta {
+    flex: 0 1 700px;
+    text-align: left;
 }
 
-.poster-container:hover {
-    transform: scale(1.03);
-}
-
-.main-poster {
-    width: 100%;
-    display: block;
-    height: auto;
-}
-
-.age-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: #f5c518;
-    color: #000;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-/* Movie Meta */
 .movie-title {
-    font-size: 2.2rem; /* Giảm nhẹ size chữ tiêu đề */
+    font-size: 2.5rem;
     font-weight: 800;
     color: #f5c518;
     margin-bottom: 15px;
     margin-top: 0;
 }
 
-@media (max-width: 768px) {
-    .movie-title {
-        text-align: center;
-        margin-top: 15px;
-    }
-}
-
-.meta-tags {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-@media (max-width: 768px) {
-    .meta-tags {
-        justify-content: center;
-    }
-}
-
-.tag {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 5px 12px;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    color: #ccc;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.tag i {
-    color: #f5c518;
-}
-
-.movie-description h5, .trailer-section h5 {
-    color: #f5c518;
-    margin-bottom: 10px;
-    font-weight: 600;
-}
-
-.movie-description p {
-    line-height: 1.7;
-    color: #ddd;
-    text-align: justify;
-    font-size: 0.95rem;
-}
-
-/* Trailer Video */
-.video-container {
-    border-radius: 12px;
-    overflow: hidden;
-    max-width: 450px; /* Thu nhỏ trailer box một chút */
-    border: 1px solid rgba(245, 197, 24, 0.3);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-.video-container video {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-/* SHOWTIME SECTION */
-.showtime-section {
-    margin-top: 40px;
-}
-
-.section-title {
-    font-weight: 700;
-    margin-bottom: 25px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #333;
-    font-size: 1.5rem;
-}
-
-.cinema-list {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
-
-.cinema-item {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    background: rgba(255,255,255, 0.02);
-    padding: 15px;
-    border-radius: 10px;
-}
-
-.cinema-info {
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: #fff;
-}
-
-/* Suất chiếu (Dạng button hiện đại) */
-.time-slots {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.time-link {
-    text-decoration: none !important;
-    background: transparent;
-    border: 1px solid #444;
-    color: #ccc;
-    padding: 7px 20px;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
-    transition: all 0.2s ease;
-}
-
-.time-link:hover {
-    background: #f5c518;
-    color: #000;
-    border-color: #f5c518;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(245, 197, 24, 0.2);
-}
-/* --- TRẠNG THÁI PHIM --- */
+/* Trạng thái & Tags */
 .status-badge {
-    margin-bottom: 15px;
-    padding: 5px 15px;
+    margin-bottom: 20px;
+    padding: 6px 16px;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    letter-spacing: 0.5px;
+    gap: 8px;
 }
+.status-now { background: rgba(220, 53, 69, 0.15); color: #ff4d5e; border: 1px solid rgba(220, 53, 69, 0.4); }
+.status-soon { background: rgba(13, 110, 253, 0.15); color: #3d8bff; border: 1px solid rgba(13, 110, 253, 0.4); }
 
-/* Màu cho Đang chiếu (Đỏ rực rỡ) */
-.status-now {
-    background: rgba(220, 53, 69, 0.2);
-    color: #ff4d5e;
-    border: 1px solid rgba(220, 53, 69, 0.5);
-    box-shadow: 0 0 10px rgba(220, 53, 69, 0.2);
+.meta-tags { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+.tag { background: rgba(255, 255, 255, 0.06); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: #bbb; display: flex; align-items: center; gap: 6px; }
+.tag i { color: #f5c518; }
+
+/* Nội dung & Trailer */
+.movie-description h5, .trailer-section h5 { color: #f5c518; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; }
+.movie-description p { line-height: 1.8; color: #ccc; text-align: justify; margin-bottom: 30px; }
+.video-container { border-radius: 12px; overflow: hidden; max-width: 500px; border: 1px solid rgba(245, 197, 24, 0.2); }
+.video-container video { width: 100%; display: block; }
+
+/* KHỐI POSTER (Bên trái) */
+.poster-container {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    /* transition: transform 0.4s ease; */
+    width: 450px;
+    flex-shrink: 0;
 }
+/* .poster-container:hover { transform: scale(1.03); } */
+.main-poster { width: 100%; height: auto; display: block; }
+.age-badge { position: absolute; top: 15px; left: 15px; background: #f5c518; color: #000; padding: 5px 10px; border-radius: 6px; font-weight: 900; }
 
-/* Màu cho Sắp chiếu (Xanh dương hoặc Cam) */
-.status-soon {
-    background: rgba(13, 110, 253, 0.2);
-    color: #3d8bff;
-    border: 1px solid rgba(13, 110, 253, 0.5);
-}
+/* LỊCH CHIẾU SECTION */
+.showtime-section { margin-top: 50px; }
+.section-title { font-weight: 700; margin-bottom: 30px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; }
+.cinema-item { background: rgba(255,255,255, 0.03); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid #f5c518; }
+.time-slots { display: flex; flex-wrap: wrap; gap: 12px; }
+.time-link { text-decoration: none !important; background: rgba(255,255,255,0.05); border: 1px solid #444; color: #eee; padding: 8px 22px; border-radius: 8px; transition: 0.3s; }
+.time-link:hover { background: #f5c518; color: #000; border-color: #f5c518; }
 
-/* Animation nhẹ cho badge Đang chiếu để thu hút sự chú ý */
-.status-now i {
-    animation: pulse-red 2s infinite;
-}
-
-@keyframes pulse-red {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-
+/* MOBILE */
 @media (max-width: 768px) {
-    .movie-meta .d-flex {
-        justify-content: center;
-    }
+    .movie-hero .container > .row { flex-direction: column; align-items: center; text-align: center; }
+    .movie-detail-meta { text-align: center; }
+    .meta-tags, .status-badge { justify-content: center; }
+    .poster-container { margin-bottom: 30px; }
+    .video-container { margin: 0 auto; }
 }

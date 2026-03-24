@@ -1,4 +1,5 @@
 ﻿using CinemaWeb.Models;
+using CinemaWeb.Services.Notifications;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +10,12 @@ namespace CinemaWeb.Controllers
     public class ShowtimesController : Controller
     {
         private readonly DbContexts _context;
+        private readonly INotificationSubject _notificationSubject;
 
-        public ShowtimesController(DbContexts context)
+        public ShowtimesController(DbContexts context, INotificationSubject notificationSubject)
         {
             _context = context;
+            _notificationSubject = notificationSubject;
         }
 
         // INDEX
@@ -56,6 +59,7 @@ namespace CinemaWeb.Controllers
             {
                 _context.Add(showtime);
                 await _context.SaveChangesAsync();
+                _notificationSubject.Publish("Thêm suất chiếu thành công!", "success");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -87,6 +91,7 @@ namespace CinemaWeb.Controllers
             {
                 _context.Update(showtime);
                 await _context.SaveChangesAsync();
+                _notificationSubject.Publish("Cập nhật suất chiếu thành công!", "info");
                 return RedirectToAction(nameof(Index));
             }
 
@@ -115,6 +120,7 @@ namespace CinemaWeb.Controllers
             var showtime = await _context.Showtimes.FindAsync(id);
             _context.Showtimes.Remove(showtime);
             await _context.SaveChangesAsync();
+            _notificationSubject.Publish("Xóa suất chiếu thành công!", "warning");
             return RedirectToAction(nameof(Index));
         }
     }
