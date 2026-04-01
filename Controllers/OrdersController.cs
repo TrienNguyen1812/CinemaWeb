@@ -35,6 +35,9 @@ namespace CinemaWeb.Controllers
             var order = await _context.Orders
                 .Include(o => o.User)
                 .Include(o => o.Tickets)
+                    .ThenInclude(o => o.Seat)
+                .Include(o => o.OrderCombos)
+                    .ThenInclude(oc => oc.Combo)
                 .Include(o => o.Payments)
                 .FirstOrDefaultAsync(o => o.IdOrder == id);
 

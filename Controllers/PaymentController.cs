@@ -122,6 +122,13 @@ namespace CinemaWeb.Controllers
             ViewBag.SavedOrderCombos = savedCombos;
 
             var vm = _paymentService.GetPaymentDetails(orderId);
+
+            var order = _context.Orders.Find(orderId);
+            if (order != null && vm != null)
+            {
+                order.TotalPrice = vm.Total; // Cập nhật TotalPrice mới nhất từ VM
+                _context.SaveChanges(); 
+            }
     
             if (vm == null) return NotFound();
 
@@ -135,6 +142,7 @@ namespace CinemaWeb.Controllers
         [HttpGet]
         public IActionResult Checkout(int orderId)
         {
+            
             var vm = _paymentService.GetPaymentDetails(orderId);
     
             if (vm == null) return NotFound();
@@ -193,19 +201,22 @@ namespace CinemaWeb.Controllers
         [HttpPost]
         public IActionResult CancelOrder(int orderId)
         {
-            var order = _context.Orders.Find(orderId);
-            if (order == null)
-                return NotFound();
+            // Nạp thêm Tickets và OrderCombos để đảm bảo context nhận diện được dữ liệu liên quan
+            var order = _context.Orders
+                .Include(o => o.Tickets)
+                .Include(o => o.OrderCombos)
+                .FirstOrDefault(o => o.IdOrder == orderId);
 
-            // chỉ huỷ khi chưa thanh toán
+            if (order == null) return NotFound();
+
             if (order.Status == "Đã thanh toán")
                 return BadRequest("Đơn đã thanh toán, không thể huỷ");
 
             order.Status = "Đã hủy";
+            _context.Update(order); // Đảm bảo ghi đè giá trị TotalPrice mới nếu cần
             _context.SaveChanges();
 
-            _notificationSubject.Publish($"Vé đã bị huỷ.", "warning");
-
+            _notificationSubject.Publish($"Vé đã bị huỷ.", "warning");
             return RedirectToAction("Index", "Home");
         }
     }

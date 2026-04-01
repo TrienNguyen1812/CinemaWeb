@@ -64,7 +64,7 @@ namespace CinemaWeb.Controllers
                     else
                         throw;
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = user.IdUser});
             }
             return View(user);
         }

@@ -11,11 +11,25 @@
     {
         selectedDateStr = DateTime.Today.ToString("yyyy-MM-dd");
     }
+
+    // --- KIỂM TRA QUÁ GIỜ ---
+    DateTime selectedDate = DateTime.Parse(selectedDateStr);
+    DateTime showFullDateTime = selectedDate.Date.Add(Model.StartTime);
+    bool isPastShowtime = showFullDateTime <= DateTime.Now;
+    // ------------------------
 }
 
 <link rel="stylesheet" href="~/css/selectseat.css" />
 
 <div class="booking-container">
+    @if (isPastShowtime)
+    {
+        <div class="alert alert-danger text-center mt-3">
+            <h4><i class="fas fa-exclamation-triangle"></i> Suất chiếu đã bắt đầu hoặc kết thúc</h4>
+            <p>Vui lòng chọn ngày khác hoặc suất chiếu khác để tiếp tục đặt vé.</p>
+            @* <a href="/" class="btn btn-primary">Quay lại trang chủ</a> *@
+        </div>
+    }
     <div class="movie-header-info">
         <h2>Chọn ghế</h2>
         <div>
@@ -46,6 +60,8 @@
         </div>
     </div>
 
+    @if (!isPastShowtime)
+    {
     <div class="screen-wrapper">
         <div class="screen"></div>
         <div class="screen-text">MÀN HÌNH</div>
@@ -94,6 +110,7 @@
             <button type="submit" class="btn-continue">Tiếp tục</button>
         </div>
     </form>
+    }
 </div>
 
 <script>

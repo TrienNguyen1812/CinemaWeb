@@ -1,5 +1,5 @@
 /* ================================================================
-   FILE: detailmovie.css (Bản Đảo Vị Trí: Poster Trái - Info Phải)
+   FILE: detailmovie.css - Đã sửa lỗi Poster & Scrollbar
    ================================================================ */
 
 .movie-detail-wrapper {
@@ -9,34 +9,86 @@
 }
 
 .movie-hero {
-    padding: 60px 0;
+    padding: 40px 0;
     background: linear-gradient(to bottom, rgba(28, 28, 46, 0.8), #0b1020);
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* Căn giữa row và tạo khoảng cách */
-.movie-hero .container > .row {
-    display: flex;
-    justify-content: center; 
+/* KHUNG CHỨA CHÍNH (ÉP NGANG & SCROLL) */
+.movie-detail-flex {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
     align-items: flex-start;
-    gap: 40px; 
+    gap: 40px;
+    background: rgba(0, 0, 0, 0.6); /* Nền tối để nổi bật nội dung */
+    padding: 30px;
+    border-radius: 15px;
+    height: 650px;       /* Chiều cao cố định để kích hoạt scroll bên phải */
+    width: 100%;
+    overflow: hidden;    /* Ngăn nội dung tràn ra ngoài khung chính */
+    position: relative;
+    box-sizing: border-box;
 }
 
-/* KHỐI THÔNG TIN (Bên phải) */
-.movie-detail-meta {
-    flex: 0 1 700px;
-    text-align: left;
+/* CỘT BÊN TRÁI: POSTER (CỐ ĐỊNH) */
+.movie-detail-left {
+    flex: 0 0 450px !important; /* Tuyệt đối không giãn, không co */
+    width: 450px !important;
+    max-width: 450px !important;
+    position: relative; /* Để age-badge căn theo cái này */
 }
 
+.poster-container {
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+}
+
+.main-poster {
+    width: 100% !important;
+    height: 600px !important; /* Chiều cao cố định poster */
+    object-fit: cover;        /* Chống bẻ ảnh, nhòe ảnh */
+    display: block;
+}
+
+.age-badge { 
+    position: absolute; 
+    top: 15px; 
+    left: 15px; 
+    background: #f5c518; 
+    color: #000; 
+    padding: 5px 10px; 
+    border-radius: 6px; 
+    font-weight: 900;
+    z-index: 10;
+}
+
+/* CỘT BÊN PHẢI: THÔNG TIN (SCROLLBAR) */
+.movie-detail-right {
+    flex: 1 !important;      /* Chiếm toàn bộ diện tích còn lại */
+    min-width: 0;             /* Ngăn nội dung đẩy cột phình ra */
+    height: 100%;             /* Cao bằng movie-detail-flex */
+    overflow-y: scroll !important; /* KÍCH HOẠT THANH CUỘN */
+    scrollbar-width: thin; /* Hỗ trợ Firefox */
+    scrollbar-color: #f5c518 rgba(255, 255, 255, 0.1); /* Hỗ trợ Firefox */
+    padding-right: 20px;
+}
+
+/* Tùy chỉnh thanh cuộn cho chuyên nghiệp */
+.movie-detail-right::-webkit-scrollbar { width: 10px; display: block; }
+.movie-detail-right::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+.movie-detail-right::-webkit-scrollbar-thumb { background: #f5c518; border-radius: 10px; }
+
+/* NỘI DUNG CHI TIẾT */
 .movie-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
     color: #f5c518;
-    margin-bottom: 15px;
-    margin-top: 0;
+    margin-bottom: 20px;
 }
 
-/* Trạng thái & Tags */
 .status-badge {
     margin-bottom: 20px;
     padding: 6px 16px;
@@ -54,25 +106,18 @@
 .tag { background: rgba(255, 255, 255, 0.06); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: #bbb; display: flex; align-items: center; gap: 6px; }
 .tag i { color: #f5c518; }
 
-/* Nội dung & Trailer */
 .movie-description h5, .trailer-section h5 { color: #f5c518; margin-bottom: 12px; font-weight: 600; text-transform: uppercase; }
 .movie-description p { line-height: 1.8; color: #ccc; text-align: justify; margin-bottom: 30px; }
-.video-container { border-radius: 12px; overflow: hidden; max-width: 500px; border: 1px solid rgba(245, 197, 24, 0.2); }
-.video-container video { width: 100%; display: block; }
 
-/* KHỐI POSTER (Bên trái) */
-.poster-container {
-    position: relative;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-    /* transition: transform 0.4s ease; */
-    width: 450px;
-    flex-shrink: 0;
+.video-container { 
+    border-radius: 12px; 
+    overflow: hidden; 
+    width: 100%; /* Video chiếm hết chiều rộng cột phải */
+    max-width: 700px; 
+    border: 1px solid rgba(245, 197, 24, 0.2); 
+    margin-bottom: 20px;
 }
-/* .poster-container:hover { transform: scale(1.03); } */
-.main-poster { width: 100%; height: auto; display: block; }
-.age-badge { position: absolute; top: 15px; left: 15px; background: #f5c518; color: #000; padding: 5px 10px; border-radius: 6px; font-weight: 900; }
+.video-container video { width: 100%; display: block; }
 
 /* LỊCH CHIẾU SECTION */
 .showtime-section { margin-top: 50px; }
@@ -82,11 +127,23 @@
 .time-link { text-decoration: none !important; background: rgba(255,255,255,0.05); border: 1px solid #444; color: #eee; padding: 8px 22px; border-radius: 8px; transition: 0.3s; }
 .time-link:hover { background: #f5c518; color: #000; border-color: #f5c518; }
 
-/* MOBILE */
-@media (max-width: 768px) {
-    .movie-hero .container > .row { flex-direction: column; align-items: center; text-align: center; }
-    .movie-detail-meta { text-align: center; }
+/* RESPONSIVE CHO MOBILE */
+@media (max-width: 992px) {
+    .movie-detail-flex {
+        flex-direction: column !important;
+        height: auto !important;
+        overflow: visible;
+    }
+    .movie-detail-left {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 300px !important;
+        margin: 0 auto 30px;
+    }
+    .movie-detail-right {
+        overflow-y: visible !important;
+        padding-right: 0;
+    }
+    .movie-title { text-align: center; font-size: 2rem; }
     .meta-tags, .status-badge { justify-content: center; }
-    .poster-container { margin-bottom: 30px; }
-    .video-container { margin: 0 auto; }
 }

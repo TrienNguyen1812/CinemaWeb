@@ -59,6 +59,13 @@ public class PaymentService
         // 1. Tính toán lại tổng tiền thực tế qua Decorator
         decimal finalTotal = _orderPriceService.CalculateTotal(order);
 
+        
+        if (order.TotalPrice != finalTotal)
+        {
+            order.TotalPrice = finalTotal;
+            _context.SaveChanges(); // Lưu ngay vào bảng Orders
+        }
+
         var firstTicket = order.Tickets.FirstOrDefault();
         
         // 2. Tính toán các thành phần giá để hiển thị chi tiết

@@ -22,7 +22,17 @@ namespace CinemaWeb.Services.Commands
         {
             // 1. Lấy thông tin suất chiếu để lấy giá vé
             var show = _context.Showtimes
+                .Include(s => s.Movie)
                 .FirstOrDefault(x => x.IdShowtime == command.IdShowtime);
+
+            //Kiểm tra suất chiếu tồn tại
+            DateTime showDateTime = command.WatchDate.Date.Add(show.StartTime);
+
+            // Kiểm tra nếu thời điểm hiện tại đã vượt quá thời gian chiếu
+            if (showDateTime <= DateTime.Now)
+            {
+                throw new Exception($"Suất chiếu phim {show.Movie?.MovieName} lúc {show.StartTime} ngày {command.WatchDate:dd/MM/yyyy} đã bắt đầu hoặc đã kết thúc. Vui lòng chọn suất khác!");
+            }
 
             if (show == null) throw new Exception("Suất chiếu không tồn tại");
 
@@ -48,8 +58,20 @@ namespace CinemaWeb.Services.Commands
                 if (seat == null) continue;
 
                 IPricingStrategy pricingStrategy = new NormalPricing();
-                if (seat.TypeSeat.Trim() == "VIP") pricingStrategy = new VipPricing();
-                if (show.StartTime.Hours >=22 || show.StartTime.Hours < 5) pricingStrategy = new NightPricing();
+                if (command.WatchDate.DayOfWeek == DayOfWeek.Wednesday)
+                {
+                    pricingStrategy = new WednesdayPricing();
+                }
+                else 
+                {
+                    // 2. Nếu không phải Thứ Tư, áp dụng logic cũ
+                    if (seat.TypeSeat.Trim() == "VIP") 
+                        pricingStrategy = new VipPricing();
+                    else if (show.StartTime.Hours >= 22 || show.StartTime.Hours < 5) 
+                        pricingStrategy = new NightPricing();
+                    else 
+                        pricingStrategy = new NormalPricing();
+                }
 
                 decimal finalTicketPrice = _ticketPriceService.CalculatePrice(show.Price, pricingStrategy);
                 runningTotal += finalTicketPrice;

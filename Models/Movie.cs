@@ -12,7 +12,7 @@ namespace CinemaWeb.Models
         [Required, Column(TypeName = "nvarchar(255)")]
         public string MovieName { get; set; }
 
-        [Required, Column(TypeName = "nvarchar(30)")]
+        [Required, Column(TypeName = "nvarchar(255)")]
         public string Category { get; set; }
 
         [Required]
@@ -21,13 +21,13 @@ namespace CinemaWeb.Models
         [Required, Column(TypeName = "date")]
         public DateTime ReleaseDate { get; set; }
 
-        [Required, Column(TypeName = "nvarchar(255)")]
+        [Required, Column(TypeName = "nvarchar(max)")]
         public string Description { get; set; }
 
-        [Required, Column(TypeName = "varchar(30)")]
+        [Required, Column(TypeName = "varchar(50)")]
         public string Poster { get; set; }
 
-        [Required, Column(TypeName = "varchar(30)")]
+        [Required, Column(TypeName = "varchar(50)")]
         public string Trailer { get; set; }
 
         [Required, Column(TypeName = "nvarchar(30)")]

@@ -1,0 +1,63 @@
+@model IEnumerable<TicketViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+}    
+
+<link rel="stylesheet" href="~/css/ticket-management.css" />
+
+<div class="ticket-container">
+    <div class="ticket-header">
+        <h2>Danh sách Đặt vé</h2>
+    </div>
+
+    <table class="ticket-table">
+        <thead>
+            <tr>
+                <th>Mã ĐH</th>
+                <th>Khách hàng</th>
+                <th>Phim & Suất chiếu</th> @* Gom nhóm lại cho gọn *@
+                <th>Số lượng & Ghế</th>
+                <th>Tổng thanh toán</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><strong>#@item.OrderId</strong></td>
+                    <td>
+                        <div class="customer-info">
+                            <strong>@item.CustomerName</strong>
+                        </div>
+                    </td>
+                    <td>
+                        <div>@item.MovieName</div>
+                        <small class="text-muted">@item.WatchDate.ToString("dd/MM") | @item.Showtime</small>
+                    </td>
+                    <td>
+                        @* Đếm số lượng vé từ chuỗi ghế (tách bằng dấu phẩy) *@
+                        @{ var ticketCount = item.Seats.Split(',').Length; }
+                        <div class="ticket-count">@ticketCount vé</div>
+                        <span class="seat-badge">@item.Seats</span>
+                    </td>
+                    <td class="fw-bold text-primary">@item.TotalPrice.ToString("N0") đ</td>
+                    <td>
+                        <span class="status-badge @(item.Status == "Đã thanh toán" ? "status-paid" : item.Status == "Đã hủy" ? "status-cancelled" : "status-pending")">
+                            @item.Status
+                        </span>
+                    </td>
+                    <td>
+                        @* Nút xem chi tiết cấu trúc vé *@
+                        <a asp-action="Details" asp-route-id="@item.OrderId" class="btn btn-sm btn-info">
+                            Kiểm vé
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

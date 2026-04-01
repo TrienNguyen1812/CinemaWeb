@@ -4,7 +4,8 @@
     Layout = "~/Views/Shared/LayoutUserHome.cshtml";
     
     // Giả sử mức giảm giá cố định 10% từ OrderPriceService để hiển thị trên UI
-    decimal discountAmount = (Model.TicketTotal + Model.ComboTotal) * 0.1m;
+    decimal totalBeforeDiscount = Model.TicketTotal + Model.ComboTotal;
+    decimal actualDiscount = totalBeforeDiscount - Model.Total;
 }
 
 <div class="payment-page">
@@ -43,10 +44,11 @@
                 <span>@Model.ComboTotal.ToString("N0") đ</span>
             </div>
             
-            @if (discountAmount > 0) {
+            @if (actualDiscount > 0) {
                 <div class="price-row text-danger">
-                    <span>Giảm giá (10%):</span> 
-                    <span>- @discountAmount.ToString("N0") đ</span>
+                    @* Bạn có thể để là "Khuyến mãi/Giảm giá" thay vì fix 10% *@
+                    <span>Giảm giá:</span> 
+                    <span>- @actualDiscount.ToString("N0") đ</span>
                 </div>
             }
 

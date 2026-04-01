@@ -24,6 +24,9 @@ namespace CinemaWeb.Controllers
                 return RedirectToAction("Login", "Auth");
 
             var orders = _context.Orders
+                .Include(o => o.Tickets)
+                .Include(o => o.OrderCombos)
+                    .ThenInclude(oc => oc.Combo)
                 .Where(o => o.IdUser == userId)
                 .OrderByDescending(o => o.OrderTime)
                 .ToList();

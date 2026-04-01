@@ -42,16 +42,86 @@
 
                     @if (item.PaymentMethod == PaymentConstants.Cash && item.Status == PaymentConstants.StatusPending)
                     {
-                        @* Ép form hiển thị inline-block và thêm lề trái *@
-                        <form asp-action="ConfirmPayment" asp-route-id="@item.IdPayment" method="post" 
-                            style="display: inline-block; margin-left: 5px;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xác nhận thanh toán bằng tiền mặt?');">Xác nhận tiền mặt</button>
-                        </form>
+                        <button type="button" class="btn btn-success btn-sm" 
+                                onclick="openPaymentModal(@item.IdPayment, @item.Price)">
+                            Xác nhận tiền mặt
+                        </button>
                     }
+
+                    <div class="modal fade" id="cashPaymentModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Xác nhận thanh toán tiền mặt</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form asp-action="ConfirmPayment" method="post">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="id" id="modalPaymentId" />
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Tiền đơn hàng:</label>
+                                            <input type="text" id="orderPrice" class="form-control" readonly />
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Tiền khách đưa:</label>
+                                            <input type="number" id="customerCash" class="form-control" 
+                                                placeholder="Nhập số tiền..." oninput="calculateChange()" required />
+                                        </div>
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label">Tiền dư:</label>
+                                            <input type="text" id="changePrice" class="form-control text-danger fw-bold" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                        <button type="submit" id="btnConfirm" class="btn btn-primary" disabled>Xác nhận đã thu tiền</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         }
         </tbody>
     </table>
 </div>
+
+<script>
+    function openPaymentModal(id, price) {
+    document.getElementById('modalPaymentId').value = id;
+    document.getElementById('orderPrice').value = price.toLocaleString('vi-VN') + " đ";
+    // Lưu giá trị số để tính toán
+    window.currentOrderPrice = price;
+    
+    // Reset form
+    document.getElementById('customerCash').value = '';
+    document.getElementById('changePrice').value = '0 đ';
+    document.getElementById('btnConfirm').disabled = true;
+
+    var myModal = new bootstrap.Modal(document.getElementById('cashPaymentModal'));
+    myModal.show();
+}
+
+    function calculateChange() {
+    const customerCash = parseFloat(document.getElementById('customerCash').value) || 0;
+    const orderPrice = window.currentOrderPrice;
+    const change = customerCash - orderPrice;
+    
+    const changeInput = document.getElementById('changePrice');
+    const btnConfirm = document.getElementById('btnConfirm');
+
+    if (change >= 0) {
+        changeInput.value = change.toLocaleString('vi-VN') + " đ";
+        changeInput.classList.replace('text-danger', 'text-success');
+        btnConfirm.disabled = false; // Cho phép xác nhận
+    } else {
+        changeInput.value = "Chưa đủ tiền (Thiếu " + Math.abs(change).toLocaleString('vi-VN') + " đ)";
+        changeInput.classList.replace('text-success', 'text-danger');
+        btnConfirm.disabled = true; // Chặn xác nhận
+    }
+}
+</script>

@@ -1,0 +1,73 @@
+@model CinemaWeb.Models.Order
+@using CinemaWeb.Services.Strategies
+@{
+    ViewData["Title"] = "Chi tiết soát vé";
+    Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
+
+    // 1. Tính tổng giá trị "nguyên bản" của toàn bộ đơn hàng (Vé + Combo)
+    decimal rawTicketsTotal = Model.Tickets.Sum(t => t.FinalPrice);
+    decimal rawCombosTotal = Model.OrderCombos?.Sum(oc => (oc.Combo?.Price ?? 0) * oc.Quantity) ?? 0;
+    decimal totalBeforeDecorator = rawTicketsTotal + rawCombosTotal;
+
+    // 2. Tính tỷ lệ giảm giá thực tế của đơn hàng (Ví dụ: 0.1 cho 10%)
+    decimal discountRate = 0;
+    if (totalBeforeDecorator > 0 && Model.TotalPrice < totalBeforeDecorator)
+    {
+        discountRate = (totalBeforeDecorator - Model.TotalPrice) / totalBeforeDecorator;
+    }
+}
+<link rel="stylesheet" href="~/css/ticket.css" />
+
+<div class="details-container">
+    <div class="details-header mb-4">
+        <h2>KIỂM TRA VÉ #@Model.IdOrder</h2>
+        @* Nút quay lại ở đầu trang *@
+        <a asp-action="Index" class="btn btn-secondary btn-sm">← Quay lại danh sách</a>
+    </div>
+
+    <div class="ticket-grid">
+        @foreach (var t in Model.Tickets)
+        {
+            // Giá niêm yết theo loại ghế (đã qua Strategy)
+            IPricingStrategy strategy = t.Seat?.TypeSeat == "VIP" ? new VipPricing() : new NormalPricing();
+            decimal priceAfterStrategy = strategy.CalculatePrice(t.OriginalPrice);
+
+            // GIÁ THỰC THU: Lấy giá của vé đó trừ đi phần giảm giá phân bổ của đơn hàng
+            decimal actualPricePerTicket = t.FinalPrice * (1 - discountRate);
+
+            <div class="ticket-card-item">
+                <div class="ticket-id">Mã vé: #@t.IdTicket</div>
+                
+                <div class="ticket-body">
+                    @* ... (Phần vị trí và loại ghế giữ nguyên) ... *@
+
+                    <div class="simple-price-container">
+                        <div class="price-box">
+                            <span class="price-label">Giá niêm yết (@t.Seat?.TypeSeat)</span>
+                            @* Giá này là giá gốc của loại ghế đó *@
+                            <span class="price-value text-muted">@priceAfterStrategy.ToString("N0") đ</span>
+                        </div>
+                        <div class="price-divider"></div>
+                        <div class="price-box">
+                            <span class="price-label">Giá thực thu (Phân bổ giảm giá)</span>
+                            @* Giá này đã bao gồm giảm giá từ Decorator của Order *@
+                            <span class="price-value text-danger fw-bold">@actualPricePerTicket.ToString("N0") đ</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (priceAfterStrategy > actualPricePerTicket)
+                {
+                    <div class="ticket-footer discount-tag">
+                        <span>🏷️ Tổng tiết kiệm/vé: -@((priceAfterStrategy - actualPricePerTicket).ToString("N0")) đ</span>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    @* Nút quay lại bổ sung ở cuối trang *@
+    <div class="mt-5 text-center">
+        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách quản lý</a>
+    </div>
+</div>

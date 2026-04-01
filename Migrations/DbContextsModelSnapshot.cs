@@ -40,7 +40,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasKey("IdCinema");
 
-                    b.ToTable("Cinemas", (string)null);
+                    b.ToTable("Cinemas");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Combo", b =>
@@ -68,7 +68,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasKey("IdCombo");
 
-                    b.ToTable("Combos", (string)null);
+                    b.ToTable("Combos");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Movie", b =>
@@ -85,11 +85,11 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Category")
                         .IsRequired()
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -100,7 +100,7 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Poster")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("date");
@@ -111,11 +111,11 @@ namespace CinemaWeb.Migrations
 
                     b.Property<string>("Trailer")
                         .IsRequired()
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("varchar(50)");
 
                     b.HasKey("IdMovie");
 
-                    b.ToTable("Movies", (string)null);
+                    b.ToTable("Movies");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Order", b =>
@@ -146,7 +146,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdUser");
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.OrderCombo", b =>
@@ -172,7 +172,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdOrder");
 
-                    b.ToTable("OrderCombos", (string)null);
+                    b.ToTable("OrderCombos");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Payment", b =>
@@ -208,7 +208,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdOrder");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.ScreeningRoom", b =>
@@ -233,7 +233,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdCinema");
 
-                    b.ToTable("ScreeningRooms", (string)null);
+                    b.ToTable("ScreeningRooms");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.SearchHistory", b =>
@@ -257,7 +257,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdMovie");
 
-                    b.ToTable("SearchHistories", (string)null);
+                    b.ToTable("SearchHistories");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Seat", b =>
@@ -287,7 +287,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdRoom");
 
-                    b.ToTable("Seats", (string)null);
+                    b.ToTable("Seats");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Showtime", b =>
@@ -316,7 +316,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdRoom");
 
-                    b.ToTable("Showtimes", (string)null);
+                    b.ToTable("Showtimes");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Ticket", b =>
@@ -353,7 +353,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasIndex("IdShowtime");
 
-                    b.ToTable("Tickets", (string)null);
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.User", b =>
@@ -386,7 +386,7 @@ namespace CinemaWeb.Migrations
 
                     b.HasKey("IdUser");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("CinemaWeb.Models.Order", b =>

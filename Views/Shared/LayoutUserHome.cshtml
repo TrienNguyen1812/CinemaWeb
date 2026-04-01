@@ -58,6 +58,7 @@
     @{
         var username = Context.Session.GetString("UserName");
         var role = Context.Session.GetString("Role");
+        var email = Context.Session.GetString("Email");
     }
 
     <!-- HEADER -->
@@ -114,8 +115,18 @@
 
         <div>
             <h4>Tài khoản</h4>
-            <a asp-controller="Auth" asp-action="Login">Đăng nhập</a>
-            <a asp-controller="Auth" asp-action="Register">Đăng ký</a>
+            @if (username != null) 
+            {
+                <div class="user-footer">
+                    <span>Hello, <b>@username</b></span>
+                    <span>@email</span>
+                </div>
+            }
+            else 
+            {
+                <a asp-controller="Auth" asp-action="Login" class="account-text">Đăng nhập</a>
+                <a asp-controller="Auth" asp-action="Register" class="account-text">Đăng ký</a>
+            }
         </div>
 
         <div>
