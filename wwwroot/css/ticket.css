@@ -1,110 +1,40 @@
-/* Container chính cho trang Quản lý vé */
 .ticket-container {
     background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    margin-top: 20px;
-}
-
-/* Phần tiêu đề và thanh tìm kiếm */
-.ticket-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 15px;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .ticket-header h2 {
-    margin: 0;
-    color: #333;
+    font-size: 28px;
     font-weight: 700;
+    color: #2c3e50;
+    border-left: 5px solid #0d6efd;
+    padding-left: 15px;
 }
 
-/* Container bọc toàn bộ thanh tìm kiếm */
-.search-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background: #f4f7f9;
-    border-radius: 50px; /* Làm thanh tìm kiếm bo tròn cực đại */
-    padding: 5px 15px;
-    border: 1px solid #e0e6ed;
-    transition: all 0.3s ease;
-    width: 350px;
-}
+/* Bảng Ticket - Đồng bộ cấu trúc Showtime */
 
-/* Hiệu ứng khi focus vào vùng tìm kiếm */
-.search-wrapper:focus-within {
-    background: #fff;
-    border-color: #0d6efd;
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
-}
-
-/* Icon kính lúp */
-.search-wrapper i {
-    color: #a0aec0;
-    margin-right: 10px;
-    font-size: 16px;
-}
-
-/* Ô input ẩn viền mặc định */
-.search-input {
-    border: none !important;
-    background: transparent !important;
-    outline: none !important;
-    width: 100%;
-    padding: 8px 0;
-    font-size: 14px;
-    color: #2d3748;
-}
-
-.search-input::placeholder {
-    color: #a0aec0;
-}
-
-/* Nút tìm kiếm kiểu hiện đại */
-.btn-search {
-    background: #0d6efd;
-    color: white;
-    border: none;
-    padding: 8px 20px;
-    border-radius: 50px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-    margin-left: 10px;
-}
-
-.btn-search:hover {
-    background: #0b5ed7;
-}
-
-/* Định dạng bảng danh sách vé */
 .ticket-table {
     width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    margin-top: 10px;
-}
-
-.ticket-table th, 
-.ticket-table td {
-    padding: 14px 10px;
-    border-bottom: 1px solid #eee;
-    text-align: center;
-    vertical-align: middle;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
 }
 
 .ticket-table th {
-    background: #f8f9fa;
-    color: #495057;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 13px;
-    border-top: 1px solid #eee;
+    background: #0d6efd; /* Màu xanh chủ đạo */
+    color: #ffffff;
+    text-align: center;
+}
+
+.ticket-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.ticket-table tr:hover {
+    background-color: #f1f7ff; /* Hiệu ứng highlight khi di chuột */
+    transition: 0.3s;
 }
 
 /* Badge trạng thái (Status tags) */
@@ -137,15 +67,6 @@
     margin-bottom: 2px;
 }
 
-.seat-badge {
-    background: #f1f3f5;
-    color: #495057;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-family: monospace;
-    font-weight: bold;
-    font-size: 12px;
-}
 
 /* Hiệu ứng hover cho dòng */
 .ticket-table tbody tr:hover {
@@ -153,45 +74,28 @@
     transition: 0.2s;
 }
 
-.btn-info {
-    background-color: #0d6efd;
-    border: none;
-    color: white;
-}
-
-/* Định dạng các nút hành động */
+/* --- BUTTONS (Giống seat.css) --- */
 .btn {
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
     text-decoration: none;
     font-size: 14px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
 
-.btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
+.btn:hover { opacity: 0.8; }
 
-.btn-confirm {
-    background: #198754;
-    color: #fff;
-}
-
-.btn-detail {
-    background: #0dcaf0 !important;
-    color: #000 !important;
-}
-
-.btn-cancel {
-    background: #dc3545;
-    color: #fff;
-}
+.btn-primary { background: #0d6efd; color: #fff; }
+.btn-secondary { background: #6c757d; color: #fff; }
+.btn-info { background: #0dcaf0; color: #000; }
+.btn-success { background: #198754; color: #fff; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-print { background: #2d3748; color: #fff; }
 
 .info-group h4 {
     color: #0d6efd;
@@ -211,9 +115,10 @@
 
 /* Layout tổng thể */
 .details-container {
+    background: #ffffff;
     padding: 30px;
-    background: #f8f9fa;
-    font-family: 'Segoe UI', sans-serif;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
 }
 
 .details-header {
@@ -395,12 +300,14 @@
     margin-bottom: 15px;
 }
 
-.badge-seat {
+/* Badge ghế ngồi trong bảng */
+.seat-badge {
     background: #0d6efd;
     color: #fff;
     padding: 4px 10px;
     border-radius: 6px;
     font-weight: bold;
+    font-size: 12px;
 }
 
 .price-flow {

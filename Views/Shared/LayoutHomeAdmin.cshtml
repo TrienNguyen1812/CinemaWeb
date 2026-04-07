@@ -12,12 +12,12 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/dashboard.css" />
     
-    <link rel="stylesheet" href="~/css/cinema.css" />
-    
-    <link rel="stylesheet" href="~/css/seat.css" />
     
     
-    <link rel="stylesheet" href="~/css/payment.css" />
+    
+    
+    
+    
     
 
     <!-- Chart.js -->
@@ -49,7 +49,7 @@
 
         <!-- Main Content -->
         <main class="flex-grow-1 p-4">
-            @RenderBody()
+            @RenderBody() 
         </main>
     </div>
 
@@ -63,3 +63,29 @@
     @RenderSection("Scripts", required: false)
 </body>
 </html>
+<style>
+    /* 1. Đảm bảo toàn bộ trang không bị cuộn cả khối */
+    body, html {
+        height: 100%;
+        margin: 0;
+        overflow: hidden; /* Chặn cuộn toàn trang */
+    }
+
+    /* 2. Cố định Sidebar */
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+        overflow-y: auto; /* Nếu menu quá dài thì cuộn trong sidebar */
+        border-right: 1px solid #dee2e6;
+        flex-shrink: 0; /* Không cho sidebar bị co lại */
+    }
+
+    /* 3. QUAN TRỌNG: Cho phép nội dung chính cuộn dọc */
+    main {
+        flex-grow: 1;
+        height: 100vh;
+        overflow-y: auto; /* Tự động hiện cuộn dọc khi nội dung tràn */
+        overflow-x: hidden; /* Chặn cuộn ngang không cần thiết */
+        padding: 20px;
+    }
+</style>

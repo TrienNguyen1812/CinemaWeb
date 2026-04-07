@@ -5,12 +5,14 @@
 }
 <link rel="stylesheet" href="~/css/order.css" />
 
-<h2>Xóa đơn hàng</h2>
+<div class="order-container">
+    <h2>Xóa đơn hàng</h2>
 
-<p>Bạn có chắc muốn xóa đơn <b>#@Model.IdOrder</b>?</p>
+    <p>Bạn có chắc muốn xóa đơn <b>#@Model.IdOrder</b>?</p>
 
-<form asp-action="Delete">
-    <input type="hidden" asp-for="IdOrder" />
-    <button class="btn-danger" type="submit">Xóa</button>
-    <a asp-action="Index">Hủy</a>
-</form>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="IdOrder" />
+        <button class="btn-danger" type="submit">Xóa</button>
+        <a asp-action="Index">Hủy</a>
+    </form>
+</div>

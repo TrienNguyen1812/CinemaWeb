@@ -5,25 +5,27 @@
 }
 <link rel="stylesheet" href="~/css/order.css" />
 
-<h2>Cập nhật đơn hàng</h2>
+<div class="order-container">
+    <h2>Cập nhật đơn hàng</h2>
 
-<form asp-action="Edit" class="order-form">
-    <input type="hidden" asp-for="IdOrder" />
+    <form asp-action="Edit" class="form-box">
+        <input type="hidden" asp-for="IdOrder" />
 
-    <label>Khách hàng</label>
-    <select asp-for="IdUser">
-        @foreach (var user in ViewBag.IdUser)
-        {
-            <option value="@user.IdUser">@user.FullName</option>
-        }
-    </select>
+        <label>Khách hàng</label>
+        <select asp-for="IdUser">
+            @foreach (var user in ViewBag.IdUser)
+            {
+                <option value="@user.IdUser">@user.FullName</option>
+            }
+        </select>
 
-    <label>Tổng tiền</label>
-    <input asp-for="TotalPrice" />
+        <label>Tổng tiền</label>
+        <input asp-for="TotalPrice" />
 
-    <label>Trạng thái</label>
-    <input asp-for="Status" />
+        <label>Trạng thái</label>
+        <input asp-for="Status" />
 
-    <button type="submit">Cập nhật</button>
-    <a asp-action="Index">Hủy</a>
-</form>
+        <button type="submit" class="btn btn-warning">Cập nhật</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

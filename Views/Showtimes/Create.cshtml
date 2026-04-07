@@ -5,21 +5,23 @@
 }
 <link rel="stylesheet" href="~/css/showtime.css" />
 
-<h2>Thêm Suất Chiếu</h2>
+<div class="showtime-container">
+    <h2>Thêm Suất Chiếu</h2>
 
-<form asp-action="Create" class="form-box">
-    <label>Phim</label>
-    <select asp-for="IdMovie" asp-items="ViewBag.IdMovie"></select>
+    <form asp-action="Create" class="form-box">
+        <label>Phim</label>
+        <select asp-for="IdMovie" asp-items="ViewBag.IdMovie"></select>
 
-    <label>Phòng</label>
-    <select asp-for="IdRoom" asp-items="ViewBag.IdRoom"></select>
+        <label>Phòng</label>
+        <select asp-for="IdRoom" asp-items="ViewBag.IdRoom"></select>
 
-    <label>Giờ chiếu</label>
-    <input asp-for="StartTime" type="time" />
+        <label>Giờ chiếu</label>
+        <input asp-for="StartTime" type="time" />
 
-    <label>Giá vé</label>
-    <input asp-for="Price" />
+        <label>Giá vé</label>
+        <input asp-for="Price" />
 
-    <button type="submit">Lưu</button>
-    <a asp-action="Index">Quay lại</a>
-</form>
+        <button type="submit" class="btn btn-success">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>

@@ -5,14 +5,16 @@
 }
 <link rel="stylesheet" href="~/css/order.css" />
 
-<h2>Chi tiết đơn hàng</h2>
+<div class="order-container">
+    <h2>Chi tiết đơn hàng</h2>
 
-<div class="order-detail">
-    <p><b>Mã đơn:</b> @Model.IdOrder</p>
-    <p><b>Khách hàng:</b> @Model.User?.FullName</p>
-    <p><b>Thời gian:</b> @Model.OrderTime.ToString("dd/MM/yyyy HH:mm:ss")</p>
-    <p><b>Tổng tiền:</b> @Model.TotalPrice.ToString("N0") ₫</p>
-    <p><b>Trạng thái:</b> @Model.Status</p>
+    <div class="container order-details">
+        <p><b>Mã đơn:</b> @Model.IdOrder</p>
+        <p><b>Khách hàng:</b> @Model.User?.FullName</p>
+        <p><b>Thời gian:</b> @Model.OrderTime.ToString("dd/MM/yyyy HH:mm:ss")</p>
+        <p><b>Tổng tiền:</b> @Model.TotalPrice.ToString("N0") ₫</p>
+        <p><b>Trạng thái:</b> @Model.Status</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </div>
-
-<a asp-action="Index">Quay lại</a>

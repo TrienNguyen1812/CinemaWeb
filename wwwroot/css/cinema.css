@@ -1,53 +1,66 @@
-﻿.container {
+﻿/* Container bao ngoài */
+.cinema-container {
     background: #ffffff;
-    padding: 24px;
-    border-radius: 12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-}
-
-h2 {
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
     margin-bottom: 20px;
-    color: #2c3e50;
 }
 
-table {
+.cinema-container h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    border-left: 5px solid #0d6efd;
+    padding-left: 15px;
+}
+
+/* Bảng Cinema - Đồng bộ với Showtime */
+.cinema-table {
     width: 100%;
     border-collapse: collapse;
+    border: 1px solid #ddd;
 }
 
-    table th {
-        background: #0d6efd;
-        color: #fff;
-        padding: 10px;
-    }
+.cinema-table th {
+    background: #0d6efd; /* Màu xanh chủ đạo */
+    color: #ffffff;
+    text-align: center;
+}
 
-    table td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-    }
+.cinema-table td {
+    vertical-align: middle;
+    text-align: center;
+}
 
+.cinema-table tr:hover {
+    background-color: #f1f7ff; /* Hiệu ứng highlight khi di chuột */
+    transition: 0.3s;
+}
+
+/* --- BUTTONS (Giống seat.css) --- */
 .btn {
-    padding: 6px 12px;
-    border-radius: 5px;
+    padding: 8px 14px;
+    border-radius: 6px;
     text-decoration: none;
-    color: #fff;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
 
-.btn-primary {
-    background: #3498db;
-}
+.btn:hover { opacity: 0.8; }
 
-.btn-warning {
-    background: #f39c12;
-}
-
-.btn-danger {
-    background: #e74c3c;
-}
-
-.btn-secondary {
-    background: #7f8c8d;
-}
+.btn-primary { background: #0d6efd; color: #fff; }
+.btn-secondary { background: #6c757d; color: #fff; }
+.btn-info { background: #0dcaf0; color: #000; }
+.btn-success { background: #198754; color: #fff; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-print { background: #2d3748; color: #fff; }
 
 .form-group {
     margin-bottom: 15px;

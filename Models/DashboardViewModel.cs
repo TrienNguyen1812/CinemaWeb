@@ -7,6 +7,7 @@ namespace CinemaWeb.Models
         public int TotalOrders { get; set; }
         public int TotalCustomers { get; set; }
         public int DailySales { get; set; }
+        public double RevenueGrowth { get; set; }
         
         public List<string> ChartLabels { get; set; }
         public List<decimal> RevenueData { get; set; }

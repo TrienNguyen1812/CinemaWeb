@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 <link rel="stylesheet" href="~/css/showtime.css" />
+
 <div class="showtime-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h2 class="showtime-title">Quản Lý Suất Chiếu</h2>
@@ -21,20 +22,20 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model)
-{
-    <tr>
-        <td>@item.Movie?.MovieName</td>
-        <td>@item.ScreeningRoom?.RoomName</td>
-        <td>@item.StartTime</td>
-        <td>@item.Price.ToString("N0") đ</td>
-        <td>
-            <a asp-action="Details" asp-route-id="@item.IdShowtime" class="btn btn-info btn-sm btn-action">Xem</a> 
-            <a asp-action="Edit" asp-route-id="@item.IdShowtime" class="btn btn-warning btn-sm btn-action ">Sửa</a> 
-            <a asp-action="Delete" asp-route-id="@item.IdShowtime" class="btn btn-danger btn-sm btn-action">Xóa</a>
-        </td>
-    </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Movie?.MovieName</td>
+                <td>@item.ScreeningRoom?.RoomName</td>
+                <td>@item.StartTime</td>
+                <td>@item.Price.ToString("N0") đ</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.IdShowtime" class="btn btn-info btn-sm btn-action">Xem</a> 
+                    <a asp-action="Edit" asp-route-id="@item.IdShowtime" class="btn btn-warning btn-sm btn-action ">Sửa</a> 
+                    <a asp-action="Delete" asp-route-id="@item.IdShowtime" class="btn btn-danger btn-sm btn-action">Xóa</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 </div>

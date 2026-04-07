@@ -11,15 +11,52 @@
     margin-bottom: 20px;
 }
 
+/* Bảng Room - Đồng bộ với Showtime */
+.room-table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
 .room-table th {
-    background-color: #0d6efd;
-    color: white;
+    background: #0d6efd; /* Màu xanh chủ đạo */
+    color: #ffffff;
+    text-align: center;
+}
+
+.room-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.room-table tr:hover {
+    background-color: #f1f7ff; /* Hiệu ứng highlight khi di chuột */
+    transition: 0.3s;
 }
 
 .form-required {
     color: red;
 }
 
-.btn-action {
-    min-width: 80px;
+/* --- BUTTONS (Giống seat.css) --- */
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
 }
+
+.btn:hover { opacity: 0.8; }
+
+.btn-primary { background: #0d6efd; color: #fff; }
+.btn-secondary { background: #6c757d; color: #fff; }
+.btn-info { background: #0dcaf0; color: #000; }
+.btn-success { background: #198754; color: #fff; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-print { background: #2d3748; color: #fff; }

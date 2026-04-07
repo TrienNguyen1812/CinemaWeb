@@ -3,6 +3,7 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
+<link rel="stylesheet" href="~/css/seat.css" />
 
 <div class="seat-container">
 
@@ -25,7 +26,7 @@
         <p class="text-danger">@TempData["Error"]</p>
     }
 
-    <table>
+    <table class="table table-bordered table-hover modern-table">
         <thead>
             <tr>
                 <th>Rạp</th>

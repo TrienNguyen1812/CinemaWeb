@@ -3,10 +3,12 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
-<div class="container">
+<link rel="stylesheet" href="~/css/cinema.css" />
+
+<div class="cinema-container">
     <h2>Cập nhật rạp</h2>
 
-    <form asp-action="Edit" method="post">
+    <form asp-action="Edit" method="post" class="form-box">
         <input type="hidden" asp-for="IdCinema" />
 
         <div class="form-group">
@@ -21,7 +23,7 @@
             <span asp-validation-for="Address" class="text-danger"></span>
         </div>
 
-        <button type="submit" class="btn btn-primary">Lưu</button>
+        <button type="submit" class="btn btn-success">Lưu</button>
         <a asp-action="Index" class="btn btn-secondary">Hủy</a>
     </form>
 </div>

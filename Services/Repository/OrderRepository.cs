@@ -18,6 +18,33 @@ public class OrderRepository : IOrderRepository
             .Sum(o => (decimal?)o.TotalPrice) ?? 0;
     }
 
+    public double GetRevenueGrowth()
+    {
+        var now = DateTime.Today;
+        var firstDayThisMonth = new DateTime(now.Year, now.Month, 1);
+        var firstDayLastMonth = firstDayThisMonth.AddMonths(-1);
+
+        // 1. Doanh thu tháng hiện tại (tính đến hôm nay)
+        var revenueThisMonth = _context.Orders
+            .Where(o => o.OrderTime >= firstDayThisMonth && 
+                        o.Status == PaymentConstants.OrderPaid)
+            .Sum(o => (decimal?)o.TotalPrice) ?? 0;
+
+        // 2. Doanh thu tháng trước
+        var revenueLastMonth = _context.Orders
+            .Where(o => o.OrderTime >= firstDayLastMonth && o.OrderTime < firstDayThisMonth &&
+                        o.Status == PaymentConstants.OrderPaid)
+            .Sum(o => (decimal?)o.TotalPrice) ?? 0;
+
+        // Tránh lỗi chia cho 0 nếu tháng trước chưa có doanh thu
+        if (revenueLastMonth == 0) return revenueThisMonth > 0 ? 100 : 0;
+
+        // Tính toán tăng trưởng
+        decimal growth = ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100;
+        
+        return (double)Math.Round(growth, 1);
+    }
+
     // 2. Tổng số đơn hàng thành công
     public int CountCompletedOrders()
     {
@@ -28,8 +55,9 @@ public class OrderRepository : IOrderRepository
     public int CountTodaySales()
     {
         var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
         return _context.Orders
-            .Count(o => o.OrderTime.Date == today && o.Status == PaymentConstants.OrderPaid);
+            .Count(o => o.OrderTime >= today && o.OrderTime < tomorrow && o.Status == PaymentConstants.OrderPaid);
     }
 
     public List<string> GetChartLabels()
@@ -98,7 +126,7 @@ public class OrderRepository : IOrderRepository
                 // Lấy tên phim từ Ticket đầu tiên (Lưu ý: Bạn cần dùng .Include hoặc Select để tránh Null)
                 MovieName = o.Tickets
                     .Select(t => t.Showtime.Movie.MovieName)
-                    .FirstOrDefault() ?? "Đồ ăn/Combo", 
+                    .FirstOrDefault() ?? "Vé xem phim", 
                 OrderTime = o.OrderTime,
                 TotalPrice = o.TotalPrice,
                 Status = o.Status

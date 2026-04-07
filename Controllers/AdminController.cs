@@ -21,6 +21,7 @@ namespace CinemaWeb.Controllers
             var model = new DashboardViewModel
             {
                 TotalRevenue = _orderRepository.GetTotalRevenue(),
+                RevenueGrowth = _orderRepository.GetRevenueGrowth(),
                 TotalOrders = _orderRepository.CountCompletedOrders(),
                 TotalCustomers = _customerRepository.CountActiveCustomers(),
                 DailySales = _orderRepository.CountTodaySales(),

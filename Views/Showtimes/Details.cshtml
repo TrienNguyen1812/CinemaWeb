@@ -4,14 +4,17 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 <link rel="stylesheet" href="~/css/showtime.css" />
-<h2>Chi Tiết Suất Chiếu</h2>
 
-<div class="detail-box">
-    <p><b>Phim:</b> @Model.Movie?.MovieName</p>
-    <p><b>Phòng:</b> @Model.ScreeningRoom?.RoomName</p>
-    <p><b>Giờ:</b> @Model.StartTime</p>
-    <p><b>Giá:</b> @Model.Price.ToString("N0") đ</p>
+<div class="showtime-container">
+    <h2>Chi Tiết Suất Chiếu</h2>
+
+    <div class="container showtime-details">
+        <p><b>Phim:</b> @Model.Movie?.MovieName</p>
+        <p><b>Phòng:</b> @Model.ScreeningRoom?.RoomName</p>
+        <p><b>Giờ:</b> @Model.StartTime</p>
+        <p><b>Giá:</b> @Model.Price.ToString("N0") đ</p>
+    </div>
+
+    <a asp-action="Edit" asp-route-id="@Model.IdShowtime" class="btn btn-primary">Sửa</a> |
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
 </div>
-
-<a asp-action="Edit" asp-route-id="@Model.IdShowtime">Sửa</a> |
-<a asp-action="Index">Quay lại</a>

@@ -3,31 +3,16 @@
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
+<link rel="stylesheet" href="~/css/seat.css" />
+
 <div class="seat-container">
     <h2>Chi tiết ghế</h2>
 
-    <table>
-        <tr>
-            <th>Rạp</th>
-            <td>@Model.ScreeningRoom?.Cinema?.CinemaName</td>
-        </tr>
-        <tr>
-            <th>Phòng</th>
-            <td>@Model.ScreeningRoom?.RoomName</td>
-        </tr>
-        <tr>
-            <th>Hàng ghế</th>
-            <td>@Model.SeatRow</td>
-        </tr>
-        <tr>
-            <th>Số ghế</th>
-            <td>@Model.SeatNumber</td>
-        </tr>
-        <tr>
-            <th>Loại ghế</th>
-            <td>@Model.TypeSeat</td>
-        </tr>
-    </table>
+    <p><strong>Rạp: </strong>@Model.ScreeningRoom?.Cinema?.CinemaName</p>
+    <p><strong>Phòng: </strong>@Model.ScreeningRoom?.RoomName</p>
+    <p><strong>Hàng ghế: </strong>@Model.SeatRow</p>
+    <p><strong>Số ghế: </strong>@Model.SeatNumber</p>
+    <p><strong>Loại ghế: </strong>@Model.TypeSeat</p>
 
     <br />
     <a asp-action="Edit" asp-route-id="@Model.IdSeat" class="btn btn-warning">Sửa</a>

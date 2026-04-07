@@ -6,14 +6,25 @@
 }
 
 <div class="container-fluid">
-    <h3 class="fw-bold mb-4">Tổng quan hệ thống</h3>
+    <h3 class="fw-bold mb-4">Thống kê</h3>
 
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <div class="card text-center p-3 shadow-sm border-0">
                 <h6 class="text-muted">Tổng doanh thu</h6>
                 <h3 class="fw-bold text-primary">@Model.TotalRevenue.ToString("N0")₫</h3>
-                <small class="text-success"><i class="fas fa-arrow-up"></i> +12% so với tháng trước</small>
+                @if (Model.RevenueGrowth >= 0)
+                {
+                    <small class="text-success">
+                        <i class="fas fa-arrow-up"></i> +@Model.RevenueGrowth% <span class="text-muted">so với tháng trước</span>
+                    </small>
+                }
+                else
+                {
+                    <small class="text-danger">
+                        <i class="fas fa-arrow-down"></i> @Model.RevenueGrowth% <span class="text-muted">so với tháng trước</span>
+                    </small>
+                }
             </div>
         </div>
         <div class="col-md-3">

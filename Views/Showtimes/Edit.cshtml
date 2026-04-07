@@ -4,22 +4,25 @@
     Layout = "~/Views/Shared/LayoutHomeAdmin.cshtml";
 }
 <link rel="stylesheet" href="~/css/showtime.css" />
-<h2>Thêm Suất Chiếu</h2>
 
-<form asp-action="Edit" class="form-box">
-    <input type="hidden" asp-for="IdShowtime" />
-    <label>Phim</label>
-    <select asp-for="IdMovie" asp-items="ViewBag.IdMovie"></select>
+<div class="showtime-container">
+    <h2>Thêm Suất Chiếu</h2>
 
-    <label>Phòng</label>
-    <select asp-for="IdRoom" asp-items="ViewBag.IdRoom"></select>
+    <form asp-action="Edit" class="form-box">
+        <input type="hidden" asp-for="IdShowtime" />
+        <label>Phim</label>
+        <select asp-for="IdMovie" asp-items="ViewBag.IdMovie"></select>
 
-    <label>Giờ chiếu</label>
-    <input asp-for="StartTime" type="time" />
+        <label>Phòng</label>
+        <select asp-for="IdRoom" asp-items="ViewBag.IdRoom"></select>
 
-    <label>Giá vé</label>
-    <input asp-for="Price" />
+        <label>Giờ chiếu</label>
+        <input asp-for="StartTime" type="time" />
 
-    <button type="submit">Lưu</button>
-    <a asp-action="Index">Quay lại</a>
-</form>
+        <label>Giá vé</label>
+        <input asp-for="Price" />
+
+        <button type="submit" class="btn btn-warning">Lưu</button>
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </form>
+</div>

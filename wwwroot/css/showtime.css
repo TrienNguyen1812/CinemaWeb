@@ -5,51 +5,36 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
 
-.showtime-title {
-    font-size: 26px;
+.showtime-container h2 {
+    font-size: 28px;
     font-weight: 700;
-    margin-bottom: 20px;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    border-left: 5px solid #0d6efd;
+    padding-left: 15px;
 }
 
-.showtime-table,
-.styled-table {
+.showtime-table {
     width: 100%;
     border-collapse: collapse;
+    border: 1px solid #ddd;
 }
 
-    .showtime-table th,
-    .styled-table th,
-    .showtime-table td,
-    .styled-table td {
-        border: 1px solid #ddd;
-        padding: 10px;
-        text-align: center;
-    }
-
-    .showtime-table th,
-    .styled-table th {
-        background: #0d6efd;
-        color: #fff;
-    }
-
-.form-box {
-    width: 400px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
+.showtime-table th {
+    background: #0d6efd; /* Màu xanh chủ đạo */
+    color: #ffffff;
+    text-align: center;
 }
 
-    .form-box input, .form-box select {
-        margin-bottom: 10px;
-        padding: 6px;
-    }
+.showtime-table td {
+    vertical-align: middle;
+    text-align: center;
+}
 
-    .form-box button {
-        background: #2196F3;
-        color: white;
-        padding: 8px;
-        border: none;
-    }
+.showtime-table tr:hover {
+    background-color: #f1f7ff; /* Hiệu ứng highlight khi di chuột */
+    transition: 0.3s;
+}
 
 .detail-box {
     width: 400px;
@@ -64,3 +49,26 @@
     padding: 8px;
     border: none;
 }
+
+/* --- BUTTONS (Giống seat.css) --- */
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn:hover { opacity: 0.8; }
+
+.btn-primary { background: #0d6efd; color: #fff; }
+.btn-secondary { background: #6c757d; color: #fff; }
+.btn-info { background: #0dcaf0; color: #000; }
+.btn-success { background: #198754; color: #fff; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-print { background: #2d3748; color: #fff; }

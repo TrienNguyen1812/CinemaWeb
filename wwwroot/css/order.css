@@ -49,6 +49,29 @@
         border: none;
     }
 
+/* --- BUTTONS (Giống seat.css) --- */
+.btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn:hover { opacity: 0.8; }
+
+.btn-primary { background: #0d6efd; color: #fff; }
+.btn-secondary { background: #6c757d; color: #fff; }
+.btn-info { background: #0dcaf0; color: #000; }
+.btn-success { background: #198754; color: #fff; }
+.btn-danger { background: #dc3545; color: #fff; }
+.btn-print { background: #2d3748; color: #fff; }
+
 .btn-create {
     display: inline-block;
     margin-bottom: 10px;
@@ -58,9 +81,3 @@
     text-decoration: none;
 }
 
-.btn-danger {
-    background: red;
-    color: white;
-    padding: 8px 12px;
-    border: none;
-}

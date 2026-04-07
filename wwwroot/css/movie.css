@@ -41,6 +41,7 @@ body {
     .movie-table th {
         background-color: #273c75;
         color: white;
+        white-space: nowrap;
     }
 
     .movie-table tr:hover {
@@ -61,21 +62,32 @@ body {
 }
 
 .btn-add {
-    background: #40f324;
+    background: #16a700;
 }
+    .btn-add:hover {
+        background: #16a700;
+    }
 
 .btn-detail {
     background: #0097e6;
 }
+    .btn-detail:hover {
+        background: #0097e6;
+    }
 
 .btn-edit {
     background: #fbc531;
-    color: black;
 }
+    .btn-edit:hover {
+        background: #fbc531;
+    }
 
 .btn-delete {
     background: #e84118;
 }
+    .btn-delete:hover {
+        background: #e84118;
+    }
 
 .btn:hover {
     opacity: 0.85;
